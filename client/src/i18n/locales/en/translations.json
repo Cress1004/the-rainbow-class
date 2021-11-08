@@ -1,0 +1,12 @@
+{
+    "app": {
+        "welcome_message": "Welcome to The Rainbow Class!",
+        "login": "Login",
+        "email_adress": "Email Address",
+        "pasword": "Password"
+    },
+    "placeholder": {
+        "input_email": "Input email address",
+        "password": "Input pasword"
+    }
+}

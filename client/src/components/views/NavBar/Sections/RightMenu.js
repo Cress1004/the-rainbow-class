@@ -25,9 +25,6 @@ function RightMenu(props) {
         <Menu.Item key="mail">
           <a href="/login">Signin</a>
         </Menu.Item>
-        <Menu.Item key="app">
-          <a href="/register">Signup</a>
-        </Menu.Item>
       </Menu>
     )
   } else {

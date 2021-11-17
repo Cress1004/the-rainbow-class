@@ -1,30 +1,50 @@
-import React, { Suspense } from 'react';
-import { Route, Switch } from "react-router-dom";
+import React, { Suspense, Component } from "react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Redirect,
+  Switch,
+} from "react-router-dom";
 import Auth from "../hoc/auth";
-// pages for this product
-import LandingPage from "./views/LandingPage/LandingPage.js";
-import LoginPage from "./views/User/LoginPage/LoginPage.js";
-import NavBar from "./views/NavBar/NavBar";
-import ResetPassword from './views/User/ResetPassword/ResetPassword';
+import "antd/dist/antd.css";
+/** Layouts **/
+import LoginLayoutRoute from "./views/Layouts/LoginLayoutRoute";
+import DashboardLayoutRoute from "./views/Layouts/DashboardLayoutRoute";
+/** Components **/
+import UserPage from "./views/User/UserPage/UserPage";
+import LoginPage from "./views/User/LoginPage/LoginPage";
+import ResetPassword from "./views/User/ResetPassword/ResetPassword";
+import Dashboard from "./views/Dashboard/Dashboard";
 
-//null   Anyone Can go inside
-//true   only logged in user can go inside
-//false  logged in user can't go inside
-
-function App() {
-  return (
-    <Suspense fallback={(<div>Loading...</div>)}>
-      {/* <NavBar /> */}
-      {/* <div style={{ paddingTop: '69px', minHeight: 'calc(100vh - 80px)' }}> */}
-        <Switch>
-          <Route exact path="/" component={Auth(LandingPage, null)} />
-          <Route exact path="/login" component={Auth(LoginPage, false)} />
-          <Route exact path="/reset_user" component={Auth(ResetPassword, false)} />
-        </Switch>
-      {/* </div> */}
-      {/* <Footer /> */}
-    </Suspense>
-  );
+class App extends Component {
+  render() {
+    return (
+      <Suspense fallback={<div>Loading...</div>}>
+          <Switch>
+            <Route exact path="/">
+              <Redirect to="/login" />
+            </Route>
+            <DashboardLayoutRoute 
+              path="/users"
+              component={Auth(UserPage, null)}
+            />
+            <DashboardLayoutRoute 
+              path="/dashboard"
+              component={Auth(Dashboard, null)}
+            />
+            <LoginLayoutRoute
+              path="/login"
+              component={Auth(LoginPage, false)}
+            />
+            <LoginLayoutRoute
+              exact
+              path="/reset_user"
+              component={Auth(ResetPassword, false)}
+            />
+          </Switch>
+        </Suspense>
+    );
+  }
 }
 
 export default App;

@@ -5,7 +5,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import { Form, Icon, Input, Button, Checkbox, Typography } from "antd";
 import { useDispatch } from "react-redux";
-import "./ResetPassword.css";
+import "./ResetPassword.scss";
 import { withTranslation } from "react-i18next";
 
 const { Title } = Typography;
@@ -22,18 +22,6 @@ function ResetPassword(props) {
     : "";
 
   return (
-    <div className="login-background">
-      <div className="info-area">
-        <Title level={3}>{t("app:welcome_message")}</Title>
-        <br />
-        <img
-          className="logo"
-          height="80%"
-          width="80%"
-          src="/images/logo.png"
-          alt="logo"
-        />
-      </div>
       <div className="resetpwd-area">
         <Formik
           initialValues={{
@@ -228,7 +216,6 @@ function ResetPassword(props) {
           }}
         </Formik>
       </div>
-    </div>
   );
 }
 

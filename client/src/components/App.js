@@ -15,6 +15,7 @@ import UserPage from "./views/User/UserPage/UserPage";
 import LoginPage from "./views/User/LoginPage/LoginPage";
 import ResetPassword from "./views/User/ResetPassword/ResetPassword";
 import Dashboard from "./views/Dashboard/Dashboard";
+import ClassList from "./views/Class/ClassList";
 
 class App extends Component {
   render() {
@@ -31,6 +32,10 @@ class App extends Component {
             <DashboardLayoutRoute 
               path="/dashboard"
               component={Auth(Dashboard, null)}
+            />
+             <DashboardLayoutRoute 
+              path="/classes"
+              component={Auth(ClassList, null)}
             />
             <LoginLayoutRoute
               path="/login"

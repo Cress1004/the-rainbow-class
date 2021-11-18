@@ -36,7 +36,6 @@ const DashboardLayout = ({ children, ...rest }) => {
             {/* <div className="logo" /> */}
             <Menu defaultSelectedKeys={["1"]} mode="inline">
               <Menu.Item key="my_schedule"><Link to="/dashboard">Dashboard</Link></Menu.Item>
-              <Menu.Item key="my" to>Dashboard</Menu.Item>
               <Menu.Item key="2">Schedule Manager</Menu.Item>
               <SubMenu key="sub1" title="User">
                 <Menu.Item key="3">Admin</Menu.Item>
@@ -45,7 +44,7 @@ const DashboardLayout = ({ children, ...rest }) => {
                 <Menu.Item key="6">Student</Menu.Item>
               </SubMenu>
               <SubMenu key="sub2" title="Class Manager">
-                <Menu.Item key="7">Class List</Menu.Item>
+                <Menu.Item key="class_list"><Link to="/classes">Class List</Link></Menu.Item>
                 <Menu.Item key="8">InRegister Student</Menu.Item>
                 <Menu.Item key="9">InRegister Volunteer</Menu.Item>
               </SubMenu>

@@ -15,7 +15,7 @@ function RightMenu(props) {
       if (response.status === 200) {
         props.history.push("/login");
       } else {
-        alert("Log Out Failed");
+        alert("Log Out Failed"); // Xu ly translation 
       }
     });
   };

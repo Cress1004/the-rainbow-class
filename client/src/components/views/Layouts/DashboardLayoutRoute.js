@@ -4,7 +4,6 @@ import { Layout, Menu, Typography } from "antd";
 import { Link } from 'react-router-dom';
 import "./style.scss";
 import RightMenu from "../NavBar/Sections/RightMenu";
-import { set } from "mongoose";
 
 const { Title } = Typography;
 const { SubMenu } = Menu;

@@ -1,18 +1,17 @@
 import React, { useState } from "react";
+import { withRouter } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Form, Icon, Input, Button, Typography, Modal } from "antd";
+import { useTranslation } from "react-i18next";
 import { loginUser } from "../../../../_actions/user_actions";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { Form, Icon, Input, Button, Typography, Modal } from "antd";
-import { useDispatch } from "react-redux";
-import "./LoginPage.scss"
+import "./LoginPage.scss";
 
 const { Title } = Typography;
 
 function LoginPage(props) {
-  const t = (string) => {
-    return string;
-  };
-
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const [showPopupResetPassword, setPopupResetPassword] = useState(false);
   const [formErrorMessage, setFormErrorMessage] = useState("");
@@ -40,14 +39,14 @@ function LoginPage(props) {
         }}
         validationSchema={Yup.object().shape({
           email: Yup.string()
-            .email("Email is invalid")
-            .required("Email is required"),
+            .email(t("invalid_email_message"))
+            .required(t("required_email_message")),
           resetEmail: Yup.string()
-            .email("Email is invalid")
-            .required("Email is required"),
+            .email(t("invalid_email_message"))
+            .required(t("required_email_message")),
           password: Yup.string()
-            .min(6, "Password must be at least 6 characters")
-            .required("Password is required"),
+            .min(8, t("required_min_length_of_password_message"))
+            .required(t("required_password_message")),
         })}
         onSubmit={(values, { setSubmitting }) => {
           setTimeout(() => {
@@ -66,12 +65,12 @@ function LoginPage(props) {
                   props.history.push("/");
                 } else {
                   setFormErrorMessage(
-                    "Check out your Account or Password again"
+                    "Check out your Account or Password again" // dua ve translation
                   );
                 }
               })
               .catch((err) => {
-                setFormErrorMessage("Check out your Account or Password again");
+                setFormErrorMessage("Check out your Account or Password again"); // dua ve translation
                 setTimeout(() => {
                   setFormErrorMessage("");
                 }, 3000);
@@ -99,12 +98,12 @@ function LoginPage(props) {
                 {t("login")}
               </Title>
               <Form
-                labelCol={{ span: 11 }}
-                wrapperCol={{ span: 13 }}
+                labelCol={{ span: 6 }}
+                wrapperCol={{ span: 18 }}
                 onSubmit={handleSubmit}
                 style={{ width: "100%" }}
               >
-                <Form.Item label={t("input_email_address")} required>
+                <Form.Item label={t("email")} required>
                   <Input
                     id="email"
                     prefix={
@@ -126,7 +125,7 @@ function LoginPage(props) {
                   )}
                 </Form.Item>
 
-                <Form.Item label={t("input_password")} required>
+                <Form.Item label={t("password")} required>
                   <Input
                     id="password"
                     prefix={
@@ -202,7 +201,7 @@ function LoginPage(props) {
               <Modal
                 style={{ textAlign: "center" }}
                 className="reset-password-modal"
-                title="Đặt lại mật khẩu"
+                title={t("reset_password")}
                 onCancel={handleCancel}
                 visible={showPopupResetPassword}
                 footer={[
@@ -217,11 +216,11 @@ function LoginPage(props) {
                     }
                     disabled={values.resetEmail === "" || errors.resetEmail}
                   >
-                    OK
+                    {t("ok")};
                   </Button>,
                 ]}
               >
-                <p>Email cấp lại mật khẩu sẽ được gửi đến địa chỉ dưới đây:</p>
+                <p>{t("reset_password_message")}</p>
                 <Form.Item className="input-reset-email">
                   <Input
                     id="resetEmail"
@@ -245,4 +244,4 @@ function LoginPage(props) {
   );
 }
 
-export default LoginPage;
+export default withRouter(LoginPage);

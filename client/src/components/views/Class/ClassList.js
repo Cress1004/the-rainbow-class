@@ -1,14 +1,13 @@
 import React from "react";
-import { Table, Tooltip } from "antd";
+import { useTranslation } from "react-i18next";
+import { Table } from "antd";
 import "./class-list.scss";
 function ClassList(props) {
   const numberOfClass = 10;
-  const t = (string) => {
-    return string;
-  };
+  const { t } = useTranslation();
   const columns = [
     {
-      title: t("Tên lớp"),
+      title: t("class_name"),
       dataIndex: "className",
       key: "className",
       ellipsis: {
@@ -18,7 +17,7 @@ function ClassList(props) {
       width: 100,
     },
     {
-      title: t("Địa chỉ"),
+      title: t("address"),
       dataIndex: "address",
       key: "address",
       width: 150,
@@ -28,7 +27,7 @@ function ClassList(props) {
       render: (address) => <span>{address}</span>,
     },
     {
-      title: t("Lớp trưởng"),
+      title: t("class_monitor"),
       dataIndex: "classMonitor",
       key: "classMonitor",
       width: 120,
@@ -38,7 +37,7 @@ function ClassList(props) {
       render: (classMonitor) => <span>{classMonitor}</span>,
     },
     {
-      title: t("Đối tượng"),
+      title: t("target_student"),
       dataIndex: "targetStudent",
       key: "targetStudent",
       width: 150,
@@ -48,7 +47,7 @@ function ClassList(props) {
       render: (targetStudent) => <span>{targetStudent}</span>,
     },
     {
-      title: t("Sĩ số"),
+      title: t("number_of_student"),
       dataIndex: "numberOfStudent",
       key: "numberOfStudent",
       width: 50,
@@ -138,7 +137,7 @@ function ClassList(props) {
   return (
     <div className="class-list">
       <div className="class-list__title">
-        {t("Danh sách các lớp học")} ({`${numberOfClass} lớp`})
+        {t("class_list")} ({`${numberOfClass} ${t("class")}`})
       </div>
       <Table columns={columns} dataSource={data} />
     </div>

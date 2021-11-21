@@ -1,6 +1,5 @@
 import React, { Suspense, Component } from "react";
 import {
-  BrowserRouter as Router,
   Route,
   Redirect,
   Switch,

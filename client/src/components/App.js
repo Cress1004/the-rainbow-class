@@ -22,7 +22,7 @@ class App extends Component {
       <Suspense fallback={<div>Loading...</div>}>
           <Switch>
             <Route exact path="/">
-              <Redirect to="/login" />
+              <Redirect to="/dashboard" />
             </Route>
             <DashboardLayoutRoute 
               path="/users"

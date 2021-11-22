@@ -14,3 +14,5 @@ If you have problem, feel free to ask me ^^
 You can watch the tutorial for this app.
 
 
+- Error: Invalid login: 535-5.7.8 Username and Password not accepted: 
+https://stackoverflow.com/questions/59188483/error-invalid-login-535-5-7-8-username-and-password-not-accepted

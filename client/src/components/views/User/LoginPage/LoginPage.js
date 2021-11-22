@@ -1,33 +1,20 @@
 import React, { useState } from "react";
 import { withRouter } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { Form, Icon, Input, Button, Typography, Modal } from "antd";
+import { Form, Icon, Input, Button, Typography } from "antd";
 import { useTranslation } from "react-i18next";
 import { loginUser } from "../../../../_actions/user_actions";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import "./LoginPage.scss";
+import ResetPassword from "./ResetPassword";
 
 const { Title } = Typography;
 
 function LoginPage(props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const [showPopupResetPassword, setPopupResetPassword] = useState(false);
   const [formErrorMessage, setFormErrorMessage] = useState("");
-
-  const showModal = () => {
-    setPopupResetPassword(true);
-  };
-
-  const handleOk = () => {
-    setPopupResetPassword(false);
-    // send email to reset password
-  };
-
-  const handleCancel = () => {
-    setPopupResetPassword(false);
-  };
 
   return (
     <div className="login-area">
@@ -35,13 +22,9 @@ function LoginPage(props) {
         initialValues={{
           email: "",
           password: "",
-          resetEmail: "",
         }}
         validationSchema={Yup.object().shape({
           email: Yup.string()
-            .email(t("invalid_email_message"))
-            .required(t("required_email_message")),
-          resetEmail: Yup.string()
             .email(t("invalid_email_message"))
             .required(t("required_email_message")),
           password: Yup.string()
@@ -64,13 +47,11 @@ function LoginPage(props) {
                   );
                   props.history.push("/");
                 } else {
-                  setFormErrorMessage(
-                    "Check out your Account or Password again" // dua ve translation
-                  );
+                  setFormErrorMessage(t("error_email_or_password_message"));
                 }
               })
               .catch((err) => {
-                setFormErrorMessage("Check out your Account or Password again"); // dua ve translation
+                setFormErrorMessage(t("fail_to_login"));
                 setTimeout(() => {
                   setFormErrorMessage("");
                 }, 3000);
@@ -161,13 +142,7 @@ function LoginPage(props) {
                     </p>
                   </label>
                 )}
-                <a
-                  className="login-form-forgot"
-                  onClick={showModal}
-                  style={{ float: "right" }}
-                >
-                  {t("forgot_password")}
-                </a>
+                <ResetPassword />
                 <div
                   style={{
                     marginTop: "20%",
@@ -198,44 +173,6 @@ function LoginPage(props) {
                   </Button>
                 </div>
               </Form>
-              <Modal
-                style={{ textAlign: "center" }}
-                className="reset-password-modal"
-                title={t("reset_password")}
-                onCancel={handleCancel}
-                visible={showPopupResetPassword}
-                footer={[
-                  <Button onClick={handleCancel}>Quay lại</Button>,
-                  <Button
-                    type="primary"
-                    onClick={handleOk}
-                    className={
-                      values.resetEmail === "" || errors.resetEmail
-                        ? "reset-pass-button-disable"
-                        : ""
-                    }
-                    disabled={values.resetEmail === "" || errors.resetEmail}
-                  >
-                    {t("ok")};
-                  </Button>,
-                ]}
-              >
-                <p>{t("reset_password_message")}</p>
-                <Form.Item className="input-reset-email">
-                  <Input
-                    id="resetEmail"
-                    type="email"
-                    value={values.resetEmail}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    style={{ width: "60%" }}
-                    placeholder={t("reset_email")}
-                  />
-                  {errors.resetEmail && touched.resetEmail && (
-                    <div className="input-feedback">{errors.email}</div>
-                  )}
-                </Form.Item>
-              </Modal>
             </div>
           );
         }}

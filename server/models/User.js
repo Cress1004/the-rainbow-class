@@ -7,7 +7,7 @@ const moment = require("moment");
 const userSchema = mongoose.Schema({
     name: {
         type:String,
-        maxlength:50
+        maxlength:100
     },
     email: {
         type:String,
@@ -18,13 +18,23 @@ const userSchema = mongoose.Schema({
         type: String,
         minglength: 5
     },
-    lastname: {
-        type:String,
-        maxlength: 50
-    },
     role : {
         type:Number,
-        default: 0 
+        default: 0 // 0: volunteer, 1: class_monitor, 2: admin, 3: superadmin
+    },
+    gender : {
+        type:Boolean,
+        default:true
+    },
+    birthday: Date,
+    address_id : {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Address',
+    },
+    phone_number: String,
+    class_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'ClassName',
     },
     image: String,
     token : {

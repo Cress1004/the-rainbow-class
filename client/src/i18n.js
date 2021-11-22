@@ -23,6 +23,8 @@ const resources = {
       password_confirm: "Nhập lại mật khẩu",
       input_password_confirm: "********",
       back_to_login: "Quay lại trang đăng nhập",
+      logout: "Đăng xuất",
+      profile: "Thông tin cá nhân",
       ok: "OK",
       class: "Lớp",
       class_list: "Danh sách các lớp học",
@@ -32,6 +34,7 @@ const resources = {
       target_student: "Đối tượng",
       number_of_student: "Sĩ số",
       my_schedule: "Lịch dạy cá nhân",
+      cancel: "Quay lại",
       //validation:
       invalid_email_message: "Địa chỉ email chưa đúng định dạng",
       required_email_message: "Hãy nhập vào địa chỉ email",
@@ -41,6 +44,10 @@ const resources = {
       required_confirm_password_message: "Hãy nhập lại mật khẩu để xác nhận",
       required_confirm_password_must_match_message:
         "Hãy nhập lại chính xác mật khẩu mới",
+      login_fail_message: "Log Out Failed",
+      error_email_or_password_message:
+        "Email hoặc mật khẩu bạn nhập vào là không đúng, hãy kiểm tra lại",
+      fail_to_login: "Check out your Account or Password again",
     },
   },
 };

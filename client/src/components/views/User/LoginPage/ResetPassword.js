@@ -2,17 +2,19 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import "./LoginPage.scss";
 import { Modal, Button, Form, Input } from "antd";
+import { resetPassword } from "../../../../_actions/user_actions";
 
 function ResetPassword(props) {
   const { t } = useTranslation();
   const [showPopupResetPassword, setPopupResetPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
   const [formErrorMessage, setFormErrorMessage] = useState("");
   const {
     values,
     touched,
     errors,
     isSubmitting,
-    handleChange,
+    //handleChange,
     handleBlur,
     handleSubmit,
   } = props;
@@ -23,12 +25,43 @@ function ResetPassword(props) {
 
   const handleOk = () => {
     setPopupResetPassword(false);
-    // send email to reset password
+    // onSubmit={(values, { setSubmitting }) => {
+    //   setTimeout(() => {
+    //     let dataToSubmit = {
+    //       email: values.email,
+    //       password: values.password,
+    //     };
+
+    //     dispatch(loginUser(dataToSubmit))
+    //       .then((response) => {
+    //         if (response.payload.loginSuccess) {
+    //           window.localStorage.setItem(
+    //             "userId",
+    //             response.payload.userId
+    //           );
+    //           props.history.push("/");
+    //         } else {
+    //           setFormErrorMessage(t("error_email_or_password_message"));
+    //         }
+    //       })
+    //       .catch((err) => {
+    //         setFormErrorMessage(t("fail_to_login"));
+    //         setTimeout(() => {
+    //           setFormErrorMessage("");
+    //         }, 3000);
+    //       });
+    //     setSubmitting(false);
+    //   }, 500);
+    // }}
   };
 
   const handleCancel = () => {
     setPopupResetPassword(false);
   };
+
+  const handleChange = (event) => {
+    setResetEmail(event.target.value)
+  }
 
   return (
     <div>
@@ -50,12 +83,12 @@ function ResetPassword(props) {
           <Button
             type="primary"
             onClick={handleOk}
-            // className={
-            //   values.resetEmail === "" || errors.resetEmail
-            //     ? "reset-pass-button-disable"
-            //     : ""
-            // }
-            // disabled={values.resetEmail === "" || errors.resetEmail}
+            className={
+              resetEmail === ""
+                ? "reset-pass-button-disable"
+                : ""
+            }
+            disabled={resetEmail === ""}
           >
             {t("ok")}
           </Button>,
@@ -67,9 +100,8 @@ function ResetPassword(props) {
             <Input
               id="resetEmail"
               name="resetEmail"
-              //value={values.resetEmail}
+              value={resetEmail}
               onChange={handleChange}
-              onBlur={handleBlur}
               style={{ width: "60%" }}
               placeholder={t("reset_email")}
               rules={[

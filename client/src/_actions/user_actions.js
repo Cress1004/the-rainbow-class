@@ -4,6 +4,7 @@ import {
     REGISTER_USER,
     AUTH_USER,
     LOGOUT_USER,
+    RESET_PASSWORD,
 } from './types';
 import { USER_SERVER } from '../components/Config.js';
 
@@ -47,3 +48,12 @@ export function logoutUser(){
     }
 }
 
+export function resetPassword(){
+    const request = axios.get(`${USER_SERVER}/reset-password`)
+    .then(response => response.data);
+
+    return {
+        type: RESET_PASSWORD,
+        payload: request
+    }
+}

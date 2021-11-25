@@ -1,0 +1,14 @@
+@import '../../../style/app.scss';
+.volunteer-list {
+    &__title {
+        font-size: $title-font-size;
+        font-weight: $title-font-weight;
+        color: $primary-color;
+    }
+    .add-volunteer-button {
+        float: right;
+    }
+    .ant-table-wrapper {
+        padding-top: 60px;
+    }
+}

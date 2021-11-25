@@ -1,9 +1,10 @@
 /node_modules
 /build
-
+data/node_modules
+data/package-lock.json
 dev.js
 .env
-
+request.http
 .DS_Store
 
 npm-debug.log*

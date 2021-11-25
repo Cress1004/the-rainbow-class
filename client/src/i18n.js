@@ -35,6 +35,10 @@ const resources = {
       number_of_student: "Sĩ số",
       my_schedule: "Lịch dạy cá nhân",
       cancel: "Quay lại",
+      volunteer_list: "Danh sách Tình nguyện viên",
+      volunteer: "Tình nguyện viên",
+      user_name: "Họ và tên",
+      phone_number: "Số điện thoại",
       //validation:
       invalid_email_message: "Địa chỉ email chưa đúng định dạng",
       required_email_message: "Hãy nhập vào địa chỉ email",

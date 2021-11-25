@@ -4,16 +4,14 @@ import { Layout, Menu, Typography } from "antd";
 import { Link } from 'react-router-dom';
 import "./style.scss";
 import RightMenu from "../NavBar/Sections/RightMenu";
+import { useTranslation } from "react-i18next";
 
 const { Title } = Typography;
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 
 const DashboardLayout = ({ children, ...rest }) => {
-  const t = (string) => {
-    return string;
-  };
-
+  const { t } = useTranslation();
   const [collapsed, setCollapsed] = useState(false);
   const handleCollapse = (collapsed) => {
     setCollapsed(collapsed);
@@ -39,7 +37,7 @@ const DashboardLayout = ({ children, ...rest }) => {
               <SubMenu key="sub1" title="User">
                 <Menu.Item key="3">Admin</Menu.Item>
                 <Menu.Item key="4">Class Monitor</Menu.Item>
-                <Menu.Item key="5">Volunteer</Menu.Item>
+                <Menu.Item key="5">{t("volunteer")}<Link to="/volunteers"></Link></Menu.Item>
                 <Menu.Item key="6">Student</Menu.Item>
               </SubMenu>
               <SubMenu key="sub2" title="Class Manager">

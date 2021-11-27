@@ -4,11 +4,11 @@ import { Form, Input, Select, Button, Radio } from "antd";
 import Axios from "axios";
 import "./volunteer.scss";
 
-//const { Option } = Select;
+const { Option } = Select;
 
 function AddVolunteer(props) {
   const { t } = useTranslation();
-  const [role, setRole] = useState(0);
+  //const [role, setRole] = useState(0);
   const layout = {
     labelCol: { span: 5 },
     wrapperCol: { span: 15 },
@@ -16,26 +16,42 @@ function AddVolunteer(props) {
   const tailLayout = {
     wrapperCol: { offset: 18, span: 4 },
   };
+
+  //const { register, handleSubmit, setValue } = useForm()
   const variable = { useForm: localStorage.getItem("userId") };
   const [location, setLocation] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [wards, setWards] = useState([]);
+  const [address, setAddress] = useState({});
 
   useEffect(() => {
-    Axios.post("/api/common-data/location", variable)
-      .then((response) => {
-        if (response.data.success) {
-          setLocation(response.data.location);
-        } else {
-          alert("Fail");
-        }
-      })
-      .catch((error) => console.log(error));
+    Axios.post("/api/common-data/location", variable).then((response) => {
+      if (response.data.success) {
+        setLocation(response.data.location);
+      } else {
+        alert(t("fail_to_get_api"));
+      }
+    });
   }, []);
 
-  const handleChangeRole = (e) => {
-    setRole(e.target.value);
+  // const handleChangeRole = (e) => {
+  //   setRole(e.target.value);
+  // };
+
+  const handleChangeProvice = (value) => {
+    setDistricts(location.find((item) => value === item.id).districts);
   };
 
-  console.log(location);
+  const handleChangeDistrict = (value) => {
+    setWards(districts.find((item) => value === item.id).wards);
+  };
+
+  // const handleSubmit = (e, values) => {
+  //   // var newUser = {}
+  //   // Axios.post('/api/users/add-new-volunteer', newUser)
+  //   e.preventDefault();
+  //   console.log(values);
+  // };
 
   //   const onGenderChange = (value: string) => {
   //     switch (value) {
@@ -52,8 +68,13 @@ function AddVolunteer(props) {
 
   return (
     <div className="add-volunteer">
-      <div className="add-volunter__title">{t("add-volunteer")}</div>
-      <Form {...layout} name="control-hooks">
+      <div className="add-volunteer__title">{t("add_volunteer")}</div>
+      <Form {...layout} name="control-hooks"
+      initialValue={{ name:'' }}
+      onSubmit={(e, values) => {
+        e.preventDefault();
+        console.log(values)
+      }}>
         <Form.Item
           name="name"
           label={t("user_name")}
@@ -72,50 +93,68 @@ function AddVolunteer(props) {
           <Input placeholder={t("input_phone_number")} />
         </Form.Item>
         <Form.Item name="address" label={t("address")}>
-          <Input placeholder={t("input_")} />
-          <Input placeholder={t("input_stress_no")} />
-          <Input placeholder={t("input_stress_no")} />
-          <Input placeholder={t("input_stress_no")} />
+          <Select
+            showSearch
+            style={{
+              display: "inline-block",
+              width: "calc(33% - 12px)",
+              marginRight: "10px",
+            }}
+            placeholder={t("input_province")}
+            onChange={handleChangeProvice}
+          >
+            {location.map((option) => (
+              <Option key={option._id} value={option.id}>
+                {option.name}
+              </Option>
+            ))}
+          </Select>
+          <Select
+            showSearch
+            style={{
+              display: "inline-block",
+              width: "calc(33% - 12px)",
+              margin: "0px 10px",
+            }}
+            placeholder={t("input_district")}
+            onChange={handleChangeDistrict}
+          >
+            {districts.length
+              ? districts.map((option) => (
+                  <Option key={option._id} value={option.id}>
+                    {option.name}
+                  </Option>
+                ))
+              : null}
+          </Select>
+          <Select
+            showSearch
+            style={{
+              display: "inline-block",
+              width: "calc(33% - 12px)",
+              marginLeft: "10px",
+            }}
+            placeholder={t("input_ward")}
+          >
+            {wards.length
+              ? wards.map((option) => (
+                  <Option key={option._id} value={option.id}>
+                    {option.name}
+                  </Option>
+                ))
+              : null}
+          </Select>
+          <Input placeholder={t("input_specific_address")} />
         </Form.Item>
         <Form.Item name="class" label={t("class")}>
           <Input placeholder={t("input_class")} />
         </Form.Item>
-        <Form.Item name="role" label={t("role")}>
+        {/* <Form.Item name="role" label={t("role")}>
           <Radio.Group onChange={handleChangeRole} value={role}>
             <Radio value={0}>{t("volunteer")}</Radio>
             <Radio value={1}>{t("class_monitor")}</Radio>
             <Radio value={2}>{t("sub_class_monitor")}</Radio>
           </Radio.Group>
-        </Form.Item>
-
-        {/* <Form.Item name="gender" label="Gender" rules={[{ required: true }]}>
-          <Select
-            placeholder="Select a option and change input text above"
-            //onChange={onGenderChange}
-            allowClear
-          >
-            <Option value="male">male</Option>
-            <Option value="female">female</Option>
-            <Option value="other">other</Option>
-          </Select>
-        </Form.Item>
-        <Form.Item
-          noStyle
-          shouldUpdate={(prevValues, currentValues) =>
-            prevValues.gender !== currentValues.gender
-          }
-        >
-          {({ getFieldValue }) =>
-            getFieldValue("gender") === "other" ? (
-              <Form.Item
-                name="customizeGender"
-                label="Customize Gender"
-                rules={[{ required: true }]}
-              >
-                <Input />
-              </Form.Item>
-            ) : null
-          }
         </Form.Item> */}
         <Form.Item {...tailLayout}>
           <Button type="primary" htmlType="submit">

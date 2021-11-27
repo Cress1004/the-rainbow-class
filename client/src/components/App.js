@@ -13,6 +13,7 @@ import Dashboard from "./views/Dashboard/Dashboard";
 import ClassList from "./views/Class/ClassList";
 import VolunteerList from "./views/User/UserPage/Volunteer/VolunteerList";
 import AddVolunteer from "./views/User/UserPage/Volunteer/AddVolunteer";
+import Mastersetting from "./views/MaterSetting/Mastersetting";
 
 class App extends Component {
   render() {
@@ -47,6 +48,10 @@ class App extends Component {
             exact
             path="/reset_user"
             component={Auth(ResetPassword, false)}
+          />
+           <DashboardLayoutRoute
+            path="/master-setting"
+            component={Auth(Mastersetting, null)}
           />
         </Switch>
       </Suspense>

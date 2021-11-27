@@ -4,6 +4,6 @@ const studentTypeSchema = mongoose.Schema({
     title: String
 });
 
-const StudentType = mongoose.model('StudentType', studentTypeSchema);
+const StudentType = mongoose.model('StudentType', studentTypeSchema, 'studentTypes');
 
 module.exports = { StudentType }

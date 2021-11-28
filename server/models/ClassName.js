@@ -2,9 +2,10 @@ const mongoose = require('mongoose');
 
 const classSchema = mongoose.Schema({
     class_name: String,
-    schedule_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Schedule',
+    description: String, 
+    address: {
+        locationID: String,
+        description: String
     },
     students: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -14,13 +15,16 @@ const classSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
     },
-    address_id: {
+    student_types: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Adress',
-    },
-    detail: String
+        ref: 'StudentType'
+    }]
+    // address_id: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'Adress',
+    // },
 })
 
-const ClassName = mongoose.model('ClassName', classSchema);
+const ClassName = mongoose.model('ClassName', classSchema, 'classes');
 
 module.exports = { ClassName }

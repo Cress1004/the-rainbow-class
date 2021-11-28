@@ -35,6 +35,7 @@ app.use(cookieParser());
 
 app.use('/api/common-data', require('./routes/common-data'));
 app.use('/api/users', require('./routes/users'));
+app.use('/api/classes', require('./routes/classes'));
 app.use('/api/volunteers', require('./routes/volunteers'));
 
 

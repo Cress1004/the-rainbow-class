@@ -1,7 +1,8 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Table } from "antd";
+import { Button, Table } from "antd";
 import "./class-list.scss";
+import { Link } from "react-router-dom";
 function ClassList(props) {
   const numberOfClass = 10;
   const { t } = useTranslation();
@@ -139,6 +140,7 @@ function ClassList(props) {
       <div className="class-list__title">
         {t("class_list")} ({`${numberOfClass} ${t("class")}`})
       </div>
+      <Button type="primary" className="add-class-button"><Link to="/add-class">{t("add_class")}</Link></Button>
       <Table columns={columns} dataSource={data} />
     </div>
   );

@@ -14,6 +14,7 @@ import ClassList from "./views/Class/ClassList";
 import VolunteerList from "./views/User/UserPage/Volunteer/VolunteerList";
 import AddVolunteer from "./views/User/UserPage/Volunteer/AddVolunteer";
 import Mastersetting from "./views/MaterSetting/Mastersetting";
+import AddClass from "./views/Class/AddClass";
 
 class App extends Component {
   render() {
@@ -34,6 +35,10 @@ class App extends Component {
           <DashboardLayoutRoute
             path="/classes"
             component={Auth(ClassList, null)}
+          />
+           <DashboardLayoutRoute
+            path="/add-class"
+            component={Auth(AddClass, null)}
           />
           <DashboardLayoutRoute
             path="/add-volunteer"

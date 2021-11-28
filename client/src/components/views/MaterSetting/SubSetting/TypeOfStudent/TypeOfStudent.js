@@ -91,7 +91,7 @@ function TypeOfStudent() {
             onSubmit={handleSubmit}
             // validateMessages={validateMessages}
           >
-            <Form.Item label={t("student-type")} rules={[{ required: true }]}>
+            <Form.Item label={t("student-type")} rules={[{ required: true, validateMessages: t("required-student-type")}]}>
               <Input onChange={(e) => setNewType(e.target.value)} />
             </Form.Item>
             <Form.Item>

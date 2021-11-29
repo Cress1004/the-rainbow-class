@@ -33,10 +33,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-app.use('/api/common-data', require('./routes/common-data'));
-app.use('/api/users', require('./routes/users'));
-app.use('/api/classes', require('./routes/classes'));
-app.use('/api/volunteers', require('./routes/volunteers'));
+app.use('/api/common-data', require('./routes/commonDataRoute'));
+app.use('/api/users', require('./routes/userRoute'));
+app.use('/api/classes', require('./routes/classRoute'));
+app.use('/api/volunteers', require('./routes/volunteerRoute'));
 
 
 //use this to show the image you have in node js server to client (react js)

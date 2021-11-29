@@ -1,27 +1,36 @@
-const { Location } = require("../models/Location");
+const { findAllLocation, findAllStudentTypes, getStudentTypeById, storeStudentType } = require("../repository/commonRepository");
 const { StudentType } = require("../models/StudentType");
 
 const getLocation = async (req, res) => {
     try {
-        const location = await Location.find({});
+        const location = await findAllLocation();
         res.status(200).json({ success: true, location: location });
     } catch (error) {
         res.status(400).send(error);
     }
 };
 
-const getStudentType = async (req, res) => {
+const getStudentTypes = async (req, res) => {
     try {
-        const studentTypes = await StudentType.find({});
+        const studentTypes = await findAllStudentTypes();
         res.status(200).json({ success: true, studentTypes: studentTypes });
     } catch (error) {
         res.status(400).send(error);
     }
 }
 
+const getStudentType = async (id) => {
+    try {
+        const type = await getStudentTypeById(id);
+        return type;
+    } catch (error) {
+        return null;
+    }
+}
+
 const addStudentType = async (req, res) => {
     try {
-        const studentType = await new StudentType(req.body);
+        const studentType = await storeStudentType(req.body);
         studentType.save();
         res.status(200).json({ success: true });
     } catch (error) {
@@ -29,4 +38,4 @@ const addStudentType = async (req, res) => {
     }
 }
 
-module.exports = { getLocation, getStudentType, addStudentType }
+module.exports = { getLocation, getStudentTypes, addStudentType, getStudentType }

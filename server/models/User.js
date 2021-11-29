@@ -18,24 +18,6 @@ const userSchema = mongoose.Schema({
         type: String,
         minglength: 5
     },
-    role : {
-        type:Number,
-        default: 0 // 0: volunteer, 1: class_monitor, 2: sub_class_monitor, 3: admin, 4: superadmin
-    },
-    gender : {
-        type:Boolean,
-        default:true
-    },
-    birthday: Date,
-    address_id : {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Address',
-    },
-    phone_number: String,
-    class_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'ClassName',
-    },
     image: String,
     token : {
         type: String,
@@ -43,7 +25,9 @@ const userSchema = mongoose.Schema({
     tokenExp :{
         type: Number
     }
-})
+}, {
+    timestamps: {createdAt: 'created_at', updatedAt: 'updated_at', deleteAt: 'delete_at'}
+});
 
 
 userSchema.pre('save', function( next ) {

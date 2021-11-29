@@ -1,11 +1,34 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Table } from "antd";
 import "./class-list.scss";
 import { Link } from "react-router-dom";
+import Axios from "axios";
+
 function ClassList(props) {
-  const numberOfClass = 10;
   const { t } = useTranslation();
+  const variable = { useForm: localStorage.getItem("userId") };
+  const [classes, setClasses] = useState();
+
+  useEffect(() => {
+    Axios.post("/api/classes/get-classes", variable).then((response) => {
+      if (response.data.success) {
+        setClasses(response.data.classes);
+      } else {
+        alert(t("fail_to_get_api"));
+      }
+    });
+  }, []);
+
+  // const data = classes.map((item, index) => ({
+  //   key: index,
+  //   className: item.class_name,
+  //   address: item.address.detail,
+  //   classMonitor: "",
+  //   targetStudent: item.studentTypes,
+  //   numberOfStudent: item.students.length,
+  // }));
+
   const columns = [
     {
       title: t("class_name"),
@@ -61,87 +84,15 @@ function ClassList(props) {
     },
   ];
 
-  const data = [
-    {
-      key: "1",
-      className: "Lớp Ong Mật",
-      classMonitor: "Nguyễn Thị Hải Thanh",
-      numberOfStudent: 32,
-      address: "Số 4, ngách 24, ngõ Mai Hương, Bạch Mai, Hai Bà Trưng, Hà Nội",
-      targetStudent: "Học sinh khuyết tật",
-    },
-    {
-      key: "2",
-      className: "Lớp Phúc Xá",
-      classMonitor: "Jim Green",
-      numberOfStudent: 42,
-      address: "Phúc Xá, Hà Nội",
-    },
-    {
-      key: "3",
-      className: "Lớp Rồng Xanh",
-      classMonitor: "Joe Black",
-      numberOfStudent: 32,
-      address: "Sidney No. 1 Lake Park, Sidney No. 1 Lake Park",
-    },
-    {
-      key: "4",
-      className: "Lớp Rồng Xanh",
-      classMonitor: "Joe Black",
-      numberOfStudent: 32,
-      address: "Sidney No. 1 Lake Park, Sidney No. 1 Lake Park",
-    },
-    {
-      key: "5",
-      className: "Lớp Rồng Xanh",
-      classMonitor: "Joe Black",
-      numberOfStudent: 32,
-      address: "Sidney No. 1 Lake Park, Sidney No. 1 Lake Park",
-    },
-    {
-      key: "6",
-      className: "Lớp Rồng Xanh",
-      classMonitor: "Joe Black",
-      numberOfStudent: 32,
-      address: "Sidney No. 1 Lake Park, Sidney No. 1 Lake Park",
-    },
-    {
-      key: "7",
-      className: "Lớp Rồng Xanh",
-      classMonitor: "Joe Black",
-      numberOfStudent: 32,
-      address: "Sidney No. 1 Lake Park, Sidney No. 1 Lake Park",
-    },
-    {
-      key: "8",
-      className: "Lớp Rồng Xanh",
-      classMonitor: "Joe Black",
-      numberOfStudent: 32,
-      address: "Sidney No. 1 Lake Park, Sidney No. 1 Lake Park",
-    },
-    {
-      key: "9",
-      className: "Lớp Rồng Xanh",
-      classMonitor: "Joe Black",
-      numberOfStudent: 32,
-      address: "Sidney No. 1 Lake Park, Sidney No. 1 Lake Park",
-    },
-    {
-      key: "10",
-      className: "Lớp Rồng Xanh",
-      classMonitor: "Joe Black",
-      numberOfStudent: 32,
-      address: "Sidney No. 1 Lake Park, Sidney No. 1 Lake Park",
-    },
-  ];
-
   return (
     <div className="class-list">
       <div className="class-list__title">
-        {t("class_list")} ({`${numberOfClass} ${t("class")}`})
+        {/* {t("class_list")} ({`${numberOfClass} ${t("class")}`}) */}
       </div>
-      <Button type="primary" className="add-class-button"><Link to="/add-class">{t("add_class")}</Link></Button>
-      <Table columns={columns} dataSource={data} />
+      <Button type="primary" className="add-class-button">
+        {/* <Link to="/add-class">{t("add_class")}</Link> */}
+      </Button>
+      {/* <Table columns={columns} dataSource={data} /> */}
     </div>
   );
 }

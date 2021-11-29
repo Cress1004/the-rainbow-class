@@ -4,26 +4,28 @@ const classSchema = mongoose.Schema({
     class_name: String,
     description: String, 
     address: {
-        locationID: String,
-        description: String
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Address'
     },
     students: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Student',
     }],
-    class_monitor_id: {
+    class_monitor: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
     },
     student_types: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'StudentType'
+    }],
+    volunteers: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     }]
-    // address_id: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'Adress',
-    // },
-})
+}, {
+    timestamps: {createdAt: 'created_at', updatedAt: 'updated_at', deleteAt: 'delete_at'}
+  });
 
 const ClassName = mongoose.model('ClassName', classSchema, 'classes');
 

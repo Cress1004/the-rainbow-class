@@ -49,15 +49,20 @@ function AddClass(props) {
   }, []);
 
   const handleChangeProvice = (value) => {
-    setDistricts(location.find((item) => value === item.id).districts);
+    const currentProvince = location.find((item) => value === item.id); 
+    setProvince({id: currentProvince.id, name: currentProvince.name});
+    setDistricts(currentProvince.districts);
   };
 
   const handleChangeDistrict = (value) => {
-    setWards(districts.find((item) => value === item.id).wards);
+    const currentDistrict = districts.find((item) => value === item.id);
+    setDistrict({id: currentDistrict.id, name: currentDistrict.name});
+    setWards(currentDistrict.wards);
   };
 
   const handleChangeWard = (value) => {
-    setWard(value);
+    const currentWard = wards.find((item) => value === item.id);
+    setWard({id: currentWard.id, name: currentWard.name});
   };
 
   const handleChangeStudentType = (value) => {
@@ -65,7 +70,6 @@ function AddClass(props) {
   };
 
   const handleSubmit = (e) => {
-      e.preventDefault();
     const data = {
       class_name: className,
       description: description,
@@ -172,7 +176,14 @@ function AddClass(props) {
           <Input
             placeholder={t("input_specific_address")}
             onChange={(e) => {
-              setAddress({ locationID: ward, description: e.target.value });
+              setAddress({
+                address: {
+                  province: province,
+                  district: district,
+                  ward: ward,
+                },
+                description: e.target.value,
+              });
             }}
           />
         </Form.Item>

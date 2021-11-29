@@ -20,14 +20,32 @@ function ClassList(props) {
     });
   }, []);
 
-  // const data = classes.map((item, index) => ({
-  //   key: index,
-  //   className: item.class_name,
-  //   address: item.address.detail,
-  //   classMonitor: "",
-  //   targetStudent: item.studentTypes,
-  //   numberOfStudent: item.students.length,
-  // }));
+  const transformAddressData = (data) => {
+    return data
+      ? `${data.description}, ${data.address.ward.name}, ${data.address.district.name}, ${data.address.name}`
+      : "";
+  };
+
+  const transformStudentTypes = (data) => {
+    console.log(data);
+    return data 
+    ? data.map(item => item.title).join(", ")
+    : "";
+  }
+  const data = classes
+    ? classes.map((item, index) => ({
+        key: index,
+        className: item.class_name,
+        description: item.description,
+        address: transformAddressData(item.address),
+        classMonitor: item.class_monitor
+          ? item.class_monitor
+          : `(${t("unset")})`,
+        targetStudent: transformStudentTypes(item.student_types),
+        numberOfStudent: item.students.length,
+      }))
+    : [];
+  console.log(data);
 
   const columns = [
     {
@@ -87,12 +105,12 @@ function ClassList(props) {
   return (
     <div className="class-list">
       <div className="class-list__title">
-        {/* {t("class_list")} ({`${numberOfClass} ${t("class")}`}) */}
+        {t("class_list")} ({`${data.length} ${t("class")}`})
       </div>
       <Button type="primary" className="add-class-button">
-        {/* <Link to="/add-class">{t("add_class")}</Link> */}
+        <Link to="/add-class">{t("add_class")}</Link>
       </Button>
-      {/* <Table columns={columns} dataSource={data} /> */}
+      <Table columns={columns} dataSource={data} />
     </div>
   );
 }

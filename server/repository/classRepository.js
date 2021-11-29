@@ -20,9 +20,9 @@ const storeClass = (data) => {
 
 const tranformClassData = async (className) => {
   try {
-    const classData = await ClassName.findOne({ _id: className._id }).populate(
-      "student_types"
-    ).populate("address");
+    const classData = await ClassName.findOne({ _id: className._id })
+    .populate("student_types")
+    .populate("address", "_id address description");
     return classData;
   } catch (error) {
     console.log("fail");

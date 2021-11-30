@@ -15,6 +15,7 @@ import VolunteerList from "./views/User/UserPage/Volunteer/VolunteerList";
 import AddVolunteer from "./views/User/UserPage/Volunteer/AddVolunteer";
 import Mastersetting from "./views/MaterSetting/Mastersetting";
 import AddClass from "./views/Class/AddClass";
+import ClassDetail from "./views/Class/ClassDetail";
 
 class App extends Component {
   render() {
@@ -34,9 +35,15 @@ class App extends Component {
           />
           <DashboardLayoutRoute
             path="/classes"
+            exact={true}
             component={Auth(ClassList, null)}
           />
-           <DashboardLayoutRoute
+          <DashboardLayoutRoute
+            path="/classes/:id"
+            exact={true}
+            component={Auth(ClassDetail, null)}
+          />
+          <DashboardLayoutRoute
             path="/add-class"
             component={Auth(AddClass, null)}
           />
@@ -54,7 +61,7 @@ class App extends Component {
             path="/reset_user"
             component={Auth(ResetPassword, false)}
           />
-           <DashboardLayoutRoute
+          <DashboardLayoutRoute
             path="/master-setting"
             component={Auth(Mastersetting, null)}
           />

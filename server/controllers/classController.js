@@ -2,6 +2,7 @@ const {
   findAllClasses,
   tranformClassData,
   storeClass,
+  findClassById,
 } = require("../repository/classRepository");
 
 const getClasses = async (req, res) => {
@@ -26,4 +27,13 @@ const addClass = async (req, res) => {
   }
 };
 
-module.exports = { addClass, getClasses };
+const getClassData = async (req, res) => {
+  try {
+    const classData = await findClassById(req.body.classId);
+    res.status(200).json({ success: true, classData: await tranformClassData(classData)});
+  } catch (error) {
+    res.status(400).send(error);
+  }
+}
+
+module.exports = { addClass, getClasses, getClassData };

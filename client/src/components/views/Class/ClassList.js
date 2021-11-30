@@ -4,6 +4,7 @@ import { Button, Table } from "antd";
 import "./class-list.scss";
 import { Link } from "react-router-dom";
 import Axios from "axios";
+import {transformAddressData, transformStudentTypes} from "../../common/transformData";
 
 function ClassList(props) {
   const { t } = useTranslation();
@@ -20,18 +21,6 @@ function ClassList(props) {
     });
   }, []);
 
-  const transformAddressData = (data) => {
-    return data
-      ? `${data.description}, ${data.address.ward.name}, ${data.address.district.name}, ${data.address.name}`
-      : "";
-  };
-
-  const transformStudentTypes = (data) => {
-    console.log(data);
-    return data 
-    ? data.map(item => item.title).join(", ")
-    : "";
-  }
   const data = classes
     ? classes.map((item, index) => ({
         key: index,
@@ -45,7 +34,6 @@ function ClassList(props) {
         numberOfStudent: item.students.length,
       }))
     : [];
-  console.log(data);
 
   const columns = [
     {

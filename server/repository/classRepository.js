@@ -5,6 +5,10 @@ const findAllClasses = () => {
   return ClassName.find({});
 };
 
+const findClassById = (id) => {
+    return ClassName.findOne({ _id: id});
+}
+
 const storeClass = (data) => {
     const newAddress = storeAddress(data.address);
     const classData = {
@@ -29,4 +33,4 @@ const tranformClassData = async (className) => {
   }
 };
 
-module.exports = { findAllClasses, tranformClassData, storeClass };
+module.exports = { findAllClasses, tranformClassData, storeClass, findClassById };

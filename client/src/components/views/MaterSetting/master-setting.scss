@@ -1,23 +1,26 @@
 @import '../style/app.scss';
-.class-list {
+.mastersetting {
     &__title {
         font-size: $title-font-size;
         font-weight: $title-font-weight;
         color: $primary-color;
-    }
-    .add-class-button {
-        float: right;
     }
     .ant-table-wrapper {
         padding-top: 60px;
     }
 }
 
-.add-class {
+.type-of-student-list {
     &__title {
         font-size: $title-font-size;
         font-weight: $title-font-weight;
         color: $primary-color;
-        padding-bottom: $title-padding-bottom;
     }
+    .ant-table-wrapper {
+        padding-top: 60px;
+    }
+}
+
+.add-new-student-type-button {
+    float: right;
 }

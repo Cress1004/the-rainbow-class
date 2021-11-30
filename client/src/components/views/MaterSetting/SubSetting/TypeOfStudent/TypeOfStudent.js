@@ -2,6 +2,7 @@ import { Button, Table, Form, Input, message } from "antd";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Axios from "axios";
+import "../../master-setting.scss"
 
 function TypeOfStudent() {
   const { t } = useTranslation();
@@ -24,7 +25,7 @@ function TypeOfStudent() {
 
   const columns = [
     {
-      title: t("student-type"),
+      title: t("student_type"),
       dataIndex: "studentType",
       key: "studentType",
       ellipsis: {
@@ -82,7 +83,7 @@ function TypeOfStudent() {
   return (
     <div>
       <div className="type-of-student-list__title">
-        {t("type-of-student-list")}
+        {t("student_type")}
       </div>
       {add ? (
         <div>
@@ -91,19 +92,19 @@ function TypeOfStudent() {
             onSubmit={handleSubmit}
             // validateMessages={validateMessages}
           >
-            <Form.Item label={t("student-type")} rules={[{ required: true, validateMessages: t("required-student-type")}]}>
+            <Form.Item label={t("student_type")} rules={[{ required: true, validateMessages: t("required-student-type")}]}>
               <Input onChange={(e) => setNewType(e.target.value)} />
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit" onClick={openMessage}>
-                Submit
+                {t("register")}
               </Button>
             </Form.Item>
           </Form>
         </div>
       ) : (
         <div>
-          <Button onClick={handleClickAdd}>{t("add-new-student-type")}</Button>
+          <Button onClick={handleClickAdd} type="primary" className="add-new-student-type-button">{t("add_new_student_type")}</Button>
           <Table columns={columns} dataSource={data} />
         </div>
       )}

@@ -116,7 +116,7 @@ function AddClass(props) {
           ]}
         >
           <TextArea
-            placeholder={t("description")}
+            placeholder={t("input_description")}
             onChange={(e) => setDescription(e.target.value)}
           />
         </Form.Item>

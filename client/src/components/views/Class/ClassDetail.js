@@ -44,8 +44,8 @@ function ClassDetail(props) {
           <Col span={16}>{transformStudentTypes(classData.student_types)}</Col>
         </Row>
         <Row>
-          <Col span={4}>{t("schedule-time")}</Col>
-          <Col span={16}>{t("schedule-time")}</Col> {/* them lich hoc */}
+          <Col span={4}>{t("schedule_time")}</Col>
+          <Col span={16}>{t("schedule_time")}</Col> {/* them lich hoc */}
         </Row>
         <hr />
         <Row>

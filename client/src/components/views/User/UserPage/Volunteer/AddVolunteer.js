@@ -158,7 +158,7 @@ function AddVolunteer(props) {
         </Form.Item> */}
         <Form.Item {...tailLayout}>
           <Button type="primary" htmlType="submit">
-            Submit
+            {t("register")}
           </Button>
         </Form.Item>
       </Form>

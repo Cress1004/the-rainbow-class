@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Route } from "react-router-dom";
 import { Layout, Menu, Typography } from "antd";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import "./style.scss";
 import RightMenu from "../NavBar/Sections/RightMenu";
 import { useTranslation } from "react-i18next";
@@ -32,23 +32,30 @@ const DashboardLayout = ({ children, ...rest }) => {
           <Sider collapsible collapsed={collapsed} onCollapse={handleCollapse}>
             {/* <div className="logo" /> */}
             <Menu defaultSelectedKeys={["1"]} mode="inline">
-              <Menu.Item key="my_schedule"><Link to="/dashboard">Dashboard</Link></Menu.Item>
-              <Menu.Item key="2">Schedule Manager</Menu.Item>
-              <SubMenu key="sub1" title="User">
-                <Menu.Item key="3">Admin</Menu.Item>
-                <Menu.Item key="4">Class Monitor</Menu.Item>
-                <Menu.Item key="5">{t("volunteer")}<Link to="/volunteers"></Link></Menu.Item>
-                <Menu.Item key="6">Student</Menu.Item>
+              <Menu.Item key="my_schedule">
+                <Link to="/dashboard">{t("dashboard")}</Link>
+              </Menu.Item>
+              <Menu.Item key="2">{t("schedule_manager")}</Menu.Item>
+              <SubMenu key="sub1" title={t("user_manager")}>
+                <Menu.Item key="3">{t("admin")}</Menu.Item>
+                <Menu.Item key="4">{t("class_monitor")}</Menu.Item>
+                <Menu.Item key="5">
+                  {t("volunteer")}
+                  <Link to="/volunteers"></Link>
+                </Menu.Item>
+                <Menu.Item key="6">{t("student")}</Menu.Item>
               </SubMenu>
-              <SubMenu key="sub2" title="Class Manager">
-                <Menu.Item key="class_list"><Link to="/classes">Class List</Link></Menu.Item>
-                <Menu.Item key="8">InRegister Student</Menu.Item>
-                <Menu.Item key="9">InRegister Volunteer</Menu.Item>
+              <SubMenu key="sub2" title={t("class_manager")}>
+                <Menu.Item key="class_list">
+                  <Link to="/classes">{t("class_list")}</Link>
+                </Menu.Item>
               </SubMenu>
-              <Menu.Item key="10">Events</Menu.Item>
+              <Menu.Item key="10">
+                {t("master_setting")}
+                <Link to="/master-setting"></Link>
+              </Menu.Item>
             </Menu>
           </Sider>
-          {/* <Content className="main-container site-layout-background">{children}</Content> */}
           <Layout className="site-layout">
             <Content>
               <div className="site-layout-background">{children}</div>

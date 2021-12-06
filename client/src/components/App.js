@@ -16,6 +16,7 @@ import AddVolunteer from "./views/User/UserPage/Volunteer/AddVolunteer";
 import Mastersetting from "./views/MaterSetting/Mastersetting";
 import AddClass from "./views/Class/AddClass";
 import ClassDetail from "./views/Class/ClassDetail";
+import EditClass from "./views/Class/EditClass";
 
 class App extends Component {
   render() {
@@ -42,6 +43,11 @@ class App extends Component {
             path="/classes/:id"
             exact={true}
             component={Auth(ClassDetail, null)}
+          />
+            <DashboardLayoutRoute
+            path="/classes/:id/edit"
+            exact={true}
+            component={Auth(EditClass, null)}
           />
           <DashboardLayoutRoute
             path="/add-class"

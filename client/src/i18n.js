@@ -72,6 +72,10 @@ const resources = {
       admin: "Quản trị viên",
       student: "Học sinh",
       class_manager: "Quản lý lớp học",
+      edit_class: "Chỉnh sửa thông tin lớp học",
+      delete_class: "Xóa lớp học",
+      modal_confirm_delete_class_title: "Xác nhận xóa lớp học",
+      modal_confirm_delete_class_content: "Xác nhận bạn muốn xóa lớp học này?",
       //validation:
       invalid_email_message: "Địa chỉ email chưa đúng định dạng",
       required_email_message: "Hãy nhập vào địa chỉ email",

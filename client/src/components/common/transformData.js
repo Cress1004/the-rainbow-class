@@ -12,4 +12,8 @@ function getArrayLength (data) {
     return data ? data.length : 0;
 }
 
-export { transformStudentTypes, transformAddressData, getArrayLength };
+function transformStudentTypesToArray (data) {
+  return data ? data.map(item => item.title) : [];
+}
+
+export { transformStudentTypes, transformAddressData, getArrayLength, transformStudentTypesToArray };

@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Axios from "axios";
 import { Form, Input, Select, Button, message } from "antd";
+import { useHistory } from "react-router";
 
 const { Option } = Select;
 const { TextArea } = Input;
 
 function AddClass(props) {
   const { t } = useTranslation();
+  const history = useHistory();
   const key = "updatable";
   const layout = {
     labelCol: { span: 5 },
@@ -70,6 +72,7 @@ function AddClass(props) {
   };
 
   const handleSubmit = (e) => {
+    e.preventDefault();
     const data = {
       class_name: className,
       description: description,
@@ -79,6 +82,7 @@ function AddClass(props) {
     Axios.post("/api/classes/add-class", data).then((response) => {
       if (response.data.success) {
         openMessage();
+        history.push("/classes")
       } else {
         alert(t("fail_to_get_api"));
       }

@@ -23,7 +23,6 @@ function ClassList(props) {
       }
     });
   }, []);
-
   const data = classes
     ? classes.map((item, index) => ({
         key: index,

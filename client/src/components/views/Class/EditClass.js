@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Axios from "axios";
 import { useParams } from "react-router";
@@ -10,6 +11,7 @@ const { Option } = Select;
 
 function EditClass(props) {
   const { t } = useTranslation();
+  const history = useHistory();
   const key = "updatable";
   const layout = {
     labelCol: { span: 5 },
@@ -86,10 +88,10 @@ function EditClass(props) {
       address: address,
       student_types: types,
     };
-
     Axios.post("/api/classes/edit-class", data).then((response) => {
       if (response.data.success) {
         openMessage();
+        history.push(`/classes/${id}`);
       } else {
         alert(t("fail_to_get_api"));
       }

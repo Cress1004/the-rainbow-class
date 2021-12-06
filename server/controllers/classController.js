@@ -3,6 +3,7 @@ const {
   tranformClassData,
   storeClass,
   findClassById,
+  deleteClass,
 } = require("../repository/classRepository");
 
 const getClasses = async (req, res) => {
@@ -30,10 +31,23 @@ const addClass = async (req, res) => {
 const getClassData = async (req, res) => {
   try {
     const classData = await findClassById(req.body.classId);
-    res.status(200).json({ success: true, classData: await tranformClassData(classData)});
+    res
+      .status(200)
+      .json({ success: true, classData: await tranformClassData(classData) });
   } catch (error) {
     res.status(400).send(error);
   }
-}
+};
 
-module.exports = { addClass, getClasses, getClassData };
+const deleteClassData = async (req, res) => {
+  try {
+    await deleteClass(req.body.classId);
+    res
+    .status(200)
+    .json({ success: true });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+module.exports = { addClass, getClasses, getClassData, deleteClassData };

@@ -74,6 +74,7 @@ const resources = {
       class_manager: "Quản lý lớp học",
       edit_class: "Chỉnh sửa thông tin lớp học",
       delete_class: "Xóa lớp học",
+      update: "Lưu thay đổi",
       modal_confirm_delete_class_title: "Xác nhận xóa lớp học",
       modal_confirm_delete_class_content: "Xác nhận bạn muốn xóa lớp học này?",
       //validation:

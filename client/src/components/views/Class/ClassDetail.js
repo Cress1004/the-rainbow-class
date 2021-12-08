@@ -104,7 +104,7 @@ function ClassDetail(props) {
               <Col span={4} className="label-text">
                 {t("schedule_time")}
               </Col>
-              <Col span={16}>{t("schedule_time")}</Col> {/* them lich hoc */}
+              <Col span={16}>{t("schedule_time")}</Col> them lich hoc
             </Row>
             <hr />
             <Row>

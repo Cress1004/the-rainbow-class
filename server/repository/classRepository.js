@@ -1,5 +1,5 @@
 const { ClassName } = require("../models/ClassName");
-const { storeAddress } = require("./commonRepository");
+const { storeAddress, updateAddress } = require("./commonRepository");
 
 const findAllClasses = () => {
   return ClassName.find({});
@@ -22,6 +22,16 @@ const storeClass = (data) => {
   return newClass;
 };
 
+const editClass = async (data) => {
+  const className = await findClassById({ _id: data._id });
+  updateAddress(className.address, data.address);
+  className.class_name = data.class_name;
+  className.description = data.description;
+  className.student_types = data.student_types;
+  className.save();
+  return className;
+};
+
 const deleteClass = (id) => {
   return ClassName.deleteOne({ _id: id });
 };
@@ -42,5 +52,6 @@ module.exports = {
   tranformClassData,
   storeClass,
   findClassById,
-  deleteClass
+  deleteClass,
+  editClass,
 };

@@ -4,6 +4,7 @@ const {
   storeClass,
   findClassById,
   deleteClass,
+  editClass,
 } = require("../repository/classRepository");
 
 const getClasses = async (req, res) => {
@@ -28,6 +29,17 @@ const addClass = async (req, res) => {
   }
 };
 
+const editClassData = async (req, res) => {
+  try {
+    await editClass(req.body);
+    res.status(200).json({ success: true });
+    console.log('abc');
+  } catch (error) {
+    console.log('fail')
+    res.status(400).send(error);
+  }
+};
+
 const getClassData = async (req, res) => {
   try {
     const classData = await findClassById(req.body.classId);
@@ -42,12 +54,10 @@ const getClassData = async (req, res) => {
 const deleteClassData = async (req, res) => {
   try {
     await deleteClass(req.body.classId);
-    res
-    .status(200)
-    .json({ success: true });
+    res.status(200).json({ success: true });
   } catch (error) {
     res.status(400).send(error);
   }
 };
 
-module.exports = { addClass, getClasses, getClassData, deleteClassData };
+module.exports = { addClass, getClasses, getClassData, deleteClassData, editClassData };

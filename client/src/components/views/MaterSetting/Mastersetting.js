@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import TypeOfStudent from "./SubSetting/TypeOfStudent/TypeOfStudent";
 import "./master-setting.scss";
+import StudentType from "./SubSetting/StudentType.js/StudentType";
 
 function Mastersetting(props) {
     const { t } = useTranslation();
@@ -10,7 +10,7 @@ function Mastersetting(props) {
       <div className="mastersetting__title">
         {t("master_setting")}
       </div>
-        <TypeOfStudent />
+        <StudentType />
     </div>
   );
 }

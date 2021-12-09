@@ -1,5 +1,4 @@
-const { findAllLocation, findAllStudentTypes, getStudentTypeById, storeStudentType } = require("../repository/commonRepository");
-const { StudentType } = require("../models/StudentType");
+const { findAllLocation, findAllStudentTypes, getStudentTypeById, storeStudentType, removeStudentType } = require("../repository/commonRepository");
 
 const getLocation = async (req, res) => {
     try {
@@ -31,11 +30,19 @@ const getStudentType = async (id) => {
 const addStudentType = async (req, res) => {
     try {
         const studentType = await storeStudentType(req.body);
-        studentType.save();
         res.status(200).json({ success: true });
     } catch (error) {
         res.status(400).send(error);
     }
 }
 
-module.exports = { getLocation, getStudentTypes, addStudentType, getStudentType }
+const deleteStudentType = async (req, res) => {
+    try {
+        removeStudentType(req.body.id);
+        res.status(200).json({ success: true });
+    } catch (error) {
+        res.status(400).send(error);
+    }
+}
+
+module.exports = { getLocation, getStudentTypes, addStudentType, getStudentType, deleteStudentType }

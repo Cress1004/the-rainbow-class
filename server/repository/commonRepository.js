@@ -14,28 +14,12 @@ const storeAddress = (data) => {
 
 const updateAddress = async (id, data) => {
   try {
-    // const address = await Address.findOneAndUpdate(
-    //   { _id: _id},
-    //   {
-    //     $set: {
-    //       address: data.address,
-    //       address: {
-    //         province: data.address.province,
-    //         district: data.address.district,
-    //         ward: data.address.ward,
-    //       },
-    //       description: data.description,  
-    //     }
-    //   },
-    // );
-
-    const address = await Address.findOne({_id: id});
+    const address = await Address.findOne({ _id: id });
     address.address = data.address;
     address.description = data.description;
     await address.save();
- 
-    console.log(address);
 
+    console.log(address);
   } catch (error) {
     console.log("update address fail");
   }
@@ -54,6 +38,14 @@ const storeStudentType = (data) => {
   return studentType.save();
 };
 
+const removeStudentType = async (id) => {
+  try {
+    return StudentType.findByIdAndDelete({ _id: id });
+  } catch (error) {
+    console.log("update address fail");
+  }
+};
+
 module.exports = {
   findAllLocation,
   findAllStudentTypes,
@@ -61,4 +53,5 @@ module.exports = {
   storeStudentType,
   storeAddress,
   updateAddress,
+  removeStudentType,
 };

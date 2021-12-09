@@ -2,9 +2,9 @@ import { Button, Table, Form, Input, message } from "antd";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Axios from "axios";
-import "../../master-setting.scss"
+import "../../master-setting.scss";
 
-function TypeOfStudent() {
+function StudentType() {
   const { t } = useTranslation();
   const key = "updatable";
   const variable = { useForm: localStorage.getItem("userId") };
@@ -35,16 +35,17 @@ function TypeOfStudent() {
     },
     {
       title: t("action"),
-      key: "action",
-      dataIndex: "action",
-      render: (record) => (
-        <button onClick={() => console.log(record)}>{"Button Text"}</button>
+      key: "id",
+      dataIndex: "id",
+      render: (id) => (
+        <button onClick={(e) => handleDelete(e, id)}>{t("delete")}</button>
       ),
     },
   ];
 
   const data = studentTypes.map((item, index) => ({
     key: index,
+    id: item._id,
     studentType: item.title,
   }));
 
@@ -54,6 +55,22 @@ function TypeOfStudent() {
 
   const handleClickBack = () => {
     setAdd(false);
+  };
+
+  const handleDelete = async (e, id) => {
+    e.preventDefault();
+    try {
+      const response = await Axios.post(
+        `/api/common-data/student-types/${id}`,
+        { id: id }
+      );
+      if (response.data.success) {
+        setStudentTypes(studentTypes.filter(item => item._id !== id));
+        alert(t("delete success"));
+      }
+    } catch (error) {
+      alert(t("fail-to-send-data"));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -76,15 +93,13 @@ function TypeOfStudent() {
     }, 1000);
   };
 
-    // const validateMessages = {
-    //   required: t("require_student_type"),
-    // };
+  // const validateMessages = {
+  //   required: t("require_student_type"),
+  // };
 
   return (
     <div>
-      <div className="type-of-student-list__title">
-        {t("student_type")}
-      </div>
+      <div className="type-of-student-list__title">{t("student_type")}</div>
       {add ? (
         <div>
           <Button onClick={handleClickBack}>{t("back")}</Button>
@@ -92,7 +107,15 @@ function TypeOfStudent() {
             onSubmit={handleSubmit}
             // validateMessages={validateMessages}
           >
-            <Form.Item label={t("student_type")} rules={[{ required: true, validateMessages: t("required-student-type")}]}>
+            <Form.Item
+              label={t("student_type")}
+              rules={[
+                {
+                  required: true,
+                  validateMessages: t("required-student-type"),
+                },
+              ]}
+            >
               <Input onChange={(e) => setNewType(e.target.value)} />
             </Form.Item>
             <Form.Item>
@@ -104,7 +127,13 @@ function TypeOfStudent() {
         </div>
       ) : (
         <div>
-          <Button onClick={handleClickAdd} type="primary" className="add-new-student-type-button">{t("add_new_student_type")}</Button>
+          <Button
+            onClick={handleClickAdd}
+            type="primary"
+            className="add-new-student-type-button"
+          >
+            {t("add_new_student_type")}
+          </Button>
           <Table columns={columns} dataSource={data} />
         </div>
       )}
@@ -112,4 +141,4 @@ function TypeOfStudent() {
   );
 }
 
-export default TypeOfStudent;
+export default StudentType;

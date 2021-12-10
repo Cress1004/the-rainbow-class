@@ -143,7 +143,7 @@ function EditClass(props) {
       message.success({ content: t("save_success"), key, duration: 3 });
     }, 1000);
   };
-  console.log(classData);
+
   return (
     <div className="edit-class">
       <div className="edit-class__title">{t("edit_class")}</div>

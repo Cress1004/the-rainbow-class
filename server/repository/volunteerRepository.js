@@ -18,4 +18,14 @@ const storeVolunteer = async (data) => {
   }
 };
 
-module.exports = { storeVolunteer };
+const getListVolunteers = async () => {
+  try {
+    return (volunteers = await Volunteer.find({})
+      .populate("user", "name email phone_number")
+      .populate("class", "class_name"));
+  } catch (error) {
+    console.log("fail to get list volunteers");
+  }
+};
+
+module.exports = { storeVolunteer, getListVolunteers };

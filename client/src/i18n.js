@@ -77,6 +77,8 @@ const resources = {
       update: "Lưu thay đổi",
       modal_confirm_delete_class_title: "Xác nhận xóa lớp học",
       modal_confirm_delete_class_content: "Xác nhận bạn muốn xóa lớp học này?",
+      short_class_monitor: "LT",
+      short_sub_class_monitor: "LP",
       //validation:
       invalid_email_message: "Địa chỉ email chưa đúng định dạng",
       required_email_message: "Hãy nhập vào địa chỉ email",

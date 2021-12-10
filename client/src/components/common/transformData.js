@@ -1,19 +1,17 @@
-function transformAddressData (data) {
+export function transformAddressData(data) {
   return data
     ? `${data.description}, ${data.address.ward.name}, ${data.address.district.name}, ${data.address.province.name}`
     : "";
-};
+}
 
-function transformStudentTypes (data) {
+export function transformStudentTypes(data) {
   return data ? data.map((item) => item.title).join(", ") : "";
-};
-
-function getArrayLength (data) {
-    return data ? data.length : 0;
 }
 
-function transformStudentTypesToArray (data) {
-  return data ? data.map(item => item.title) : [];
+export function getArrayLength(data) {
+  return data ? data.length : 0;
 }
 
-export { transformStudentTypes, transformAddressData, getArrayLength, transformStudentTypesToArray };
+export function transformStudentTypesToArray(data) {
+  return data ? data.map((item) => item.title) : [];
+}

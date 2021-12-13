@@ -1,4 +1,4 @@
-const { storeVolunteer, getListVolunteers } = require("../repository/volunteerRepository");
+const { storeVolunteer, getListVolunteers, getVolunteerById } = require("../repository/volunteerRepository");
 
 const addNewVolunteer = async (req, res) => {
   try {
@@ -18,4 +18,13 @@ const getAllVolunteer = async (req, res) => {
   }
 };
 
-module.exports = { addNewVolunteer, getAllVolunteer };
+const getVolunteerData = async (req, res) => {
+  try {
+    const volunteer = await getVolunteerById(req.body.id);
+    res.status(200).json({ success: true, volunteer: volunteer });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+}
+
+module.exports = { addNewVolunteer, getAllVolunteer, getVolunteerData };

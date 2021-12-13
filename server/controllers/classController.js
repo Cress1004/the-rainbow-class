@@ -33,7 +33,6 @@ const editClassData = async (req, res) => {
   try {
     await editClass(req.body);
     res.status(200).json({ success: true });
-    console.log('abc');
   } catch (error) {
     console.log('fail')
     res.status(400).send(error);

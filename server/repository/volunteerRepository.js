@@ -18,6 +18,16 @@ const storeVolunteer = async (data) => {
   }
 };
 
+const getVolunteerById = async (id) => {
+  try {
+    return await Volunteer.findOne({ _id: id })
+      .populate("user", "name email phone_number")
+      .populate("class", "class_name");
+  } catch (error) {
+    console.log("fail to get volunteer data");
+  }
+};
+
 const getListVolunteers = async () => {
   try {
     return (volunteers = await Volunteer.find({})
@@ -28,4 +38,4 @@ const getListVolunteers = async () => {
   }
 };
 
-module.exports = { storeVolunteer, getListVolunteers };
+module.exports = { storeVolunteer, getListVolunteers, getVolunteerById };

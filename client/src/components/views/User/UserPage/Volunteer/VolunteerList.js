@@ -25,8 +25,6 @@ function VolunteerList(props) {
     });
   }, []);
 
-  console.log(volunteers);
-
   const columns = [
     {
       title: t("user_name"),

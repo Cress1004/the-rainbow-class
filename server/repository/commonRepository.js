@@ -18,8 +18,6 @@ const updateAddress = async (id, data) => {
     address.address = data.address;
     address.description = data.description;
     await address.save();
-
-    console.log(address);
   } catch (error) {
     console.log("update address fail");
   }

@@ -10,12 +10,8 @@ const volunteerSchema = mongoose.Schema(
       type: Number,
       default: 0, // 0: volunteer, 1: class_monitor, 2: sub_class_monitor, 3: admin, 4: superadmin
     },
-    gender: {
-      type: Boolean,
-      default: true,
-    },
     birthday: Date,
-    address_id: {
+    address: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Address",
     },

@@ -23,7 +23,7 @@ function VolunteerList(props) {
         alert(t("fail_to_get_api"));
       }
     });
-  }, []);
+  }, [t]);
 
   const columns = [
     {

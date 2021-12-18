@@ -19,6 +19,10 @@ const userSchema = mongoose.Schema(
       type: String,
       minglength: 5,
     },
+    gender: {
+      type: Number,
+      default: 0,
+    },
     image: String,
     token: {
       type: String,

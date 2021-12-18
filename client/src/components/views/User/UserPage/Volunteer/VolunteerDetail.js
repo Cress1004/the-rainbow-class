@@ -32,7 +32,7 @@ function VolunteerDetail(props) {
         alert(t("fail_to_get_api"));
       }
     });
-  }, []);
+  }, [t, id]);
 
   const openDeletePopup = () => {
     setConfirmDelete(true);
@@ -59,7 +59,7 @@ function VolunteerDetail(props) {
 
   const transformRoleWithClass = (className, role) => {
     if (role === CLASS_MONITOR) return `${t("class_monitor")} - ${className}`;
-    if (role === CLASS_MONITOR)
+    if (role === SUB_CLASS_MONITOR)
       return `${t("sub_class_monitor")} - ${className}`;
     return t("volunteer");
   };

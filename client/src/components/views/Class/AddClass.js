@@ -19,7 +19,6 @@ function AddClass(props) {
     wrapperCol: { offset: 18, span: 4 },
   };
 
-  const variable = { useForm: localStorage.getItem("userId") };
   const [location, setLocation] = useState([]);
   const [province, setProvince] = useState("");
   const [districts, setDistricts] = useState([]);
@@ -33,7 +32,7 @@ function AddClass(props) {
 
   const [studentTypes, setStudentTypes] = useState([]);
   useEffect(() => {
-    Axios.post("/api/common-data/location", variable).then((response) => {
+    Axios.post("/api/common-data/location", null).then((response) => {
       if (response.data.success) {
         setLocation(response.data.location);
       } else {
@@ -41,14 +40,14 @@ function AddClass(props) {
       }
     });
 
-    Axios.post("/api/common-data/student-types", variable).then((response) => {
+    Axios.post("/api/common-data/student-types", null).then((response) => {
       if (response.data.success) {
         setStudentTypes(response.data.studentTypes);
       } else {
         alert(t("fail_to_get_api"));
       }
     });
-  }, []);
+  }, [t]);
 
   const handleChangeProvice = (value) => {
     const currentProvince = location.find((item) => value === item.id); 

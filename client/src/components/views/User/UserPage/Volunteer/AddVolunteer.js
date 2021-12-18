@@ -26,7 +26,7 @@ function AddVolunteer(props) {
         alert(t("fail_to_get_api"));
       }
     });
-  }, []);
+  }, [t]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

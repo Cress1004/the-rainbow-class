@@ -18,6 +18,7 @@ import AddClass from "./views/Class/AddClass";
 import ClassDetail from "./views/Class/ClassDetail";
 import EditClass from "./views/Class/EditClass";
 import VolunteerDetail from "./views/User/UserPage/Volunteer/VolunteerDetail";
+import EditVolunteer from "./views/User/UserPage/Volunteer/EditVolunteer";
 
 class App extends Component {
   render() {
@@ -45,7 +46,7 @@ class App extends Component {
             exact={true}
             component={Auth(ClassDetail, null)}
           />
-            <DashboardLayoutRoute
+          <DashboardLayoutRoute
             path="/classes/:id/edit"
             exact={true}
             component={Auth(EditClass, null)}
@@ -63,10 +64,15 @@ class App extends Component {
             exact={true}
             component={Auth(VolunteerList, null)}
           />
-           <DashboardLayoutRoute
+          <DashboardLayoutRoute
             path="/volunteers/:id"
             exact={true}
             component={Auth(VolunteerDetail, null)}
+          />
+          <DashboardLayoutRoute
+            path="/volunteers/:id/edit"
+            exact={true}
+            component={Auth(EditVolunteer, null)}
           />
           <LoginLayoutRoute path="/login" component={Auth(LoginPage, false)} />
           <LoginLayoutRoute

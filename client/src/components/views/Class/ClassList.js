@@ -11,18 +11,17 @@ import {
 
 function ClassList(props) {
   const { t } = useTranslation();
-  const variable = { useForm: localStorage.getItem("userId") };
   const [classes, setClasses] = useState();
 
   useEffect(() => {
-    Axios.post("/api/classes/get-classes", variable).then((response) => {
+    Axios.post("/api/classes/get-classes", null).then((response) => {
       if (response.data.success) {
         setClasses(response.data.classes);
       } else {
         alert(t("fail_to_get_api"));
       }
     });
-  }, []);
+  }, [t]);
   const data = classes
     ? classes.map((item, index) => ({
         key: index,

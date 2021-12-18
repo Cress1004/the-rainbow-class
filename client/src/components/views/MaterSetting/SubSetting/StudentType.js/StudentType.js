@@ -7,21 +7,19 @@ import "../../master-setting.scss";
 function StudentType() {
   const { t } = useTranslation();
   const key = "updatable";
-  const variable = { useForm: localStorage.getItem("userId") };
-
   const [studentTypes, setStudentTypes] = useState([]);
   const [newType, setNewType] = useState("");
   const [add, setAdd] = useState(false);
 
   useEffect(() => {
-    Axios.post("/api/common-data/student-types", variable).then((response) => {
+    Axios.post("/api/common-data/student-types", null).then((response) => {
       if (response.data.success) {
         setStudentTypes(response.data.studentTypes);
       } else {
         alert(t("fail_to_get_api"));
       }
     });
-  }, []);
+  }, [t]);
 
   const columns = [
     {

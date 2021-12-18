@@ -14,7 +14,6 @@ import {
 function ClassDetail(props) {
   const { t } = useTranslation();
   const history = useHistory();
-  const variable = { useForm: localStorage.getItem("userId") };
   const { id } = useParams();
   const [classData, setClassData] = useState({});
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -27,7 +26,7 @@ function ClassDetail(props) {
         alert(t("fail_to_get_api"));
       }
     });
-  }, []);
+  }, [t, id]);
 
   const openDeletePopup = () => {
     setConfirmDelete(true);

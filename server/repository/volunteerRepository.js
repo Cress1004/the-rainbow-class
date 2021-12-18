@@ -1,5 +1,6 @@
 const { Volunteer } = require("../models/Volunteer");
-const { storeUser } = require("./userRepository");
+const { storeUser, updateUserData } = require("./userRepository");
+const { storeAddress, updateAddress } = require("./commonRepository");
 
 const storeVolunteer = async (data) => {
   try {
@@ -21,8 +22,9 @@ const storeVolunteer = async (data) => {
 const getVolunteerById = async (id) => {
   try {
     return await Volunteer.findOne({ _id: id })
-      .populate("user", "name email phone_number")
-      .populate("class", "class_name");
+      .populate("user", "name email phone_number gender")
+      .populate("class", "class_name")
+      .populate("address");
   } catch (error) {
     console.log("fail to get volunteer data");
   }
@@ -38,4 +40,32 @@ const getListVolunteers = async () => {
   }
 };
 
-module.exports = { storeVolunteer, getListVolunteers, getVolunteerById };
+const updateVolunteer = async (data) => {
+  try {
+    const volunteer = await Volunteer.findOne({_id: data.id});
+    const userData = {
+      id: volunteer.user._id,
+      name: data.name,
+      gender: data.gender,
+    };
+    await updateUserData(userData);
+    if (volunteer.address) {
+      await updateAddress(volunteer.address, data.address);
+    } else {
+      const address = await storeAddress(data.address);
+      volunteer.address = address._id;
+    }
+    console.log(data.phoneNumber)
+    volunteer.phone_number = data.phoneNumber;
+    return volunteer.save();
+  } catch (error) {
+    console.log("fail to update volunteer");
+  }
+};
+
+module.exports = {
+  storeVolunteer,
+  getListVolunteers,
+  getVolunteerById,
+  updateVolunteer,
+};

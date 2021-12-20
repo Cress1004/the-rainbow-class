@@ -43,7 +43,10 @@ const DashboardLayout = ({ children, ...rest }) => {
                   {t("volunteer")}
                   <Link to="/volunteers"></Link>
                 </Menu.Item>
-                <Menu.Item key="6">{t("student")}</Menu.Item>
+                <Menu.Item key="6">
+                  {t("student")}
+                  <Link to="/students"></Link>
+                </Menu.Item>
               </SubMenu>
               <SubMenu key="sub2" title={t("class_manager")}>
                 <Menu.Item key="class_list">

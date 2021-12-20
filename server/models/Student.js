@@ -9,18 +9,14 @@ const studentSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
-    gender : {
-        type:Boolean,
-        default:true    // true: male, false: female
-    },
     birthday: Date,
     parent_name: String,
-    address_id : {
+    address : {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Address',
     },
     phone_number: String,
-    class_id: {
+    class: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'ClassName',
     },
@@ -30,7 +26,7 @@ const studentSchema = mongoose.Schema({
     }],
     student_types: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Type',
+        ref: 'StudentType',
     }]
 })
 

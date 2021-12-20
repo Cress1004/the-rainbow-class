@@ -32,9 +32,9 @@ const getVolunteerById = async (id) => {
 
 const getListVolunteers = async () => {
   try {
-    return (volunteers = await Volunteer.find({})
+    return await Volunteer.find({})
       .populate("user", "name email phone_number")
-      .populate("class", "class_name"));
+      .populate("class", "class_name");
   } catch (error) {
     console.log("fail to get list volunteers");
   }

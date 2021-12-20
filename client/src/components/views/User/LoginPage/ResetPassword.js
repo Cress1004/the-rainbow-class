@@ -2,22 +2,22 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import "./LoginPage.scss";
 import { Modal, Button, Form, Input } from "antd";
-import { resetPassword } from "../../../../_actions/user_actions";
+// import { resetPassword } from "../../../../_actions/user_actions";
 
 function ResetPassword(props) {
   const { t } = useTranslation();
   const [showPopupResetPassword, setPopupResetPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
-  const [formErrorMessage, setFormErrorMessage] = useState("");
-  const {
-    values,
-    touched,
-    errors,
-    isSubmitting,
-    //handleChange,
-    handleBlur,
-    handleSubmit,
-  } = props;
+  // const [formErrorMessage, setFormErrorMessage] = useState("");
+  // const {
+  //   // values,
+  //   // touched,
+  //   // errors,
+  //   // isSubmitting,
+  //   // handleChange,
+  //   // handleBlur,
+  //   // handleSubmit,
+  // } = props;
 
   const showModal = () => {
     setPopupResetPassword(true);

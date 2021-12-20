@@ -37,7 +37,6 @@ function EditVolunteer(props) {
     Axios.post("/api/volunteers/:id", { id: id }).then((response) => {
       if (response.data.success) {
         const data = response.data.volunteer;
-        console.log(data.address);
         setVolunteerData({
           id: data._id,
           name: data.user.name,
@@ -46,7 +45,7 @@ function EditVolunteer(props) {
           address: data.address,
           phoneNumber: data.phone_number,
           role: data.role,
-          className: data.class_name,
+          className: data.class.class_name,
         });
         if (data.address) {
           setProvince(data.address.address.province);
@@ -58,7 +57,6 @@ function EditVolunteer(props) {
       }
     });
   }, [t, id]);
-  console.log(volunteerData);
   const handleChangeProvice = (value) => {
     const currentProvince = location.find((item) => value === item.id);
     setProvince({ id: currentProvince.id, name: currentProvince.name });
@@ -130,7 +128,6 @@ function EditVolunteer(props) {
     Axios.post(`/api/volunteers/${id}/edit`, volunteerData).then((response) => {
       if (response.data.success) {
         history.push(`/volunteers/${id}`);
-        console.log("volunteerData was sent"); //
       } else {
         alert(t("fail_to_get_api"));
       }

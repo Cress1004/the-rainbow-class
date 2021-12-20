@@ -72,8 +72,6 @@ function VolunteerDetail(props) {
     return t("volunteer");
   };
 
-  console.log(volunteerData);
-
   return (
     <div className="volunteer-detail">
       <div className="volunteer-detail__title">{t("volunteer_detail")}</div>
@@ -101,6 +99,7 @@ function VolunteerDetail(props) {
               <img
                 className="volunteer-detail__avatar"
                 src={volunteerData.image}
+                alt='user-avatar'
               ></img>
               <h3>{volunteerData.name}</h3>
             </Col>

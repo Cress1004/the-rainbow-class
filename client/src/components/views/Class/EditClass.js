@@ -20,7 +20,6 @@ function EditClass(props) {
     wrapperCol: { offset: 18, span: 4 },
   };
   const { id } = useParams();
-  const variable = { useForm: localStorage.getItem("userId") };
   const [location, setLocation] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [district, setDistrict] = useState("");
@@ -31,7 +30,7 @@ function EditClass(props) {
   const [studentTypes, setStudentTypes] = useState([]);
   const [types, setTypes] = useState([]);
   useEffect(() => {
-    Axios.post("/api/common-data/location", variable).then((response) => {
+    Axios.post("/api/common-data/location", null).then((response) => {
       if (response.data.success) {
         setLocation(response.data.location);
       } else {
@@ -39,7 +38,7 @@ function EditClass(props) {
       }
     });
 
-    Axios.post("/api/common-data/student-types", variable).then((response) => {
+    Axios.post("/api/common-data/student-types", null).then((response) => {
       if (response.data.success) {
         setStudentTypes(response.data.studentTypes);
       } else {

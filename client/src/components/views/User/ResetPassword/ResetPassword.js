@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import { withRouter } from "react-router-dom";
-import { loginUser } from "../../../../_actions/user_actions";
+// import { loginUser } from "../../../../_actions/user_actions";
 import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { Form, Icon, Input, Button, Typography } from "antd";
-import { useDispatch } from "react-redux";
+// import { useDispatch } from "react-redux";
 import "./ResetPassword.scss";
 
 const { Title } = Typography;

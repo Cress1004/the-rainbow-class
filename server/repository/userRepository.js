@@ -6,6 +6,7 @@ const storeUser = async (data) => {
     const newUser = await new User({
       name: data.name,
       email: data.email,
+      image: process.env.DEFAULT_IMAGE_PATH + 'default-image.jpg',
       password: process.env.DEFAULT_PASSWORD,
     });
     return newUser.save();
@@ -25,4 +26,8 @@ const updateUserData = async (data) => {
   }
 };
 
-module.exports = { storeUser, updateUserData };
+const deleteUser = async (id) => {
+  return await User.deleteOne({ _id: id });
+}
+
+module.exports = { storeUser, updateUserData, deleteUser };

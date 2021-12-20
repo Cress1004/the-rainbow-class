@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { useHistory } from "react-router-dom";
 import { Form, Input, Select, Button } from "antd";
 import Axios from "axios";
 import "./volunteer.scss";
@@ -9,6 +10,7 @@ const { Option } = Select;
 function AddVolunteer(props) {
   const { t } = useTranslation();
   const [classes, setClasses] = useState([]);
+  const history = useHistory();
   const [volunteerData, setVolunteerData] = useState({});
   const layout = {
     labelCol: { span: 5 },
@@ -33,7 +35,7 @@ function AddVolunteer(props) {
     try {
       const response = await Axios.post("/api/volunteers/add-volunteer", volunteerData);
       if (response.data.success) {
-        alert("success");
+        history.push('/volunteers')
       }
     } catch (error) {
       alert(t("fail-to-send-data"));

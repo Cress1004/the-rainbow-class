@@ -48,17 +48,12 @@ function RightMenu(props) {
       <Dropdown overlay={menu}>
         <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
           {user &&
-            (user.image ? (
+            (
               <Avatar className="avatar"
-                src="/image/default-image.jpg"
+                src={user.image ? user.image : "/image/default-image.jpg"}
                 style={{ width: "40px", height: "40px" }}
               />
-            ) : (
-              <Avatar
-                src={user.image}
-                style={{ width: "40px", height: "40px" }}
-              />
-            ))}
+            )}
           {" "}{user && user.name}
           {/* <DownOutlined /> */}
         </a>

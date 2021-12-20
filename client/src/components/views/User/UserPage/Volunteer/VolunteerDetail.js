@@ -1,17 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Row, Col, Button, Modal } from "antd";
+import { Row, Col, Button, Modal, Form } from "antd";
 import { transformAddressData } from "../../../../common/transformData";
 import Axios from "axios";
 
 const CLASS_MONITOR = 1;
 const SUB_CLASS_MONITOR = 2;
 
+const { Item } = Form;
+const layout = {
+  labelCol: { span: 6 },
+  wrapperCol: { span: 18 },
+};
+
 function VolunteerDetail(props) {
   const { t } = useTranslation();
   const { id } = useParams();
+  const history = useHistory();
   const [volunteerData, setVolunteerData] = useState({});
   const [confirmDelete, setConfirmDelete] = useState(false);
 
@@ -23,10 +30,12 @@ function VolunteerDetail(props) {
           id: data._id,
           name: data.user.name,
           email: data.user.email,
+          gender: data.user.gender,
+          image: data.user.image,
           address: transformAddressData(data.address),
           phoneNumber: data.phone_number,
           role: data.role,
-          className: data.class_name
+          className: data.class.class_name,
         });
       } else {
         alert(t("fail_to_get_api"));
@@ -38,19 +47,18 @@ function VolunteerDetail(props) {
     setConfirmDelete(true);
   };
 
-  const deleteClass = () => {
-    console.log("abc");
+  const deleteVolunteer = () => {
     setConfirmDelete(false);
-    //   Axios.post(`/api/classes/${id}/delete`, { classId: id }).then(
-    //     (response) => {
-    //       if (response.data.success) {
-    //         alert(t("delete_class_success"));
-    //         history.push("/classes");
-    //       } else {
-    //         alert(t("fail_to_delete_class"));
-    //       }
-    //     }
-    //   );
+      Axios.post(`/api/volunteers/${id}/delete`, { volunteerId: id }).then(
+        (response) => {
+          if (response.data.success) {
+            alert(t("delete_volunteer_success"));
+            history.push("/volunteers");
+          } else {
+            alert(t("fail_to_delete_volunteer"));
+          }
+        }
+      );
   };
 
   const cancelDelete = () => {
@@ -89,47 +97,46 @@ function VolunteerDetail(props) {
       {volunteerData && (
         <>
           <Row>
-            <Col span={4} className="label-text">
-              {t("user_name")}
+            <Col className="volunteer-detail__left-block" span={6}>
+              <img
+                className="volunteer-detail__avatar"
+                src={volunteerData.image}
+              ></img>
+              <h3>{volunteerData.name}</h3>
             </Col>
-            <Col span={16}>{volunteerData.name}</Col>
-          </Row>
-          <Row>
-            <Col span={4} className="label-text">
-              {t("email")}
+            <Col className="volunteer-detail__right-block" span={18}>
+              <Form {...layout} className="volunteer-detail__info-area">
+                <Item label={t("user_name")}>
+                  {volunteerData.name}
+                </Item>
+                <Item label={t("email")}>{volunteerData.email}</Item>
+                <Item label={t("address")}>
+                  {volunteerData.address}
+                </Item>
+                <Item label={t("phone_number")}>
+                  {volunteerData.phoneNumber}
+                </Item>
+                <Item label={t("role")}>
+                  {transformRoleWithClass(
+                    volunteerData.className,
+                    volunteerData.role
+                  )}
+                </Item>
+              </Form>
             </Col>
-            <Col span={16}>{volunteerData.email}</Col>
-          </Row>
-          <Row>
-            <Col span={4} className="label-text">
-              {t("address")}
-            </Col>
-            <Col span={16}>{volunteerData.address}</Col>
-          </Row>
-          <Row>
-            <Col span={4} className="label-text">
-              {t("phone_number")}
-            </Col>
-            <Col span={16}>{volunteerData.phoneNumber}</Col>
-          </Row>
-          <Row>
-            <Col span={4} className="label-text">
-              {t("role")}
-            </Col>
-            <Col span={16}>{transformRoleWithClass(volunteerData.className, volunteerData.role)}</Col>
           </Row>
         </>
       )}
       <Modal
         title={t("modal_confirm_delete_volunteer_title")}
         visible={confirmDelete}
-        onOk={deleteClass}
+        onOk={deleteVolunteer}
         onCancel={cancelDelete}
         okText={t("delete_volunteer")}
         cancelText={t("cancel")}
         footer={[
           <Button onClick={cancelDelete}>{t("cancel")}</Button>,
-          <Button onClick={deleteClass} type="danger">
+          <Button onClick={deleteVolunteer} type="danger">
             {t("delete_volunteer")}
           </Button>,
         ]}

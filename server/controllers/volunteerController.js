@@ -1,4 +1,10 @@
-const { storeVolunteer, getListVolunteers, getVolunteerById, updateVolunteer } = require("../repository/volunteerRepository");
+const {
+  storeVolunteer,
+  getListVolunteers,
+  getVolunteerById,
+  updateVolunteer,
+  deleteVolunteer,
+} = require("../repository/volunteerRepository");
 
 const addNewVolunteer = async (req, res) => {
   try {
@@ -25,7 +31,7 @@ const getVolunteerData = async (req, res) => {
   } catch (error) {
     res.status(400).send(error);
   }
-}
+};
 
 const editVolunteer = async (req, res) => {
   try {
@@ -34,6 +40,21 @@ const editVolunteer = async (req, res) => {
   } catch (error) {
     res.status(400).send(error);
   }
-}
+};
 
-module.exports = { addNewVolunteer, getAllVolunteer, getVolunteerData, editVolunteer };
+const deleteVolunteerData = async (req, res) => {
+  try {
+    await deleteVolunteer(req.body.volunteerId);
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+module.exports = {
+  addNewVolunteer,
+  getAllVolunteer,
+  getVolunteerData,
+  editVolunteer,
+  deleteVolunteerData,
+};

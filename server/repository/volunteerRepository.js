@@ -1,5 +1,5 @@
 const { Volunteer } = require("../models/Volunteer");
-const { storeUser, updateUserData } = require("./userRepository");
+const { storeUser, updateUserData, deleteUser } = require("./userRepository");
 const { storeAddress, updateAddress } = require("./commonRepository");
 
 const storeVolunteer = async (data) => {
@@ -22,7 +22,7 @@ const storeVolunteer = async (data) => {
 const getVolunteerById = async (id) => {
   try {
     return await Volunteer.findOne({ _id: id })
-      .populate("user", "name email phone_number gender")
+      .populate("user", "name email phone_number gender image")
       .populate("class", "class_name")
       .populate("address");
   } catch (error) {
@@ -63,9 +63,17 @@ const updateVolunteer = async (data) => {
   }
 };
 
+const deleteVolunteer = async (id) => {
+  const volunteer = await Volunteer.findOne({_id: id})
+  await deleteUser(volunteer.user._id);
+  return await Volunteer.deleteOne({ _id: id });
+};
+
+
 module.exports = {
   storeVolunteer,
   getListVolunteers,
   getVolunteerById,
   updateVolunteer,
+  deleteVolunteer
 };

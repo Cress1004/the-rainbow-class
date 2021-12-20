@@ -21,6 +21,8 @@ import VolunteerDetail from "./views/User/UserPage/Volunteer/VolunteerDetail";
 import EditVolunteer from "./views/User/UserPage/Volunteer/EditVolunteer";
 import AddStudent from "./views/User/UserPage/Student/AddStudent";
 import StudentList from "./views/User/UserPage/Student/StudentList";
+import EditStudent from "./views/User/UserPage/Student/EditStudent";
+import StudentDetail from "./views/User/UserPage/Student/StudentDetail";
 
 class App extends Component {
   render() {
@@ -77,12 +79,23 @@ class App extends Component {
             component={Auth(EditVolunteer, null)}
           />
           <DashboardLayoutRoute
-            path="/students/add-student"
+            path="/add-student"
             component={Auth(AddStudent, null)}
           />
             <DashboardLayoutRoute
             path="/students"
+            exact={true}
             component={Auth(StudentList, null)}
+          />
+           <DashboardLayoutRoute
+            path="/students/:id"
+            exact={true}
+            component={Auth(StudentDetail, null)}
+          />
+          <DashboardLayoutRoute
+            path="/students/:id/edit"
+            exact={true}
+            component={Auth(EditStudent, null)}
           />
           <LoginLayoutRoute path="/login" component={Auth(LoginPage, false)} />
           <LoginLayoutRoute

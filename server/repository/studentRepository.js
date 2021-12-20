@@ -26,7 +26,8 @@ const getStudentById = async (id) => {
     return await Student.findOne({ _id: id })
       .populate("user", "name email phone_number gender image")
       .populate("class", "class_name")
-      .populate("address");
+      .populate("address")
+      .populate("student_types");
   } catch (error) {
     console.log("fail to get student data");
   }
@@ -49,6 +50,7 @@ const updateStudent = async (data) => {
     const userData = {
       id: student.user._id,
       name: data.name,
+      email: data.email,
       gender: data.gender,
     };
     await updateUserData(userData);
@@ -58,8 +60,9 @@ const updateStudent = async (data) => {
       const address = await storeAddress(data.address);
       student.address = address._id;
     }
-    console.log(data.phoneNumber);
     student.phone_number = data.phoneNumber;
+    student.parent_name = data.parent_name;
+    student.student_types = data.studentTypes;
     return student.save();
   } catch (error) {
     console.log("fail to update student");

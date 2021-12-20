@@ -18,6 +18,7 @@ const storeUser = async (data) => {
 const updateUserData = async (data) => {
   try {
     const user = await User.findOne({ _id: data.id });
+    user.email = data.email;
     user.name = data.name;
     user.gender = data.gender;
     return user.save();

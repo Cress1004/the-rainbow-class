@@ -66,6 +66,15 @@
         color: $primary-color;
         padding-bottom: $title-padding-bottom;
     }
+    &__input-address-select-form {
+        .ant-select {
+            display: inline-block;
+            width: calc(33% - 12px);
+        }
+    }
+    &__input-address-center-form{
+        margin: 0px 20px;
+    }
 }
 
 .ant-form-item-label {

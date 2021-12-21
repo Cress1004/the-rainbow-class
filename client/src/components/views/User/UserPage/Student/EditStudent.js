@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
 import { Form, Input, Select, Button, Radio } from "antd";
-import { transformAddressData } from "../../../../common/transformData";
 import Axios from "axios";
 import "./student.scss";
 
@@ -21,8 +20,7 @@ function EditStudent(props) {
   const [wards, setWards] = useState([]);
   const [ward, setWard] = useState({});
   const [province, setProvince] = useState({});
-  const [addressDes, setAddressDes] = useState("");
-
+  
   const layout = {
     labelCol: { span: 5 },
     wrapperCol: { span: 15 },
@@ -58,13 +56,13 @@ function EditStudent(props) {
           studentTypes: data.student_types.map((type) => type._id),
           image: data.user.image,
           phoneNumber: data.phone_number,
+          address: data.address,
           className: data.class ? data.class.class_name : t("unset"),
         });
         if (data.address) {
           setProvince(data.address.address.province);
           setDistrict(data.address.address.district);
           setWard(data.address.address.ward);
-          setAddressDes(data.address.description);
         }
       } else {
         alert(t("fail_to_get_api"));
@@ -87,7 +85,7 @@ function EditStudent(props) {
             name: currentProvince.name,
           },
         },
-        description: addressDes
+        description: studentData.address && studentData.address.description ? studentData.address.description : ""
       },
     });
   };
@@ -107,7 +105,7 @@ function EditStudent(props) {
             name: currentDistrict.name,
           },
         },
-        description: addressDes
+        description: studentData.address.description,
       },
     });
   };
@@ -126,22 +124,17 @@ function EditStudent(props) {
             name: currentWard.name,
           },
         },
-        description: addressDes
+        description: studentData.address.description,
       },
     });
   };
 
   const handleChangeAddressDescription = (e) => {
-    setAddressDes(e.target.value);
     setStudentData({
       ...studentData,
       address: {
-        address: {
-            province: province,
-            district: district,
-            ward: ward
-        },
-        description: addressDes,
+        address: studentData.address.address,
+        description: e.target.value,
       },
     });
   };
@@ -153,12 +146,11 @@ function EditStudent(props) {
         studentData: studentData,
       });
       if (response.data.success) {
-        // history.push("/students");
+        history.push("/students");
       }
     } catch (error) {
       alert(t("fail-to-send-data"));
     }
-    console.log(studentData);
   };
 
   return (
@@ -275,7 +267,7 @@ function EditStudent(props) {
               : null}
           </Select>
           <Input
-            value={addressDes}
+            value={studentData.address && studentData.address.description ? studentData.address.description : ""}
             onChange={(e) => handleChangeAddressDescription(e)}
             placeholder={t("input_specific_address")}
           />

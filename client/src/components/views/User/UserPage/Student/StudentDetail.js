@@ -44,8 +44,6 @@ function StudentDetail(props) {
     });
   }, [t, id]);
 
-  console.log(studentData);
-
   const openDeletePopup = () => {
     setConfirmDelete(true);
   };

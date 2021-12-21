@@ -3,6 +3,7 @@ const {
   getListStudents,
   getStudentById,
   updateStudent,
+  deleteStudent,
 } = require("../repository/studentRepository");
 
 const addNewStudent = async (req, res) => {
@@ -35,16 +36,25 @@ const getStudentInfo = async (req, res) => {
 const editStudent = async (req, res) => {
     try {
         await updateStudent(req.body.studentData);
-        console.log(req.body.studentData)
         res.status(200).json({ success: true });
       } catch (error) {
         res.status(400).send(error);
       }
 }
 
+const deleteStudentData = async (req, res) => {
+    try {
+        await deleteStudent(req.body.studentId);
+        res.status(200).json({ success: true });
+    } catch (error) {
+        res.status(400).send(error);
+    }
+}
+
 module.exports = {
   addNewStudent,
   getStudents,
   getStudentInfo,
-  editStudent
+  editStudent,
+  deleteStudentData
 };

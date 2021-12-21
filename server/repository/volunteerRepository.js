@@ -55,7 +55,6 @@ const updateVolunteer = async (data) => {
       const address = await storeAddress(data.address);
       volunteer.address = address._id;
     }
-    console.log(data.phoneNumber)
     volunteer.phone_number = data.phoneNumber;
     return volunteer.save();
   } catch (error) {

@@ -1,15 +1,15 @@
 const mongoose = require('mongoose');
 
 const scheduleSchema = mongoose.Schema({
-    schedule_type: {
+    scheduleType: {
         type: Number,
         default: 0      // 0: lesson, 1: meeting, 2: interview
     },
-    person_in_charge: [{
+    personInCharge: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }],
-    address_id: {
+    address: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Address'
     },
@@ -17,8 +17,8 @@ const scheduleSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }],
-    start_time: Date,
-    end_time: Date,
+    startTime: Date,
+    endTime: Date,
 })
 
 const Schedule = mongoose.model('Schedule', scheduleSchema);

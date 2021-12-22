@@ -31,18 +31,19 @@ function StudentDetail(props) {
           name: data.user.name,
           email: data.user.email,
           gender: data.user.gender,
-          parent_name: data.parent_name,
-          studentTypes: transformStudentTypes(data.student_types),
+          parentName: data.parentName,
+          studentTypes: transformStudentTypes(data.studentTypes),
           image: data.user.image,
-          address: transformAddressData(data.address),
-          phoneNumber: data.phone_number,
-          className: data.class ? data.class.class_name : t("unset"),
+          address: transformAddressData(data.user.address),
+          phoneNumber: data.user.phoneNumber,
+          className: data.class ? data.class.name : t("unset"),
         });
       } else {
         alert(t("fail_to_get_api"));
       }
     });
   }, [t, id]);
+
 
   const openDeletePopup = () => {
     setConfirmDelete(true);
@@ -102,7 +103,7 @@ function StudentDetail(props) {
                 <Item label={t("user_name")}>{studentData.name}</Item>
                 <Item label={t("email")}>{studentData.email}</Item>
                 <Item label={t("phone_number")}>{studentData.phoneNumber}</Item>
-                <Item label={t("parent_name")}>{studentData.parent_name}</Item>
+                <Item label={t("parent_name")}>{studentData.parentName}</Item>
                 <Item label={t("address")}>{studentData.address}</Item>
                 <Item label={t("student_types")}>{studentData.studentTypes}</Item>
                 <Item label={t("class_name")}>{studentData.className}</Item>

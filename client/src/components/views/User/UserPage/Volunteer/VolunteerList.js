@@ -70,8 +70,8 @@ function VolunteerList(props) {
     key: index,
     id: item._id,
     userName: transformRoleName(item.user.name, item.role),
-    className: item.class.class_name,
-    phoneNumber: item.phone_number,
+    className: item.class.name,
+    phoneNumber: item.user.phoneNumber,
     role: item.role,
     email: item.user.email,
   }));

@@ -58,9 +58,9 @@ function StudentList(props) {
     key: index,
     id: item._id,
     userName: item.user.name,
-    className: item.class ? item.class_name : t('unset'),
-    phoneNumber: item.phone_number,
-    studentTypes: transformStudentTypes(item.student_types)
+    className: item.class ? item.class.name : t('unset'),
+    phoneNumber: item.user.phoneNumber,
+    studentTypes: transformStudentTypes(item.studentTypes)
   }));
 
   const renderData = (text, key) => (

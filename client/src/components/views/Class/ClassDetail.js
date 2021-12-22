@@ -77,7 +77,7 @@ function ClassDetail(props) {
               <Col span={4} className="label-text">
                 {t("class_name")}
               </Col>
-              <Col span={16}>{classData.class_name}</Col>
+              <Col span={16}>{classData.name}</Col>
             </Row>
             <Row>
               <Col span={4} className="label-text">
@@ -96,14 +96,14 @@ function ClassDetail(props) {
                 {t("target_student")}
               </Col>
               <Col span={16}>
-                {transformStudentTypes(classData.student_types)}
+                {transformStudentTypes(classData.studentTypes)}
               </Col>
             </Row>
             <Row>
               <Col span={4} className="label-text">
                 {t("schedule_time")}
               </Col>
-              <Col span={16}>{t("schedule_time")}</Col> them lich hoc
+              <Col span={16}>{t("schedule_time")}</Col>
             </Row>
             <hr />
             <Row>
@@ -117,10 +117,10 @@ function ClassDetail(props) {
             </Row>
             <Row>
               <Col span={12}>
-                {t("class_monitor")}: {classData.class_monitor}
+                {t("class_monitor")}: {classData.classMonitor}
               </Col>
               <Col span={12}>
-                {t("sub_class_monitor")}: {classData.sub_class_monitor}
+                {t("sub_class_monitor")}: {classData.subClassMonitor}
               </Col>
             </Row>
           </>

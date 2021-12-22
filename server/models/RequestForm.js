@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 
 const requestFormSchema = mongoose.Schema({
-    request_type_id: {
+    requestType: {
         type: Number,
         default: 0      // 0: absent request, 1: stop working
     },
-    request_user_id: {
+    requestUser: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
@@ -13,8 +13,8 @@ const requestFormSchema = mongoose.Schema({
         type: String,
         maxLength: 500,
     },
-    create_at: Date,
-    approve_at: Date,
+    createAt: Date,
+    approveAt: Date,
     status: {
         type: Number,
         default: 0      // 0: pending, 1: approved, 2: reject

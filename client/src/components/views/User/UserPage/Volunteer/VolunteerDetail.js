@@ -32,10 +32,10 @@ function VolunteerDetail(props) {
           email: data.user.email,
           gender: data.user.gender,
           image: data.user.image,
-          address: transformAddressData(data.address),
-          phoneNumber: data.phone_number,
+          address: transformAddressData(data.user.address),
+          phoneNumber: data.user.phoneNumber,
           role: data.role,
-          className: data.class.class_name,
+          className: data.class.name,
         });
       } else {
         alert(t("fail_to_get_api"));

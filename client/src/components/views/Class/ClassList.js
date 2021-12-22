@@ -26,13 +26,13 @@ function ClassList(props) {
     ? classes.map((item, index) => ({
         key: index,
         id: item._id,
-        className: item.class_name,
+        name: item.name,
         description: item.description,
         address: transformAddressData(item.address),
         classMonitor: item.class_monitor
           ? item.class_monitor
           : `(${t("unset")})`,
-        targetStudent: transformStudentTypes(item.student_types),
+        targetStudent: transformStudentTypes(item.studentTypes),
         numberOfStudent: item.students.length,
       }))
     : [];
@@ -40,8 +40,8 @@ function ClassList(props) {
   const columns = [
     {
       title: t("class_name"),
-      dataIndex: "className",
-      key: "className",
+      dataIndex: "name",
+      key: "name",
       render: (text, key) => renderData(text, key),
       width: 100,
     },

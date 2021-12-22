@@ -1,20 +1,19 @@
 const { Student } = require("../models/Student");
 const { storeUser, updateUserData, deleteUser } = require("./userRepository");
-const { storeAddress, updateAddress } = require("./commonRepository");
 
 const storeStudent = async (data) => {
   try {
     const newUser = await storeUser({
       name: data.name,
       email: data.email,
+      phoneNumber: data.phoneNumber,
+      address: data.address,
     });
     const newStudent = await new Student({
-      phone_number: data.phone_number,
-      parent_name: data.parent_name,
-      student_types: data.student_types,
+      parentName: data.parentName,
+      studentTypes: data.studentTypes,
       user: newUser._id,
     });
-    storeAddress(data.address);
     return newStudent.save();
   } catch (error) {
     console.log("fail to store new student");
@@ -24,10 +23,13 @@ const storeStudent = async (data) => {
 const getStudentById = async (id) => {
   try {
     return await Student.findOne({ _id: id })
-      .populate("user", "name email phone_number gender image")
-      .populate("class", "class_name")
-      .populate("address")
-      .populate("student_types");
+      .populate({ path: "studentTypes" })
+      .populate({ path: "class", select: "name" })
+      .populate({
+        path: "user",
+        select: "name email phoneNumber gender image address",
+        populate: { path: "address", select: "address description" },
+      });
   } catch (error) {
     console.log("fail to get student data");
   }
@@ -36,9 +38,9 @@ const getStudentById = async (id) => {
 const getListStudents = async () => {
   try {
     return Student.find({})
-      .populate("user", "name phone_number")
-      .populate("class", "class_name")
-      .populate("student_types");
+      .populate("user", "name phoneNumber")
+      .populate("class", "name")
+      .populate("studentTypes");
   } catch (error) {
     console.log("fail to get list students");
   }
@@ -52,17 +54,12 @@ const updateStudent = async (data) => {
       name: data.name,
       email: data.email,
       gender: data.gender,
+      phoneNumber: data.phoneNumber,
+      address: data.address
     };
     await updateUserData(userData);
-    if (student.address) {
-      await updateAddress(student.address, data.address);
-    } else {
-      const address = await storeAddress(data.address);
-      student.address = address._id;
-    }
-    student.phone_number = data.phoneNumber;
-    student.parent_name = data.parent_name;
-    student.student_types = data.studentTypes;
+    student.parentName = data.parentName;
+    student.studentTypes = data.studentTypes;
     return student.save();
   } catch (error) {
     console.log("fail to update student");

@@ -9,7 +9,7 @@ const lessonSchema = mongoose.Schema({
         type: String, 
         maxLength: 1000
     },
-    schedule_id: {
+    schedule: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Schedule'
     },
@@ -17,7 +17,7 @@ const lessonSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Achievement'
     }],
-    class_id: {
+    class: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'ClassName'
     }

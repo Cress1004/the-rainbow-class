@@ -164,7 +164,7 @@ function AddStudent(props) {
             onChange={(e) =>
               setStudentData({
                 ...studentData,
-                phone_number: e.target.value,
+                phoneNumber: e.target.value,
               })
             }
           />
@@ -173,7 +173,7 @@ function AddStudent(props) {
           <Input
             placeholder={t("input_parent_name")}
             onChange={(e) => {
-              setStudentData({ ...studentData, parent_name: e.target.value });
+              setStudentData({ ...studentData, parentName: e.target.value });
             }}
           />
         </Item>
@@ -194,7 +194,6 @@ function AddStudent(props) {
           className="add-student__input-address-select-form"
         >
           <Select
-            value={province ? province.name : undefined}
             showSearch
             placeholder={t("input_province")}
             onChange={handleChangeProvice}
@@ -206,7 +205,6 @@ function AddStudent(props) {
             ))}
           </Select>
           <Select
-            value={district ? district.name : undefined}
             showSearch
             placeholder={t("input_district")}
             onChange={handleChangeDistrict}
@@ -221,7 +219,6 @@ function AddStudent(props) {
               : null}
           </Select>
           <Select
-            value={ward ? ward.name : undefined}
             showSearch
             placeholder={t("input_ward")}
             onChange={handleChangeWard}
@@ -245,7 +242,7 @@ function AddStudent(props) {
             showSearch
             placeholder={t("input_student_type")}
             onChange={(value) =>
-              setStudentData({ ...studentData, student_types: value })
+              setStudentData({ ...studentData, studentTypes: value })
             }
           >
             {studentTypes.map((option) => (

@@ -26,3 +26,22 @@
         margin: 0px;
     }
 }
+
+.edit-profile {
+    &__title {
+        font-size: $title-font-size;
+        font-weight: $title-font-weight;
+        color: $primary-color;
+        padding-bottom: $title-padding-bottom;
+    }
+    &__input-address-select-form {
+        .ant-select {
+            display: inline-block;
+            width: calc(33% - 12px);
+        }
+    }
+    &__input-address-center-form{
+        margin: 0px 20px;
+    }
+}
+

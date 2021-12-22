@@ -4,6 +4,7 @@ import { Row, Col, Button, Form } from "antd";
 import { Link } from "react-router-dom";
 import Axios from "axios";
 import "./profile.scss";
+import { transformAddressData } from "../../../common/transformData";
 
 const { Item } = Form;
 const layout = {
@@ -20,7 +21,6 @@ function Profile() {
     Axios.post(`/api/users/profile`, { userId: userId }).then((response) => {
       if (response.data.success) {
         setUserData(response.data.userData);
-
       } else {
         alert(t("fail_to_get_api"));
       }
@@ -31,6 +31,8 @@ function Profile() {
   const handleChangeAvatar = (e) => {
     // setUserData({...userData, image: e.target.value})
   };
+
+  //Ngay sinh, dia chi
   return (
     <div>
       <div className="profile__title">{t("profile")}</div>
@@ -62,7 +64,8 @@ function Profile() {
               <Form {...layout} className="profile__info-area">
                 <Item label={t("user_name")}>{userData.name}</Item>
                 <Item label={t("email")}>{userData.email}</Item>
-                <Item label={t("phone_number")}>{userData.phone_number}</Item>
+                <Item label={t("phone_number")}>{userData.phoneNumber}</Item>
+                <Item label={t("address")}>{transformAddressData(userData.address)}</Item>
               </Form>
             </Col>
           </Row>

@@ -63,7 +63,7 @@ function StudentType() {
         { id: id }
       );
       if (response.data.success) {
-        setStudentTypes(studentTypes.filter(item => item._id !== id));
+        setStudentTypes(studentTypes.filter((item) => item._id !== id));
         alert(t("delete success"));
       }
     } catch (error) {
@@ -91,20 +91,13 @@ function StudentType() {
     }, 1000);
   };
 
-  // const validateMessages = {
-  //   required: t("require_student_type"),
-  // };
-
   return (
     <div>
       <div className="type-of-student-list__title">{t("student_type")}</div>
       {add ? (
         <div>
           <Button onClick={handleClickBack}>{t("back")}</Button>
-          <Form
-            onSubmit={handleSubmit}
-            // validateMessages={validateMessages}
-          >
+          <Form onSubmit={handleSubmit}>
             <Form.Item
               label={t("student_type")}
               rules={[

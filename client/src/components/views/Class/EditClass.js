@@ -28,7 +28,6 @@ function EditClass(props) {
   const [classData, setClassData] = useState({});
   const [province, setProvince] = useState({});
   const [studentTypes, setStudentTypes] = useState([]);
-  const [types, setTypes] = useState([]);
   useEffect(() => {
     Axios.post("/api/common-data/location", null).then((response) => {
       if (response.data.success) {
@@ -49,11 +48,16 @@ function EditClass(props) {
     Axios.post(`/api/classes/${id}`, { classId: id }).then((response) => {
       if (response.data.success) {
         const data = response.data.classData;
-        setClassData(data);
+        setClassData({
+          _id: data._id,
+          name: data.name,
+          description: data.description,
+          address: data.address,
+          studentTypes: data.studentTypes.map((type) => type._id),
+        });
         setProvince(data.address.address.province);
         setDistrict(data.address.address.district);
         setWard(data.address.address.ward);
-        setTypes(data.student_types.map((type) => type._id));
       } else {
         alert(t("fail_to_get_api"));
       }
@@ -75,7 +79,6 @@ function EditClass(props) {
             name: currentProvince.name,
           },
         },
-        description: classData.address.description,
       },
     });
   };
@@ -95,7 +98,6 @@ function EditClass(props) {
             name: currentDistrict.name,
           },
         },
-        description: classData.address.description,
       },
     });
   };
@@ -114,14 +116,18 @@ function EditClass(props) {
             name: currentWard.name,
           },
         },
-        description: classData.address.description,
       },
     });
   };
 
-  const handleChangeStudentType = (value) => {
-    setTypes(value);
-    setClassData({ ...classData, student_types: value });
+  const handleChangeAddressDescription = (e) => {
+    setClassData({
+      ...classData,
+      address: {
+        address: classData.address.address,
+        description: e.target.value,
+      },
+    });
   };
 
   const handleSubmit = (e) => {
@@ -156,10 +162,10 @@ function EditClass(props) {
             ]}
           >
             <Input
-              value={classData.class_name}
+              value={classData.name}
               placeholder={t("input_class_name")}
               onChange={(e) =>
-                setClassData({ ...classData, class_name: e.target.value })
+                setClassData({ ...classData, name: e.target.value })
               }
             />
           </Form.Item>
@@ -237,15 +243,7 @@ function EditClass(props) {
             <Input
               value={classData.address ? classData.address.description : ""}
               placeholder={t("input_specific_address")}
-              onChange={(e) => {
-                setClassData({
-                  ...classData,
-                  address: {
-                    address: classData.address.address, 
-                    description: e.target.value 
-                  },
-                });
-              }}
+              onChange={(e) => handleChangeAddressDescription(e)}
             />
           </Form.Item>
           <Form.Item name="studentType" label={t("student_type")}>
@@ -257,9 +255,9 @@ function EditClass(props) {
                 width: "100%",
                 marginRight: "10px",
               }}
-              value={types}
+              value={classData.studentTypes}
               placeholder={t("input_student_type")}
-              onChange={handleChangeStudentType}
+              onChange={(value) => setClassData({...classData, studentTypes: value})}
             >
               {studentTypes.map((option) => (
                 <Option key={option._id} value={option._id}>

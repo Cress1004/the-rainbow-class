@@ -6,11 +6,11 @@ const reportSchema = mongoose.Schema({
         maxLengh: 5000,
     },
     created_at: Date,
-    created_by: {
+    createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
-    lesson_id: {
+    lesson: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Lesson'
     }

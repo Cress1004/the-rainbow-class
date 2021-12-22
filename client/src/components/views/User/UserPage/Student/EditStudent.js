@@ -52,17 +52,17 @@ function EditStudent(props) {
           name: data.user.name,
           email: data.user.email,
           gender: data.user.gender,
-          parent_name: data.parent_name,
-          studentTypes: data.student_types.map((type) => type._id),
+          parentName: data.parentName,
+          studentTypes: data.studentTypes.map((type) => type._id),
           image: data.user.image,
-          phoneNumber: data.phone_number,
-          address: data.address,
-          className: data.class ? data.class.class_name : t("unset"),
+          phoneNumber: data.user.phoneNumber,
+          address: data.user.address,
+          className: data.class ? data.class.name : t("unset"),
         });
-        if (data.address) {
-          setProvince(data.address.address.province);
-          setDistrict(data.address.address.district);
-          setWard(data.address.address.ward);
+        if (data.user.address) {
+          setProvince(data.user.address.address.province);
+          setDistrict(data.user.address.address.district);
+          setWard(data.user.address.address.ward);
         }
       } else {
         alert(t("fail_to_get_api"));
@@ -202,10 +202,10 @@ function EditStudent(props) {
         </Item>
         <Item name="parent_name" label={t("parent_name")}>
           <Input
-            value={studentData.parent_name}
+            value={studentData.parentName}
             placeholder={t("input_parent_name")}
             onChange={(e) => {
-              setStudentData({ ...studentData, parent_name: e.target.value });
+              setStudentData({ ...studentData, parentName: e.target.value });
             }}
           />
         </Item>

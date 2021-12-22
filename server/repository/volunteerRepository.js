@@ -7,9 +7,9 @@ const storeVolunteer = async (data) => {
     const newUser = await storeUser({
       name: data.name,
       email: data.email,
+      phoneNumber: data.phoneNumber,
     });
     const newVolunteer = await new Volunteer({
-      phone_number: data.phone_number,
       class: data.class,
       user: newUser._id,
     });
@@ -22,9 +22,12 @@ const storeVolunteer = async (data) => {
 const getVolunteerById = async (id) => {
   try {
     return await Volunteer.findOne({ _id: id })
-      .populate("user", "name email phone_number gender image")
-      .populate("class", "class_name")
-      .populate("address");
+    .populate({ path: "class", select: "name" })
+    .populate({
+      path: "user",
+      select: "name email phoneNumber gender image address",
+      populate: { path: "address", select: "address description" },
+    });
   } catch (error) {
     console.log("fail to get volunteer data");
   }
@@ -33,8 +36,8 @@ const getVolunteerById = async (id) => {
 const getListVolunteers = async () => {
   try {
     return await Volunteer.find({})
-      .populate("user", "name email phone_number")
-      .populate("class", "class_name");
+      .populate("user", "name email phoneNumber")
+      .populate("class", "name");
   } catch (error) {
     console.log("fail to get list volunteers");
   }
@@ -42,20 +45,15 @@ const getListVolunteers = async () => {
 
 const updateVolunteer = async (data) => {
   try {
-    const volunteer = await Volunteer.findOne({_id: data.id});
-    const userData = {
+    const volunteer = await Volunteer.findOne({ _id: data.id });
+    await updateUserData({
       id: volunteer.user._id,
+      email:data.email,
       name: data.name,
       gender: data.gender,
-    };
-    await updateUserData(userData);
-    if (volunteer.address) {
-      await updateAddress(volunteer.address, data.address);
-    } else {
-      const address = await storeAddress(data.address);
-      volunteer.address = address._id;
-    }
-    volunteer.phone_number = data.phoneNumber;
+      phoneNumber: data.phoneNumber,
+      address: data.address
+    });
     return volunteer.save();
   } catch (error) {
     console.log("fail to update volunteer");
@@ -63,16 +61,15 @@ const updateVolunteer = async (data) => {
 };
 
 const deleteVolunteer = async (id) => {
-  const volunteer = await Volunteer.findOne({_id: id})
+  const volunteer = await Volunteer.findOne({ _id: id });
   await deleteUser(volunteer.user._id);
   return await Volunteer.deleteOne({ _id: id });
 };
-
 
 module.exports = {
   storeVolunteer,
   getListVolunteers,
   getVolunteerById,
   updateVolunteer,
-  deleteVolunteer
+  deleteVolunteer,
 };

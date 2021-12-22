@@ -9,7 +9,7 @@ const homeworkSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Student'
     }],
-    lesson_id: {
+    lesson: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Lesson'
     },

@@ -5,12 +5,12 @@ const LessonPlanSchema = mongoose.Schema({
         type: String,
         maxLength: 5000,
     },
-    created_by: {
+    createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
     },
     created_at: Date,
-    lesson_id: {
+    lesson: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Lesson',
     },

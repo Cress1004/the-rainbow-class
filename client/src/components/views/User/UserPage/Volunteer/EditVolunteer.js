@@ -42,15 +42,15 @@ function EditVolunteer(props) {
           name: data.user.name,
           email: data.user.email,
           gender: data.user.gender,
-          address: data.address,
-          phoneNumber: data.phone_number,
+          address: data.user.address,
+          phoneNumber: data.user.phoneNumber,
           role: data.role,
-          className: data.class.class_name,
+          className: data.class.name,
         });
-        if (data.address) {
-          setProvince(data.address.address.province);
-          setDistrict(data.address.address.district);
-          setWard(data.address.address.ward);
+        if (data.user.address.address) {
+          setProvince(data.user.address.address.province);
+          setDistrict(data.user.address.address.district);
+          setWard(data.user.address.address.ward);
         }
       } else {
         alert(t("fail_to_get_api"));

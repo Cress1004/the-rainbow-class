@@ -25,10 +25,7 @@ function AddClass(props) {
   const [district, setDistrict] = useState("");
   const [wards, setWards] = useState([]);
   const [ward, setWard] = useState("");
-  const [className, setClassName] = useState("");
-  const [description, setDescription] = useState("");
-  const [address, setAddress] = useState({});
-  const [types, setTypes] = useState([]);
+  const [classData, setClassData] = useState([]);
 
   const [studentTypes, setStudentTypes] = useState([]);
   useEffect(() => {
@@ -50,35 +47,74 @@ function AddClass(props) {
   }, [t]);
 
   const handleChangeProvice = (value) => {
-    const currentProvince = location.find((item) => value === item.id); 
-    setProvince({id: currentProvince.id, name: currentProvince.name});
+    const currentProvince = location.find((item) => value === item.id);
+    setProvince({ id: currentProvince.id, name: currentProvince.name });
     setDistricts(currentProvince.districts);
+    setDistrict({});
+    setWard({});
+    setClassData({
+      ...classData,
+      address: {
+        address: {
+          province: {
+            id: currentProvince.id,
+            name: currentProvince.name,
+          },
+        },
+      },
+    });
   };
 
   const handleChangeDistrict = (value) => {
     const currentDistrict = districts.find((item) => value === item.id);
-    setDistrict({id: currentDistrict.id, name: currentDistrict.name});
+    setDistrict({ id: currentDistrict.id, name: currentDistrict.name });
     setWards(currentDistrict.wards);
+    setWard({});
+    setClassData({
+      ...classData,
+      address: {
+        address: {
+          province: classData.address.address.province,
+          district: {
+            id: currentDistrict.id,
+            name: currentDistrict.name,
+          },
+        },
+      },
+    });
   };
 
   const handleChangeWard = (value) => {
     const currentWard = wards.find((item) => value === item.id);
-    setWard({id: currentWard.id, name: currentWard.name});
+    setWard({ id: currentWard.id, name: currentWard.name });
+    setClassData({
+      ...classData,
+      address: {
+        address: {
+          province: classData.address.address.province,
+          district: classData.address.address.district,
+          ward: {
+            id: currentWard.id,
+            name: currentWard.name,
+          },
+        },
+      },
+    });
   };
 
-  const handleChangeStudentType = (value) => {
-    setTypes(value);
+  const handleChangeAddressDescription = (e) => {
+    setClassData({
+      ...classData,
+      address: {
+        address: classData.address.address,
+        description: e.target.value,
+      },
+    });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const data = {
-      class_name: className,
-      description: description,
-      address: address,
-      student_types: types,
-    };
-    Axios.post("/api/classes/add-class", data).then((response) => {
+    Axios.post("/api/classes/add-class", classData).then((response) => {
       if (response.data.success) {
         openMessage();
         history.push("/classes")
@@ -108,7 +144,7 @@ function AddClass(props) {
         >
           <Input
             placeholder={t("input_class_name")}
-            onChange={(e) => setClassName(e.target.value)}
+            onChange={(e) => setClassData({...classData , name: e.target.value})}
           />
         </Form.Item>
         <Form.Item
@@ -120,7 +156,7 @@ function AddClass(props) {
         >
           <TextArea
             placeholder={t("input_description")}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={(e) => setClassData({...classData, description: e.target.value})}
           />
         </Form.Item>
         <Form.Item name="address" label={t("address")}>
@@ -178,16 +214,7 @@ function AddClass(props) {
           </Select>
           <Input
             placeholder={t("input_specific_address")}
-            onChange={(e) => {
-              setAddress({
-                address: {
-                  province: province,
-                  district: district,
-                  ward: ward,
-                },
-                description: e.target.value,
-              });
-            }}
+            onChange={(e) => handleChangeAddressDescription(e)}
           />
         </Form.Item>
         <Form.Item name="studentType" label={t("student_type")}>
@@ -200,7 +227,7 @@ function AddClass(props) {
               marginRight: "10px",
             }}
             placeholder={t("input_student_type")}
-            onChange={handleChangeStudentType}
+            onChange={(value) => setClassData({...classData, studentTypes: value})}
           >
             {studentTypes.map((option) => (
               <Option key={option._id} value={option._id}>

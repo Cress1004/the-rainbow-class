@@ -12,9 +12,9 @@ const findClassById = (id) => {
 const storeClass = (data) => {
   const newAddress = storeAddress(data.address);
   const classData = {
-    class_name: data.class_name,
+    name: data.name,
     description: data.description,
-    student_types: data.student_types,
+    studentTypes: data.studentTypes,
     address: newAddress._id,
   };
   const newClass = new ClassName(classData);
@@ -23,13 +23,17 @@ const storeClass = (data) => {
 };
 
 const editClass = async (data) => {
-  const className = await findClassById({ _id: data._id });
-  updateAddress(className.address, data.address);
-  className.class_name = data.class_name;
-  className.description = data.description;
-  className.student_types = data.student_types;
-  className.save();
-  return className;
+  try {
+    const className = await findClassById({ _id: data._id });
+    await updateAddress(className.address, data.address);
+    className.name = data.name;
+    className.description = data.description;
+    className.studentTypes = data.studentTypes;
+    className.save();
+    return className;
+  } catch (error) {
+    console.log("edit class data fail");
+  }
 };
 
 const deleteClass = (id) => {
@@ -39,7 +43,7 @@ const deleteClass = (id) => {
 const tranformClassData = async (className) => {
   try {
     const classData = await ClassName.findOne({ _id: className._id })
-      .populate("student_types")
+      .populate("studentTypes")
       .populate("address", "_id address description");
     return classData;
   } catch (error) {

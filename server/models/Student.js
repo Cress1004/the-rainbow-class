@@ -5,13 +5,7 @@ const studentSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
-    birthday: Date,
-    parent_name: String,
-    address : {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Address',
-    },
-    phone_number: String,
+    parentName: String,
     class: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'ClassName',
@@ -20,7 +14,7 @@ const studentSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Favourite',
     }],
-    student_types: [{
+    studentTypes: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'StudentType',
     }]

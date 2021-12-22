@@ -76,7 +76,7 @@ function AddVolunteer(props) {
             onChange={(e) =>
               setVolunteerData({
                 ...volunteerData,
-                phone_number: e.target.value,
+                phoneNumber: e.target.value,
               })
             }
           />
@@ -96,7 +96,7 @@ function AddVolunteer(props) {
           >
             {classes.map((option) => (
               <Option key={option._id} value={option._id}>
-                {option.class_name}
+                {option.name}
               </Option>
             ))}
           </Select>

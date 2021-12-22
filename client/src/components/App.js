@@ -23,6 +23,8 @@ import AddStudent from "./views/User/UserPage/Student/AddStudent";
 import StudentList from "./views/User/UserPage/Student/StudentList";
 import EditStudent from "./views/User/UserPage/Student/EditStudent";
 import StudentDetail from "./views/User/UserPage/Student/StudentDetail";
+import Profile from "./views/User/Profile/Profile";
+import EditProfile from "./views/User/Profile/EditProfile";
 
 class App extends Component {
   render() {
@@ -32,6 +34,16 @@ class App extends Component {
           <Route exact path="/">
             <Redirect to="/dashboard" />
           </Route>
+          <DashboardLayoutRoute
+            path="/profile"
+            exact={true}
+            component={Auth(Profile, null)}
+          />
+           <DashboardLayoutRoute
+            path="/profile/edit"
+            exact={true}
+            component={Auth(EditProfile, null)}
+          />
           <DashboardLayoutRoute
             path="/users"
             component={Auth(UserPage, null)}

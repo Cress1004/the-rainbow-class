@@ -6,7 +6,7 @@ const storeUser = async (data) => {
     const newUser = await new User({
       name: data.name,
       email: data.email,
-      image: process.env.DEFAULT_IMAGE_PATH + 'default-image.jpg',
+      image: process.env.DEFAULT_IMAGE_PATH + "default-image.jpg",
       password: process.env.DEFAULT_PASSWORD,
     });
     return newUser.save();
@@ -29,6 +29,26 @@ const updateUserData = async (data) => {
 
 const deleteUser = async (id) => {
   return await User.deleteOne({ _id: id });
+};
+
+const getUserData = async (id) => {
+  try {
+    return await User.findOne({ _id: id });
+  } catch (error) {
+    console.log("can't get user infor");
+  }
+};
+
+const updateProfile = async (data) => {
+  try {
+    const user =  await User.findOne({ _id: data._id });
+    user.email = data.email;
+    user.phone_number = data.phone_number;
+    user.name = data.name;
+    return user.save();
+  } catch (error) {
+    console.log("can't update user infor");
+  }
 }
 
-module.exports = { storeUser, updateUserData, deleteUser };
+module.exports = { storeUser, updateUserData, deleteUser, getUserData, updateProfile };

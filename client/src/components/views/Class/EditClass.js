@@ -3,10 +3,24 @@ import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Axios from "axios";
 import { useParams } from "react-router";
-import { Form, Input, Select, Button, message } from "antd";
+import {
+  Form,
+  Input,
+  Select,
+  Button,
+  message,
+  Row,
+  Col,
+  TimePicker,
+  Icon,
+} from "antd";
+import { transformScheduleTime } from "../../common/transformData";
+import { generateKey } from "../../common/function";
+import { WEEKDAY, formatTimeSchedule } from "../../common/constant";
 
 const { TextArea } = Input;
 const { Option } = Select;
+const { Item } = Form;
 
 function EditClass(props) {
   const { t } = useTranslation();
@@ -28,6 +42,8 @@ function EditClass(props) {
   const [classData, setClassData] = useState({});
   const [province, setProvince] = useState({});
   const [studentTypes, setStudentTypes] = useState([]);
+  const [defaultSchedule, setDefaultSchedule] = useState([]);
+
   useEffect(() => {
     Axios.post("/api/common-data/location", null).then((response) => {
       if (response.data.success) {
@@ -54,10 +70,14 @@ function EditClass(props) {
           description: data.description,
           address: data.address,
           studentTypes: data.studentTypes.map((type) => type._id),
+          defaultSchedule: data.defaultSchedule,
         });
-        setProvince(data.address.address.province);
-        setDistrict(data.address.address.district);
-        setWard(data.address.address.ward);
+        if (data.address) {
+          setProvince(data.address.address.province);
+          setDistrict(data.address.address.district);
+          setWard(data.address.address.ward);
+        }
+        setDefaultSchedule(data.defaultSchedule);
       } else {
         alert(t("fail_to_get_api"));
       }
@@ -130,15 +150,36 @@ function EditClass(props) {
     });
   };
 
+  const addNewDefaultSchedule = () => {
+    const newSchedule = {
+      key: generateKey(),
+      dayOfWeek: undefined,
+      startTime: undefined,
+      endTime: undefined,
+    };
+    setDefaultSchedule([...defaultSchedule, newSchedule]);
+  };
+
+  const deleteDefaultSchedule = (e, key) => {
+    const newSchedule = defaultSchedule.filter(
+      (schedule) => schedule.key !== key
+    );
+    setDefaultSchedule(newSchedule);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    Axios.post(`/api/classes/${id}/edit`, classData).then((response) => {
-      if (response.data.success) {
-        openMessage();
-        history.push(`/classes/${id}`);
-      } else {
-        alert(t("fail_to_get_api"));
-      }
+    setClassData({ ...classData, defaultSchedule: defaultSchedule });
+    setClassData((classData) => {
+      Axios.post(`/api/classes/${id}/edit`, classData).then((response) => {
+        if (response.data.success) {
+          openMessage();
+          history.push(`/classes/${id}`);
+        } else {
+          alert(t("fail_to_get_api"));
+        }
+      });
+      return classData;
     });
   };
 
@@ -149,12 +190,94 @@ function EditClass(props) {
     }, 1000);
   };
 
+  const schedule = (
+    <>
+      {defaultSchedule &&
+        defaultSchedule.map((item) => (
+          <Row>
+            <Col span={8}>
+              <Select
+                value={item.dayOfWeek}
+                showSearch
+                placeholder={t("input_weekday")}
+                onChange={(value) =>
+                  setDefaultSchedule(
+                    [...defaultSchedule].map((object) => {
+                      if (object.key === item.key) {
+                        return {
+                          ...object,
+                          dayOfWeek: value,
+                        };
+                      } else return object;
+                    })
+                  )
+                }
+              >
+                {WEEKDAY.map((option) => (
+                  <Option key={option.key} value={option.key}>
+                    {option.text}
+                  </Option>
+                ))}
+              </Select>
+            </Col>
+            <Col span={2}>{t("from")}</Col>
+            <Col span={5}>
+              <TimePicker
+                format={formatTimeSchedule}
+                value={transformScheduleTime(item.startTime)}
+                placeholder="time_placeholder"
+                onChange={(e) =>
+                  setDefaultSchedule(
+                    [...defaultSchedule].map((object) => {
+                      if (object.key === item.key) {
+                        return {
+                          ...object,
+                          startTime: e._d ? e._d : undefined,
+                        };
+                      } else return object;
+                    })
+                  )
+                }
+              />
+            </Col>
+            <Col span={2}>{t("to")}</Col>
+            <Col span={5}>
+              <TimePicker
+                format={formatTimeSchedule}
+                value={transformScheduleTime(item.endTime)}
+                placeholder="time_placeholder"
+                onChange={(e) =>
+                  setDefaultSchedule(
+                    [...defaultSchedule].map((object) => {
+                      if (object.key === item.key) {
+                        return {
+                          ...object,
+                          endTime: e._d ? e._d : undefined,
+                        };
+                      } else return object;
+                    })
+                  )
+                }
+              />
+            </Col>
+            <Col span={2}>
+              <Icon
+                type="close-circle"
+                onClick={(e) => deleteDefaultSchedule(e, item.key)}
+              />
+            </Col>
+          </Row>
+        ))}
+      <Icon type="plus-circle" onClick={addNewDefaultSchedule} />
+    </>
+  );
+
   return (
     <div className="edit-class">
       <div className="edit-class__title">{t("edit_class")}</div>
       {classData && (
         <Form {...layout} name="control-hooks" onSubmit={handleSubmit}>
-          <Form.Item
+          <Item
             name="name"
             label={t("class_name")}
             rules={[
@@ -168,8 +291,8 @@ function EditClass(props) {
                 setClassData({ ...classData, name: e.target.value })
               }
             />
-          </Form.Item>
-          <Form.Item
+          </Item>
+          <Item
             name="description"
             label={t("description")}
             rules={[
@@ -183,8 +306,8 @@ function EditClass(props) {
                 setClassData({ ...classData, description: e.target.value })
               }
             />
-          </Form.Item>
-          <Form.Item name="address" label={t("address")}>
+          </Item>
+          <Item name="address" label={t("address")}>
             <Select
               showSearch
               style={{
@@ -245,8 +368,8 @@ function EditClass(props) {
               placeholder={t("input_specific_address")}
               onChange={(e) => handleChangeAddressDescription(e)}
             />
-          </Form.Item>
-          <Form.Item name="studentType" label={t("student_type")}>
+          </Item>
+          <Item name="studentType" label={t("student_type")}>
             <Select
               mode="multiple"
               showSearch
@@ -257,7 +380,9 @@ function EditClass(props) {
               }}
               value={classData.studentTypes}
               placeholder={t("input_student_type")}
-              onChange={(value) => setClassData({...classData, studentTypes: value})}
+              onChange={(value) =>
+                setClassData({ ...classData, studentTypes: value })
+              }
             >
               {studentTypes.map((option) => (
                 <Option key={option._id} value={option._id}>
@@ -265,13 +390,15 @@ function EditClass(props) {
                 </Option>
               ))}
             </Select>
-          </Form.Item>
-          {/* Lịch học */}
-          <Form.Item {...tailLayout}>
+          </Item>
+          <Item name="time" label={t("default_schedule")}>
+            {schedule}
+          </Item>
+          <Item {...tailLayout}>
             <Button type="primary" htmlType="submit" onClick={openMessage}>
               {t("update")}
             </Button>
-          </Form.Item>
+          </Item>
         </Form>
       )}
     </div>

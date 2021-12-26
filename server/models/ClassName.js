@@ -1,32 +1,59 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const classSchema = mongoose.Schema({
+const classSchema = mongoose.Schema(
+  {
     name: String,
-    description: String, 
+    description: String,
     address: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Address'
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Address",
     },
-    students: [{
+    students: [
+      {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Student',
-    }],
+        ref: "Student",
+      },
+    ],
     classMonitor: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
-    studentTypes: [{
+    studentTypes: [
+      {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'StudentType'
-    }],
-    volunteers: [{
+        ref: "StudentType",
+      },
+    ],
+    volunteers: [
+      {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    }]
-}, {
-    timestamps: {createdAt: 'created_at', updatedAt: 'updated_at', deleteAt: 'delete_at'}
-  });
+        ref: "User",
+      },
+    ],
+    schedules: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Schedule",
+      },
+    ],
+    defaultSchedule: [
+      {
+        key: Number,
+        startTime: Date,
+        endTime: Date,
+        dayOfWeek: Number, // 0: All, 1: Sun, 2: Mon, ... , 7: Sat
+      },
+    ],
+  },
+  {
+    timestamps: {
+      createdAt: "created_at",
+      updatedAt: "updated_at",
+      deleteAt: "delete_at",
+    },
+  }
+);
 
-const ClassName = mongoose.model('ClassName', classSchema, 'classes');
+const ClassName = mongoose.model("ClassName", classSchema, "classes");
 
-module.exports = { ClassName }
+module.exports = { ClassName };

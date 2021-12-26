@@ -16,6 +16,7 @@ const storeClass = (data) => {
     description: data.description,
     studentTypes: data.studentTypes,
     address: newAddress._id,
+    defaultSchedule: data.defaultSchedule,
   };
   const newClass = new ClassName(classData);
   newClass.save();
@@ -25,10 +26,16 @@ const storeClass = (data) => {
 const editClass = async (data) => {
   try {
     const className = await findClassById({ _id: data._id });
-    await updateAddress(className.address, data.address);
+    if (className.address) {
+      await updateAddress(className.address, data.address);
+    } else {
+      const address = await storeAddress(data.address);
+      className.address = address._id;
+    }
     className.name = data.name;
     className.description = data.description;
     className.studentTypes = data.studentTypes;
+    className.defaultSchedule = data.defaultSchedule;
     className.save();
     return className;
   } catch (error) {

@@ -1,11 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Axios from "axios";
-import { Form, Input, Select, Button, message } from "antd";
+import {
+  Form,
+  Input,
+  Select,
+  Button,
+  message,
+  TimePicker,
+  Icon,
+  Row,
+  Col,
+} from "antd";
 import { useHistory } from "react-router";
+import { WEEKDAY, formatTimeSchedule } from "../../common/constant";
+import { generateKey } from "../../common/function";
+import { transformScheduleTime } from "../../common/transformData";
 
 const { Option } = Select;
 const { TextArea } = Input;
+const { Item } = Form;
 
 function AddClass(props) {
   const { t } = useTranslation();
@@ -26,6 +40,14 @@ function AddClass(props) {
   const [wards, setWards] = useState([]);
   const [ward, setWard] = useState("");
   const [classData, setClassData] = useState([]);
+  const [defaultSchedule, setDefaultSchedule] = useState([
+    {
+      key: generateKey(),
+      dayOfWeek: undefined,
+      startTime: "00:00",
+      endTime: "00:00",
+    },
+  ]);
 
   const [studentTypes, setStudentTypes] = useState([]);
   useEffect(() => {
@@ -112,17 +134,119 @@ function AddClass(props) {
     });
   };
 
+  const addNewDefaultSchedule = () => {
+    const newSchedule = {
+      key: generateKey(),
+      dayOfWeek: undefined,
+      startTime: "00:00",
+      endTime: "00:00",
+    };
+    setDefaultSchedule([...defaultSchedule, newSchedule]);
+  };
+
+  const deleteDefaultSchedule = (e, key) => {
+    const newSchedule = defaultSchedule.filter(
+      (schedule) => schedule.key !== key
+    );
+    setDefaultSchedule(newSchedule);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    Axios.post("/api/classes/add-class", classData).then((response) => {
-      if (response.data.success) {
-        openMessage();
-        history.push("/classes")
-      } else {
-        alert(t("fail_to_get_api"));
-      }
+    setClassData({ ...classData, defaultSchedule: defaultSchedule });
+    setClassData((classData) => {
+      Axios.post("/api/classes/add-class", classData).then((response) => {
+        if (response.data.success) {
+          openMessage();
+          history.push("/classes");
+        } else {
+          alert(t("fail_to_get_api"));
+        }
+      });
+      return classData;
     });
   };
+
+  const schedule = (
+    <>
+      {defaultSchedule.map((item) => (
+        <Row>
+          <Col span={8}>
+            <Select
+              value={item.dayOfWeek}
+              showSearch
+              placeholder={t("input_weekday")}
+              onChange={(value) =>
+                setDefaultSchedule(
+                  [...defaultSchedule].map((object) => {
+                    if (object.key === item.key) {
+                      return {
+                        ...object,
+                        dayOfWeek: value,
+                      };
+                    } else return object;
+                  })
+                )
+              }
+            >
+              {WEEKDAY.map((option) => (
+                <Option key={option.key} value={option.key}>
+                  {option.text}
+                </Option>
+              ))}
+            </Select>
+          </Col>
+          <Col span={2}>{t("from")}</Col>
+          <Col span={5}>
+            <TimePicker
+              format={formatTimeSchedule}
+              value={transformScheduleTime(item.startTime)}
+              placeholder="time_placeholder"
+              onChange={(e) =>
+                setDefaultSchedule(
+                  [...defaultSchedule].map((object) => {
+                    if (object.key === item.key) {
+                      return {
+                        ...object,
+                        startTime: e._d ? e._d : undefined,
+                      };
+                    } else return object;
+                  })
+                )
+              }
+            />
+          </Col>
+          <Col span={2}>{t("to")}</Col>
+          <Col span={5}>
+            <TimePicker
+              format={formatTimeSchedule}
+              value={transformScheduleTime(item.endTime)}
+              placeholder="time_placeholder"
+              onChange={(e) =>
+                setDefaultSchedule(
+                  [...defaultSchedule].map((object) => {
+                    if (object.key === item.key) {
+                      return {
+                        ...object,
+                        endTime: e._d ? e._d : undefined,
+                      };
+                    } else return object;
+                  })
+                )
+              }
+            />
+          </Col>
+          <Col span={2}>
+            <Icon
+              type="close-circle"
+              onClick={(e) => deleteDefaultSchedule(e, item.key)}
+            />
+          </Col>
+        </Row>
+      ))}
+      <Icon type="plus-circle" onClick={addNewDefaultSchedule} />
+    </>
+  );
 
   const openMessage = () => {
     message.loading({ content: t("loading"), key });
@@ -135,7 +259,7 @@ function AddClass(props) {
     <div className="add-class">
       <div className="add-class__title">{t("add_class")}</div>
       <Form {...layout} name="control-hooks" onSubmit={handleSubmit}>
-        <Form.Item
+        <Item
           name="name"
           label={t("class_name")}
           rules={[
@@ -144,10 +268,12 @@ function AddClass(props) {
         >
           <Input
             placeholder={t("input_class_name")}
-            onChange={(e) => setClassData({...classData , name: e.target.value})}
+            onChange={(e) =>
+              setClassData({ ...classData, name: e.target.value })
+            }
           />
-        </Form.Item>
-        <Form.Item
+        </Item>
+        <Item
           name="description"
           label={t("description")}
           rules={[
@@ -156,10 +282,12 @@ function AddClass(props) {
         >
           <TextArea
             placeholder={t("input_description")}
-            onChange={(e) => setClassData({...classData, description: e.target.value})}
+            onChange={(e) =>
+              setClassData({ ...classData, description: e.target.value })
+            }
           />
-        </Form.Item>
-        <Form.Item name="address" label={t("address")}>
+        </Item>
+        <Item name="address" label={t("address")}>
           <Select
             showSearch
             style={{
@@ -216,8 +344,8 @@ function AddClass(props) {
             placeholder={t("input_specific_address")}
             onChange={(e) => handleChangeAddressDescription(e)}
           />
-        </Form.Item>
-        <Form.Item name="studentType" label={t("student_type")}>
+        </Item>
+        <Item name="studentType" label={t("student_type")}>
           <Select
             mode="multiple"
             showSearch
@@ -227,7 +355,9 @@ function AddClass(props) {
               marginRight: "10px",
             }}
             placeholder={t("input_student_type")}
-            onChange={(value) => setClassData({...classData, studentTypes: value})}
+            onChange={(value) =>
+              setClassData({ ...classData, studentTypes: value })
+            }
           >
             {studentTypes.map((option) => (
               <Option key={option._id} value={option._id}>
@@ -235,13 +365,15 @@ function AddClass(props) {
               </Option>
             ))}
           </Select>
-        </Form.Item>
-        {/* Lịch học */}
-        <Form.Item {...tailLayout}>
+        </Item>
+        <Item name="time" label={t("default_schedule")}>
+          {schedule}
+        </Item>
+        <Item {...tailLayout}>
           <Button type="primary" htmlType="submit" onClick={openMessage}>
             {t("register")}
           </Button>
-        </Form.Item>
+        </Item>
       </Form>
     </div>
   );

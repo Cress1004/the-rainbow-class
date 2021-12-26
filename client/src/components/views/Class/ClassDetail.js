@@ -8,6 +8,7 @@ import Axios from "axios";
 import {
   getArrayLength,
   transformAddressData,
+  transformDefaultSchedule,
   transformStudentTypes,
 } from "../../common/transformData";
 
@@ -103,7 +104,16 @@ function ClassDetail(props) {
               <Col span={4} className="label-text">
                 {t("schedule_time")}
               </Col>
-              <Col span={16}>{t("schedule_time")}</Col>
+              <Col span={16}>
+                {classData.defaultSchedule && classData.defaultSchedule.length
+                  ? classData.defaultSchedule.map((item) => {
+                      const data = transformDefaultSchedule(item);
+                      return (
+                        <Row>{`${data.dayOfWeek} ${data.startTime} - ${data.endTime}`}</Row>
+                      );
+                    })
+                  : t("not_have_default_schedule")}
+              </Col>
             </Row>
             <hr />
             <Row>

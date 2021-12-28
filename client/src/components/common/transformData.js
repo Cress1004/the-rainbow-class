@@ -1,5 +1,5 @@
 import moment from "moment";
-import { WEEKDAY, formatTimeSchedule } from "./constant";
+import { WEEKDAY, FORMAT_TIME_SCHEDULE, FORMAT_DATE } from "./constant";
 
 export function transformAddressData(data) {
   return data && data.address && data.description
@@ -20,16 +20,36 @@ export function transformStudentTypesToArray(data) {
 }
 
 export function transformScheduleTime(time) {
-  return time ? moment(new Date(time), formatTimeSchedule) : undefined;
+  return time ? moment(new Date(time), FORMAT_TIME_SCHEDULE) : undefined;
 }
 
-export function transformDefaultSchedule(data) {
+export function transformSchedule(data) {
   return data
     ? {
         key: data.key,
         dayOfWeek: WEEKDAY.find((item) => item.key === data.dayOfWeek).text,
-        endTime: moment(new Date(data.endTime)).format(formatTimeSchedule),
-        startTime: moment(new Date(data.startTime)).format(formatTimeSchedule),
+        endTime: moment(new Date(data.endTime)).format(FORMAT_TIME_SCHEDULE),
+        startTime: moment(new Date(data.startTime)).format(FORMAT_TIME_SCHEDULE),
       }
     : undefined;
+}
+
+export function transformLessonTime(data) {
+  return data
+  ? {
+      key: data.key,
+      dayOfWeek: WEEKDAY.find((item) => item.key === data.dayOfWeek).text,
+      endTime: moment(new Date(data.endTime)).format(FORMAT_TIME_SCHEDULE),
+      startTime: moment(new Date(data.startTime)).format(FORMAT_TIME_SCHEDULE),
+      date: moment(new Date(data.endTime)).format(FORMAT_DATE),
+    }
+  : undefined;
+}
+
+export function transformLessonTimeToString(data) {
+  const newData = transformLessonTime(data)
+  console.log(newData);
+  return newData
+  ? `${newData.date} ${newData.startTime} - ${newData.endTime}`
+  : "";
 }

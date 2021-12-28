@@ -13,7 +13,7 @@ import {
   Col,
 } from "antd";
 import { useHistory } from "react-router";
-import { WEEKDAY, formatTimeSchedule } from "../../common/constant";
+import { WEEKDAY, FORMAT_TIME_SCHEDULE } from "../../common/constant";
 import { generateKey } from "../../common/function";
 import { transformScheduleTime } from "../../common/transformData";
 
@@ -199,7 +199,7 @@ function AddClass(props) {
           <Col span={2}>{t("from")}</Col>
           <Col span={5}>
             <TimePicker
-              format={formatTimeSchedule}
+              format={FORMAT_TIME_SCHEDULE}
               value={transformScheduleTime(item.startTime)}
               placeholder="time_placeholder"
               onChange={(e) =>
@@ -219,7 +219,7 @@ function AddClass(props) {
           <Col span={2}>{t("to")}</Col>
           <Col span={5}>
             <TimePicker
-              format={formatTimeSchedule}
+              format={FORMAT_TIME_SCHEDULE}
               value={transformScheduleTime(item.endTime)}
               placeholder="time_placeholder"
               onChange={(e) =>

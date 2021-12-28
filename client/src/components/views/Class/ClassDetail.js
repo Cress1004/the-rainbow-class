@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Row, Col, Button, Modal } from "antd";
+import { Row, Col, Button, Modal, Icon, Menu, Dropdown } from "antd";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router";
 import Axios from "axios";
 import {
   getArrayLength,
   transformAddressData,
-  transformDefaultSchedule,
+  transformSchedule,
   transformStudentTypes,
 } from "../../common/transformData";
+import LessonList from "./Lesson/LessonList";
 
 function ClassDetail(props) {
   const { t } = useTranslation();
@@ -18,6 +19,7 @@ function ClassDetail(props) {
   const { id } = useParams();
   const [classData, setClassData] = useState({});
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [lessons, setLessons] = useState([]);
 
   useEffect(() => {
     Axios.post(`/api/classes/${id}`, { classId: id }).then((response) => {
@@ -27,6 +29,15 @@ function ClassDetail(props) {
         alert(t("fail_to_get_api"));
       }
     });
+    Axios.post(`/api/classes/${id}/get-lessons`, { classId: id }).then(
+      (response) => {
+        if (response.data.success) {
+          setLessons(response.data.lessons);
+        } else {
+          alert(t("fail_to_get_api"));
+        }
+      }
+    );
   }, [t, id]);
 
   const openDeletePopup = () => {
@@ -51,90 +62,108 @@ function ClassDetail(props) {
     setConfirmDelete(false);
   };
 
+  const menu = (
+    <Menu>
+      <Menu.Item key="0">
+        <Link to={`/classes/${id}/edit`}>{t("edit_class")}</Link>
+      </Menu.Item>
+      <Menu.Item key="1">{t("assign_student_to_class")}</Menu.Item>
+      <Menu.Divider />
+      <Menu.Item
+        key="3"
+        className="class-detail__delete-class"
+        onClick={openDeletePopup}
+      >
+        {t("delete_class")}
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <div>
       <div className="class-detail">
-        <div className="class-detail__title">{t("class_detail")}</div>
         <Row>
-          <Col span={14} />
-          <Col span={6}>
-            <Button type="primary" className="edit-class-button">
-              <Link to={`/classes/${id}/edit`}>{t("edit_class")}</Link>
-            </Button>
-          </Col>
-          <Col span={4}>
-            <Button
-              type="danger"
-              className="delete-class-button"
-              onClick={openDeletePopup}
-            >
-              {t("delete_class")}
-            </Button>
-          </Col>
+          <div className="class-detail__title">{t("class_detail")}</div>
+          <div className="class-detail__more-option">
+            <Dropdown overlay={menu} trigger={["click"]}>
+              <a
+                className="ant-dropdown-link"
+                onClick={(e) => e.preventDefault()}
+              >
+                <Icon type="more" />
+              </a>
+            </Dropdown>
+          </div>
         </Row>
-        {classData && (
-          <>
-            <Row>
-              <Col span={4} className="label-text">
-                {t("class_name")}
-              </Col>
-              <Col span={16}>{classData.name}</Col>
-            </Row>
-            <Row>
-              <Col span={4} className="label-text">
-                {t("description")}
-              </Col>
-              <Col span={16}>{classData.description}</Col>
-            </Row>
-            <Row>
-              <Col span={4} className="label-text">
-                {t("address")}
-              </Col>
-              <Col span={16}>{transformAddressData(classData.address)}</Col>
-            </Row>
-            <Row>
-              <Col span={4} className="label-text">
-                {t("target_student")}
-              </Col>
-              <Col span={16}>
-                {transformStudentTypes(classData.studentTypes)}
-              </Col>
-            </Row>
-            <Row>
-              <Col span={4} className="label-text">
-                {t("schedule_time")}
-              </Col>
-              <Col span={16}>
-                {classData.defaultSchedule && classData.defaultSchedule.length
-                  ? classData.defaultSchedule.map((item) => {
-                      const data = transformDefaultSchedule(item);
-                      return (
-                        <Row>{`${data.dayOfWeek} ${data.startTime} - ${data.endTime}`}</Row>
-                      );
-                    })
-                  : t("not_have_default_schedule")}
-              </Col>
-            </Row>
-            <hr />
-            <Row>
-              <Col span={12}>
-                {t("number_of_volunteers")}:{" "}
-                {getArrayLength(classData.volunteers)}
-              </Col>
-              <Col span={12}>
-                {t("number_of_students")}: {getArrayLength(classData.students)}
-              </Col>
-            </Row>
-            <Row>
-              <Col span={12}>
-                {t("class_monitor")}: {classData.classMonitor}
-              </Col>
-              <Col span={12}>
-                {t("sub_class_monitor")}: {classData.subClassMonitor}
-              </Col>
-            </Row>
-          </>
-        )}
+        <div className="class-detail__info-area">
+          {" "}
+          {classData && (
+            <>
+              <Row>
+                <Col span={4} className="label-text">
+                  {t("class_name")}
+                </Col>
+                <Col span={16}>{classData.name}</Col>
+              </Row>
+              <Row>
+                <Col span={4} className="label-text">
+                  {t("description")}
+                </Col>
+                <Col span={16}>{classData.description}</Col>
+              </Row>
+              <Row>
+                <Col span={4} className="label-text">
+                  {t("address")}
+                </Col>
+                <Col span={16}>{transformAddressData(classData.address)}</Col>
+              </Row>
+              <Row>
+                <Col span={4} className="label-text">
+                  {t("target_student")}
+                </Col>
+                <Col span={16}>
+                  {transformStudentTypes(classData.studentTypes)}
+                </Col>
+              </Row>
+              <Row>
+                <Col span={4} className="label-text">
+                  {t("schedule_time")}
+                </Col>
+                <Col span={16}>
+                  {classData.defaultSchedule && classData.defaultSchedule.length
+                    ? classData.defaultSchedule.map((item) => {
+                        const data = transformSchedule(item);
+                        return (
+                          <Row>{`${data.dayOfWeek} ${data.startTime} - ${data.endTime}`}</Row>
+                        );
+                      })
+                    : t("not_have_default_schedule")}
+                </Col>
+              </Row>
+              <hr />
+              <Row>
+                <Col span={12}>
+                  {t("number_of_volunteers")}:{" "}
+                  {getArrayLength(classData.volunteers)}
+                </Col>
+                <Col span={12}>
+                  {t("number_of_students")}:{" "}
+                  {getArrayLength(classData.students)}
+                </Col>
+              </Row>
+              <Row>
+                <Col span={12}>
+                  {t("class_monitor")}: {classData.classMonitor}
+                </Col>
+                <Col span={12}>
+                  {t("sub_class_monitor")}: {classData.subClassMonitor}
+                </Col>
+              </Row>
+            </>
+          )}
+          <hr />
+          {lessons.length ? <LessonList id={id} lessons={lessons} /> : null}
+        </div>
         <Modal
           title={t("modal_confirm_delete_class_title")}
           visible={confirmDelete}

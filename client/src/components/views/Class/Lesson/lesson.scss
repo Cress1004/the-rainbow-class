@@ -1,0 +1,9 @@
+@import "../../style/app.scss";
+.add-lesson {
+  &__title {
+    font-size: $title-font-size;
+    font-weight: $title-font-weight;
+    color: $primary-color;
+    padding-bottom: $title-padding-bottom;
+  }
+}

@@ -25,6 +25,7 @@ import EditStudent from "./views/User/UserPage/Student/EditStudent";
 import StudentDetail from "./views/User/UserPage/Student/StudentDetail";
 import Profile from "./views/User/Profile/Profile";
 import EditProfile from "./views/User/Profile/EditProfile";
+import AddLesson from "./views/Class/Lesson/AddLesson";
 
 class App extends Component {
   render() {
@@ -61,6 +62,11 @@ class App extends Component {
             path="/classes/:id"
             exact={true}
             component={Auth(ClassDetail, null)}
+          />
+           <DashboardLayoutRoute
+            path="/classes/:id/lessons/add"
+            exact={true}
+            component={Auth(AddLesson, null)}
           />
           <DashboardLayoutRoute
             path="/classes/:id/edit"

@@ -1,8 +1,13 @@
-const { storeNewLesson, getLessonsByCLass } = require("../repository/lessonRepository");
+const {
+  storeNewLesson,
+  getLessonsByCLass,
+  findLesson,
+  deleteLesson,
+} = require("../repository/lessonRepository");
 
 const addLesson = async (req, res) => {
   try {
-    const lesson = await storeNewLesson(req.body);
+    await storeNewLesson(req.body);
     res.status(200).json({ success: true });
   } catch (error) {
     res.status(400).send(error);
@@ -18,7 +23,27 @@ const getListLessonByClass = async (req, res) => {
   }
 };
 
+const getLessonData = async (req, res) => {
+  try {
+    const lessonData = await findLesson(req.body.lessonId);
+    res.status(200).json({ success: true, lessonData: lessonData });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+const deleteLessonData = async (req, res) => {
+  try {
+    await deleteLesson(req.body.lessonId);
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 module.exports = {
   addLesson,
-  getListLessonByClass
+  getListLessonByClass,
+  getLessonData,
+  deleteLessonData,
 };

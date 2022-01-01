@@ -23,6 +23,14 @@ const updateAddress = async (id, data) => {
   }
 };
 
+const deleteAddress = async (id) => {
+  try {
+    return Address.findByIdAndDelete({ _id: id });
+  } catch (error) {
+    console.log("delete address fail");
+  }
+};
+
 const findAllStudentTypes = () => {
   return StudentType.find({});
 };
@@ -40,7 +48,7 @@ const removeStudentType = async (id) => {
   try {
     return StudentType.findByIdAndDelete({ _id: id });
   } catch (error) {
-    console.log("update address fail");
+    console.log("delete student type fail");
   }
 };
 
@@ -52,4 +60,5 @@ module.exports = {
   storeAddress,
   updateAddress,
   removeStudentType,
+  deleteAddress
 };

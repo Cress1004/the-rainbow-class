@@ -1,4 +1,4 @@
-const { Schedule } = require("../models/Schedule")
+const { Schedule } = require("../models/Schedule");
 const { storeAddress } = require("./commonRepository");
 
 const storeNewSchedule = async (data) => {
@@ -7,10 +7,18 @@ const storeNewSchedule = async (data) => {
     const newSchedule = await new Schedule(data);
     newSchedule.address = address._id;
     newSchedule.save();
-    return newSchedule; 
+    return newSchedule;
   } catch (error) {
     console.log("fail to store Schedule");
   }
 };
 
-module.exports = { storeNewSchedule };
+const deleteSchedule = async (id) => {
+  try {
+    return Schedule.findByIdAndDelete({ _id: id });
+  } catch (error) {
+    console.log("fail to store Schedule");
+  }
+};
+
+module.exports = { storeNewSchedule, deleteSchedule };

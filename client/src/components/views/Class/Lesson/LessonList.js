@@ -67,7 +67,7 @@ function LessonList(props) {
 
   const renderData = (text, key) => (
     <Link
-      to={`${id}/lessons/${key.id}`}
+      to={`/classes/${id}/lessons/${key.id}`}
       className={"text-in-table-row"}
     >
       <span>{text}</span>

@@ -41,15 +41,26 @@ export function transformLessonTime(data) {
       dayOfWeek: WEEKDAY.find((item) => item.key === data.dayOfWeek).text,
       endTime: moment(new Date(data.endTime)).format(FORMAT_TIME_SCHEDULE),
       startTime: moment(new Date(data.startTime)).format(FORMAT_TIME_SCHEDULE),
-      date: moment(new Date(data.endTime)).format(FORMAT_DATE),
+      date: moment(new Date(data.date)).format(FORMAT_DATE),
     }
   : undefined;
 }
 
 export function transformLessonTimeToString(data) {
   const newData = transformLessonTime(data)
-  console.log(newData);
   return newData
   ? `${newData.date} ${newData.startTime} - ${newData.endTime}`
   : "";
+}
+
+export function convertTimeStringToMoment(string) {
+  return string
+  ? moment(string, FORMAT_TIME_SCHEDULE)
+  : undefined;
+}
+
+export function convertDateStringToMoment(string) {
+  return string
+  ? moment(string, FORMAT_DATE)
+  : undefined;
 }

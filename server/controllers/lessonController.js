@@ -3,6 +3,7 @@ const {
   getLessonsByCLass,
   findLesson,
   deleteLesson,
+  editLesson,
 } = require("../repository/lessonRepository");
 
 const addLesson = async (req, res) => {
@@ -41,9 +42,19 @@ const deleteLessonData = async (req, res) => {
   }
 };
 
+const editLessonData = async (req, res) => {
+  try {
+    await editLesson(req.body.lessonData);
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 module.exports = {
   addLesson,
   getListLessonByClass,
   getLessonData,
   deleteLessonData,
+  editLessonData,
 };

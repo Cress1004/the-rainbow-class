@@ -25,6 +25,7 @@ const scheduleSchema = mongoose.Schema({
   ],
   time: {
     key: Number,
+    date: Date,
     startTime: Date,
     endTime: Date,
     dayOfWeek: Number, // 0: All, 1: Sun, 2: Mon, ... , 7: Sat

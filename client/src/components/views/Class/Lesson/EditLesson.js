@@ -14,17 +14,27 @@ import { useHistory, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Axios from "axios";
 import "./lesson.scss";
-import { WEEKDAY, FORMAT_TIME_SCHEDULE, OFFLINE_OPTION, ONLINE_OPTION } from "../../../common/constant";
-import { transformScheduleTime } from "../../../common/transformData";
+import {
+  WEEKDAY,
+  FORMAT_TIME_SCHEDULE,
+  OFFLINE_OPTION,
+  ONLINE_OPTION,
+  FORMAT_DATE,
+} from "../../../common/constant";
+import {
+  convertTimeStringToMoment,
+  convertDateStringToMoment,
+} from "../../../common/transformData";
 import { generateKey } from "../../../common/function";
+import moment from "moment";
 
 const { Item } = Form;
 const { TextArea } = Input;
 const { Option } = Select;
 
-function AddLesson(props) {
+function EditLesson(props) {
   const { t } = useTranslation();
-  const { id } = useParams();
+  const { id, lessonId } = useParams();
   const history = useHistory();
   const [location, setLocation] = useState([]);
   const [province, setProvince] = useState("");
@@ -33,7 +43,6 @@ function AddLesson(props) {
   const [wards, setWards] = useState([]);
   const [ward, setWard] = useState("");
   const [defaultSchedule, setDefaultSchedule] = useState({});
-  const [teachOption, setTeachOption] = useState(OFFLINE_OPTION);
   const [classData, setClassData] = useState({});
   const [lessonData, setLessonData] = useState({});
   const [time, setTime] = useState({});
@@ -50,12 +59,6 @@ function AddLesson(props) {
       if (response.data.success) {
         const data = response.data.classData;
         setClassData(data);
-        if (data.address) {
-          setLessonData({ ...lessonData, address: data.address });
-          setProvince(data.address.address.province);
-          setDistrict(data.address.address.district);
-          setWard(data.address.address.ward);
-        }
       } else {
         alert(t("fail_to_get_api"));
       }
@@ -63,6 +66,31 @@ function AddLesson(props) {
     Axios.post("/api/common-data/location", null).then((response) => {
       if (response.data.success) {
         setLocation(response.data.location);
+      } else {
+        alert(t("fail_to_get_api"));
+      }
+    });
+    Axios.post(`/api/classes/${id}/lessons/${lessonId}`, {
+      lessonId: lessonId,
+    }).then((response) => {
+      if (response.data.success) {
+        const data = response.data.lessonData;
+        setLessonData({
+          _id: data._id,
+          scheduleId: data.schedule._id,
+          teachOption: data.schedule.teachOption,
+          linkOnline: data.schedule.linkOnline,
+          title: data.title,
+          description: data.description,
+          address: data.schedule.address,
+          // paticipants: data.schedule.paticipants,
+        });
+        setTime(data.schedule.time);
+        if (data.schedule.address) {
+          setProvince(data.schedule.address.address.province);
+          setDistrict(data.schedule.address.address.district);
+          setWard(data.schedule.address.address.ward);
+        }
       } else {
         alert(t("fail_to_get_api"));
       }
@@ -111,7 +139,7 @@ function AddLesson(props) {
     const currentWard = wards.find((item) => value === item.id);
     setWard({ id: currentWard.id, name: currentWard.name });
     setLessonData({
-      ...setLessonData,
+      ...lessonData,
       address: {
         address: {
           province: lessonData.address.address.province,
@@ -135,26 +163,26 @@ function AddLesson(props) {
     });
   };
 
-  const onChangeDate = (e) => {
+  const onChangeDate = (e, dateString) => {
     const dayOfWeek = e._d.toString().split(" ")[0];
     const key = WEEKDAY.find((item) => item.value === dayOfWeek).key;
-    const time = classData.defaultSchedule.find(
+    const newTime = classData.defaultSchedule.find(
       (item) => item.dayOfWeek === key
     );
-    setDefaultSchedule(time);
-    time
+    setDefaultSchedule(newTime);
+    newTime
       ? setTime({
-          key: time.key,
-          date: e._d,
-          startTime: time.startTime,
-          endTime: time.endTime,
-          dayOfWeek: time.dayOfWeek,
+          key: newTime.key,
+          date: dateString,
+          startTime: newTime.startTime,
+          endTime: newTime.endTime,
+          dayOfWeek: newTime.dayOfWeek,
         })
       : setTime({
           ...time,
           key: generateKey(),
+          date: dateString,
           dayOfWeek: key,
-          date: e._d,
           endTime: undefined,
           startTime: undefined,
         });
@@ -165,13 +193,14 @@ function AddLesson(props) {
     setLessonData({
       ...lessonData,
       classId: id,
-      teachOption: teachOption,
       time: time,
     });
     setLessonData((lessonData) => {
-      Axios.post(`/api/classes/${id}/add-lesson`, lessonData).then((response) => {
+      Axios.post(`/api/classes/${id}/lessons/${lessonId}/edit`, {
+        lessonData: lessonData,
+      }).then((response) => {
         if (response.data.success) {
-          history.push(`/classes/${id}`);
+          // history.push(`/classes/${id}`);
         } else {
           alert(t("fail_to_get_api"));
         }
@@ -239,7 +268,7 @@ function AddLesson(props) {
       </Select>
       <Input
         placeholder={t("input_specific_address")}
-        value={classData.address ? classData.address.description : undefined}
+        value={lessonData.address ? lessonData.address.description : undefined}
         onChange={(e) => handleChangeAddressDescription(e)}
       />
     </Item>
@@ -253,6 +282,7 @@ function AddLesson(props) {
       <Form {...layout} name="control-hooks" onSubmit={handleSubmit}>
         <Item name="name" label={t("lesson_name")}>
           <Input
+            value={lessonData.title}
             placeholder={t("input_lesson_name")}
             onChange={(e) =>
               setLessonData({ ...lessonData, title: e.target.value })
@@ -261,6 +291,7 @@ function AddLesson(props) {
         </Item>
         <Item name="description" label={t("description")}>
           <TextArea
+            value={lessonData.description}
             placeholder={t("input_description")}
             onChange={(e) =>
               setLessonData({ ...lessonData, description: e.target.value })
@@ -269,19 +300,22 @@ function AddLesson(props) {
         </Item>
         <Item name="teachOption" label={t("teach_option")}>
           <Radio.Group
-            defaultValue={teachOption}
-            onChange={(e) => setTeachOption(e.target.value)}
+            value={lessonData.teachOption}
+            onChange={(e) =>
+              setLessonData({ ...lessonData, teachOption: e.target.value })
+            }
           >
             <Radio value={OFFLINE_OPTION}>{t("offline")}</Radio>
             <Radio value={ONLINE_OPTION}>{t("online")}</Radio>
           </Radio.Group>
         </Item>
-        {teachOption === OFFLINE_OPTION ? (
+        {lessonData.teachOption === OFFLINE_OPTION ? (
           <div>{offlineAddress}</div>
         ) : (
           <div>
             <Item name="linkOnline" label={t("link_online")}>
               <Input
+                value={lessonData.linkOnline}
                 placeholder="input_link"
                 onChange={(e) =>
                   setLessonData({ ...lessonData, linkOnline: e.target.value })
@@ -290,39 +324,42 @@ function AddLesson(props) {
             </Item>
           </div>
         )}
-        <Item name="time" label={t("default_schedule")}>
-          <Col span={8}>
-            <DatePicker
-              onChange={onChangeDate}
-              placeholder="date_placeholder"
-            />
-          </Col>
-          <Col span={2}>{t("from")}</Col>
-          <Col span={5}>
-            <TimePicker
-              format={FORMAT_TIME_SCHEDULE}
-              value={time ? transformScheduleTime(time.startTime) : undefined}
-              placeholder="time_placeholder"
-              onChange={(e) =>
-                setTime({ ...time, startTime: e._d ? e._d : undefined })
-              }
-            />
-          </Col>
-          <Col span={2}>{t("to")}</Col>
-          <Col span={5}>
-            <TimePicker
-              format={FORMAT_TIME_SCHEDULE}
-              value={time ? transformScheduleTime(time.endTime) : undefined}
-              placeholder="time_placeholder"
-              onChange={(e) =>
-                setTime({ ...time, endTime: e._d ? e._d : undefined })
-              }
-            />
-          </Col>
-        </Item>
+        {time && (
+          <Item name="time" label={t("default_schedule")}>
+            <Col span={8}>
+              <DatePicker
+                value={convertDateStringToMoment(time.date)}
+                onChange={onChangeDate}
+                placeholder="date_placeholder"
+              />
+            </Col>
+            <Col span={2}>{t("from")}</Col>
+            <Col span={5}>
+              <TimePicker
+                format={FORMAT_TIME_SCHEDULE}
+                value={convertTimeStringToMoment(time.startTime)}
+                placeholder="time_placeholder"
+                onChange={(e) =>
+                  setTime({ ...time, startTime: e._d ? e._d : undefined })
+                }
+              />
+            </Col>
+            <Col span={2}>{t("to")}</Col>
+            <Col span={5}>
+              <TimePicker
+                format={FORMAT_TIME_SCHEDULE}
+                value={convertTimeStringToMoment(time.endTime)}
+                placeholder="time_placeholder"
+                onChange={(e) =>
+                  setTime({ ...time, endTime: e._d ? e._d : undefined })
+                }
+              />
+            </Col>
+          </Item>
+        )}
         <Item {...tailLayout}>
           <Button type="primary" htmlType="submit">
-            {t("register")}
+            {t("update")}
           </Button>
         </Item>
       </Form>
@@ -330,4 +367,4 @@ function AddLesson(props) {
   );
 }
 
-export default AddLesson;
+export default EditLesson;

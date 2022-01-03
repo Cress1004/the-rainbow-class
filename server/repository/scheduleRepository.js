@@ -1,5 +1,5 @@
 const { Schedule } = require("../models/Schedule");
-const { storeAddress } = require("./commonRepository");
+const { storeAddress, updateAddress } = require("./commonRepository");
 
 const storeNewSchedule = async (data) => {
   try {
@@ -21,4 +21,25 @@ const deleteSchedule = async (id) => {
   }
 };
 
-module.exports = { storeNewSchedule, deleteSchedule };
+const updateSchedule = async (data) => {
+  try {
+    const schedule = await Schedule.findOne({ _id: data._id });
+    if (schedule.address) {
+      await updateAddress(schedule.address, data.address);
+    } else {
+      const address = await storeAddress({
+        address: data.address.address,
+        description: data.address.description
+      });
+      schedule.address = address._id;
+    }
+    schedule.teachOption = data.teachOption;
+    schedule.linkOnline = data.linkOnline;
+    schedule.time = data.time;
+    return schedule.save();
+  } catch (error) {
+    console.log("fail to store Schedule");
+  }
+}
+
+module.exports = { storeNewSchedule, deleteSchedule, updateSchedule };

@@ -1,6 +1,10 @@
 const { Lesson } = require("../models/Lesson");
 const { deleteAddress } = require("./commonRepository");
-const { storeNewSchedule, deleteSchedule } = require("./scheduleRepository");
+const {
+  storeNewSchedule,
+  deleteSchedule,
+  updateSchedule,
+} = require("./scheduleRepository");
 
 const storeNewLesson = async (data) => {
   try {
@@ -60,9 +64,28 @@ const deleteLesson = async (lessonId) => {
   }
 };
 
+const editLesson = async (lessonData) => {
+  try {
+    const lesson = await findLesson(lessonData._id);
+    lesson.title = lessonData.title;
+    lesson.description = lessonData.description;
+    await updateSchedule({
+      _id: lessonData.scheduleId,
+      teachOption: lessonData.teachOption,
+      linkOnline: lessonData.linkOnline,
+      address: lessonData.address,
+      time: lessonData.time,
+    });
+    lesson.save();
+  } catch (error) {
+    console.log("fail to delete lesson");
+  }
+};
+
 module.exports = {
   storeNewLesson,
   getLessonsByCLass,
   findLesson,
   deleteLesson,
+  editLesson,
 };

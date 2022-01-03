@@ -27,6 +27,7 @@ import Profile from "./views/User/Profile/Profile";
 import EditProfile from "./views/User/Profile/EditProfile";
 import AddLesson from "./views/Class/Lesson/AddLesson";
 import LessonDetail from "./views/Class/Lesson/LessonDetail";
+import EditLesson from "./views/Class/Lesson/EditLesson";
 
 class App extends Component {
   render() {
@@ -41,7 +42,7 @@ class App extends Component {
             exact={true}
             component={Auth(Profile, null)}
           />
-           <DashboardLayoutRoute
+          <DashboardLayoutRoute
             path="/profile/edit"
             exact={true}
             component={Auth(EditProfile, null)}
@@ -64,15 +65,20 @@ class App extends Component {
             exact={true}
             component={Auth(ClassDetail, null)}
           />
-           <DashboardLayoutRoute
+          <DashboardLayoutRoute
             path="/classes/:id/lessons/add"
             exact={true}
             component={Auth(AddLesson, null)}
           />
-            <DashboardLayoutRoute
+          <DashboardLayoutRoute
             path="/classes/:id/lessons/:lessonId"
             exact={true}
             component={Auth(LessonDetail, null)}
+          />
+          <DashboardLayoutRoute
+            path="/classes/:id/lessons/:lessonId/edit"
+            exact={true}
+            component={Auth(EditLesson, null)}
           />
           <DashboardLayoutRoute
             path="/classes/:id/edit"
@@ -106,12 +112,12 @@ class App extends Component {
             path="/add-student"
             component={Auth(AddStudent, null)}
           />
-            <DashboardLayoutRoute
+          <DashboardLayoutRoute
             path="/students"
             exact={true}
             component={Auth(StudentList, null)}
           />
-           <DashboardLayoutRoute
+          <DashboardLayoutRoute
             path="/students/:id"
             exact={true}
             component={Auth(StudentDetail, null)}

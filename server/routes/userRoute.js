@@ -10,6 +10,7 @@ const {
   getUserProfile,
   updateUserProfile,
   updateAvatar,
+  changePassword,
 } = require("../controllers/authController");
 
 router.get("/auth", auth, authentication);
@@ -19,6 +20,8 @@ router.get("/logout", auth, logout);
 router.post("/profile", auth, getUserProfile);
 router.post("/profile/edit", auth, updateUserProfile);
 router.post("/change-avatar", auth, updateAvatar);
+router.post("/change-password", auth, changePassword);
+
 //router.get("/reset-password", auth, resetPassword);
 
 module.exports = router;

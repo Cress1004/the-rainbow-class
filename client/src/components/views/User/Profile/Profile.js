@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Row, Col, Button, Form } from "antd";
+import { Row, Col, Button, Form, Modal, Input } from "antd";
 import { Link } from "react-router-dom";
 import Axios from "axios";
 import "./profile.scss";
@@ -13,19 +13,24 @@ const layout = {
 };
 
 function Profile() {
-  const [userData, setUserData] = useState({});
-  const [showChange, setShowChange] = useState(false);
   const { t } = useTranslation();
   const userId = localStorage.getItem("userId");
+  const [userData, setUserData] = useState({});
+  const [password, setPassword] = useState({});
+  const [showChangeAvatar, setShowChangeAvatar] = useState(false);
+  const [showChangePassword, setShowChangePassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(undefined);
 
   useEffect(() => {
     Axios.post(`/api/users/profile`, { userId: userId }).then((response) => {
       if (response.data.success) {
-        setUserData(response.data.userData);
+        const data = response.data.userData;
+        setUserData(data);
       } else {
         alert(t("fail_to_get_api"));
       }
     });
+    setPassword({ userId: userId });
   }, [t, userId]);
 
   const handleChangeAvatar = (e) => {
@@ -40,7 +45,7 @@ function Profile() {
     }).then((response) => {
       if (response.data.success) {
         setUserData({ ...userData, image: response.data.link });
-        setShowChange(true);
+        setShowChangeAvatar(true);
       } else {
         alert(t("fail_to_upload_avatar"));
       }
@@ -50,7 +55,7 @@ function Profile() {
   const submitSaveAvatar = () => {
     Axios.post(`/api/users/change-avatar`, userData).then((response) => {
       if (response.data.success) {
-        setShowChange(false);
+        setShowChangeAvatar(false);
         window.location.reload();
       } else {
         alert(t("fail_to_save_avatar"));
@@ -59,8 +64,33 @@ function Profile() {
   };
 
   const changeAvatar = () => {
-    setShowChange(true);
-  }
+    setShowChangeAvatar(true);
+  };
+
+  const submitChangePassword = () => {
+    Axios.post(`/api/users/change-password`, password).then((response) => {
+      if (response.data.success) {
+        const result = response.data.result;
+        console.log(result);
+        if(!result) {
+          setShowChangePassword(false);
+          setPassword({userId: userId})
+        };
+      } else {
+        alert(t("fail_to_save_avatar"));
+      }
+    });
+  };
+
+  const checkConfirmPassword = (e) => {
+    const value = e.target.value;
+    if (password.newPass == value) {
+      setPassword({ ...password, passConfirm: value });
+      setErrorMessage(undefined);
+    } else {
+      setErrorMessage(t("confirm_password_is_not_match"));
+    }
+  };
 
   //Ngay sinh, dia chi
   return (
@@ -74,7 +104,11 @@ function Profile() {
           </Button>
         </Col>
         <Col span={5}>
-          <Button type="primary" className="profile__change-password-button">
+          <Button
+            type="primary"
+            className="profile__change-password-button"
+            onClick={() => setShowChangePassword(true)}
+          >
             {t("change_password")}
           </Button>
         </Col>
@@ -90,13 +124,14 @@ function Profile() {
                 alt="user-avatar"
                 id="file"
               ></img>
-              {showChange ? (
+              {showChangeAvatar ? (
                 <div>
                   <input type="file" onChange={(e) => handleChangeAvatar(e)} />
                   <Button onClick={submitSaveAvatar}>{t("save_avatar")}</Button>
                 </div>
-              ) : 
-              <Button onClick={changeAvatar}>{t('change_avatar')}</Button>}
+              ) : (
+                <Button onClick={changeAvatar}>{t("change_avatar")}</Button>
+              )}
             </Col>
             <Col className="profile__right-block" span={18}>
               <Form {...layout} className="profile__info-area">
@@ -111,6 +146,53 @@ function Profile() {
           </Row>
         </>
       )}
+      <Modal
+        className="profile__change-password"
+        title={t("modal_change_password")}
+        visible={showChangePassword}
+        onOk={submitChangePassword}
+        onCancel={() => setShowChangePassword(false)}
+        okText={t("change_password")}
+        cancelText={t("cancel")}
+        footer={[
+          <Button
+            type="primary"
+            onClick={submitChangePassword }
+            disabled={errorMessage}
+            className={
+              errorMessage ? "disable-submit-button" : "enable-submit-lesson"
+            }
+          >
+            {t("change_password")}
+          </Button>,
+          <Button onClick={() => setShowChangePassword(false)}>
+            {t("cancel")}
+          </Button>,
+        ]}
+      >
+        <Form {...layout} className="profile__change-password-form">
+          <Item label={t("old_password")}>
+            <Input
+              type="password"
+              onChange={(e) =>
+                setPassword({ ...password, oldPass: e.target.value })
+              }
+            />
+          </Item>
+          <Item label={t("new_password")}>
+            <Input
+              type="password"
+              onChange={(e) =>
+                setPassword({ ...password, newPass: e.target.value })
+              }
+            />
+          </Item>
+          <Item label={t("confirm_new_password")}>
+            <Input type="password" onChange={(e) => checkConfirmPassword(e)} />
+          </Item>
+          <span className="error__modal-error">{errorMessage}</span>
+        </Form>
+      </Modal>
     </div>
   );
 }

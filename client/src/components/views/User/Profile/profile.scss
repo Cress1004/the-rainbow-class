@@ -46,3 +46,8 @@
     }
 }
 
+.disable-submit-button {
+    background-color: $disable-color;
+    border-color: $disable-color;
+}
+

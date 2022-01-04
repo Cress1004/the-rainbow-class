@@ -1,17 +1,18 @@
 require("dotenv").config();
+const bcrypt = require("bcrypt");
 const { User } = require("../models/User");
 const { storeAddress, updateAddress } = require("./commonRepository");
 
 const storeUser = async (data) => {
   try {
-    const address = storeAddress(data.address)
+    const address = storeAddress(data.address);
     const newUser = await new User({
       name: data.name,
       email: data.email,
       image: process.env.DEFAULT_IMAGE_PATH + "default-image.jpg",
       password: process.env.DEFAULT_PASSWORD,
       phoneNumber: data.phoneNumber,
-      address: address._id
+      address: address._id,
     });
     return newUser.save();
   } catch (error) {
@@ -44,7 +45,10 @@ const deleteUser = async (id) => {
 
 const getUserData = async (id) => {
   try {
-    return await User.findOne({ _id: id }).populate("address", "address description");
+    return await User.findOne({ _id: id }).populate(
+      "address",
+      "address description"
+    );
   } catch (error) {
     console.log("can't get user infor");
   }
@@ -52,7 +56,7 @@ const getUserData = async (id) => {
 
 const updateProfile = async (data) => {
   try {
-    const user =  await User.findOne({ _id: data._id });
+    const user = await User.findOne({ _id: data._id });
     user.email = data.email;
     user.name = data.name;
     user.phoneNumber = data.phoneNumber;
@@ -66,16 +70,44 @@ const updateProfile = async (data) => {
   } catch (error) {
     console.log("can't update user infor");
   }
-}
+};
 
 const changeAvatar = async (data) => {
   try {
-    const user =  await User.findOne({ _id: data._id });
+    const user = await User.findOne({ _id: data._id });
     user.image = data.image;
     return user.save();
   } catch (error) {
     console.log("can't update user avatar");
   }
-}
+};
 
-module.exports = { storeUser, updateUserData, deleteUser, getUserData, updateProfile, changeAvatar };
+const checkChangePassword = async (data) => {
+  try {
+    var message;
+    const user = await User.findOne({ _id: data.userId }, (err, user) => {
+      user.comparePassword(data.oldPass, (err, isMatch) => {
+        if (!isMatch) {
+          message = "Old Password is not correct!";
+        } else {
+          user.password = data.newPass;
+          user.save();
+          return;
+        }
+      });
+      return message;
+    });
+  } catch (error) {
+    console.log("can't update password");
+  }
+};
+
+module.exports = {
+  storeUser,
+  updateUserData,
+  deleteUser,
+  getUserData,
+  updateProfile,
+  changeAvatar,
+  checkChangePassword,
+};

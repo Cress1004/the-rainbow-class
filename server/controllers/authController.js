@@ -6,6 +6,7 @@ const {
   getUserData,
   updateProfile,
   changeAvatar,
+  checkChangePassword,
 } = require("../repository/userRepository");
 
 const authentication = (req, res) => {
@@ -120,6 +121,15 @@ const updateAvatar = async (req, res) => {
   }
 };
 
+const changePassword = async (req, res) => {
+  try {
+    console.log(await checkChangePassword(req.body));
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 module.exports = {
   authentication,
   login,
@@ -129,4 +139,5 @@ module.exports = {
   getUserProfile,
   updateUserProfile,
   updateAvatar,
+  changePassword,
 };

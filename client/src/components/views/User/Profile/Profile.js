@@ -14,7 +14,7 @@ const layout = {
 
 function Profile() {
   const [userData, setUserData] = useState({});
-  const [changeButton, setChangeButton] = useState(false);
+  const [showChange, setShowChange] = useState(false);
   const { t } = useTranslation();
   const userId = localStorage.getItem("userId");
 
@@ -40,7 +40,7 @@ function Profile() {
     }).then((response) => {
       if (response.data.success) {
         setUserData({ ...userData, image: response.data.link });
-        setChangeButton(true);
+        setShowChange(true);
       } else {
         alert(t("fail_to_upload_avatar"));
       }
@@ -50,13 +50,17 @@ function Profile() {
   const submitSaveAvatar = () => {
     Axios.post(`/api/users/change-avatar`, userData).then((response) => {
       if (response.data.success) {
-        setChangeButton(false);
+        setShowChange(false);
         window.location.reload();
       } else {
         alert(t("fail_to_save_avatar"));
       }
     });
   };
+
+  const changeAvatar = () => {
+    setShowChange(true);
+  }
 
   //Ngay sinh, dia chi
   return (
@@ -86,10 +90,13 @@ function Profile() {
                 alt="user-avatar"
                 id="file"
               ></img>
-              <input type="file" onChange={(e) => handleChangeAvatar(e)} />
-              {changeButton ? (
-                <Button onClick={submitSaveAvatar}>{t("save_avatar")}</Button>
-              ) : null}
+              {showChange ? (
+                <div>
+                  <input type="file" onChange={(e) => handleChangeAvatar(e)} />
+                  <Button onClick={submitSaveAvatar}>{t("save_avatar")}</Button>
+                </div>
+              ) : 
+              <Button onClick={changeAvatar}>{t('change_avatar')}</Button>}
             </Col>
             <Col className="profile__right-block" span={18}>
               <Form {...layout} className="profile__info-area">

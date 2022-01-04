@@ -2,6 +2,7 @@
 /build
 data/node_modules
 data/package-lock.json
+package-lock.json
 dev.js
 .env
 request.http

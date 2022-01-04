@@ -79,11 +79,6 @@ function LessonList(props) {
         <div className="lesson-list__title">
           {t("lesson_list")} ({`${data.length} ${t("class")}`})
         </div>
-        <div className="lesson-list__add-lesson">
-          <Button type="primary">
-            <Link to={`/classes/${id}/lessons/add`}>{t("add_lesson")}</Link>
-          </Button>
-        </div>
       </Row>
       <Table columns={columns} dataSource={data} />
     </div>

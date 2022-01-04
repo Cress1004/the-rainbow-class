@@ -2,7 +2,11 @@ require("dotenv").config();
 
 const { User } = require("../models/User");
 const nodemailer = require("nodemailer");
-const { getUserData, updateProfile } = require("../repository/userRepository");
+const {
+  getUserData,
+  updateProfile,
+  changeAvatar,
+} = require("../repository/userRepository");
 
 const authentication = (req, res) => {
   res.status(200).json({
@@ -107,6 +111,15 @@ const updateUserProfile = async (req, res) => {
   }
 };
 
+const updateAvatar = async (req, res) => {
+  try {
+    await changeAvatar(req.body);
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 module.exports = {
   authentication,
   login,
@@ -115,4 +128,5 @@ module.exports = {
   resetPassword,
   getUserProfile,
   updateUserProfile,
+  updateAvatar,
 };

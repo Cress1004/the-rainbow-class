@@ -68,4 +68,14 @@ const updateProfile = async (data) => {
   }
 }
 
-module.exports = { storeUser, updateUserData, deleteUser, getUserData, updateProfile };
+const changeAvatar = async (data) => {
+  try {
+    const user =  await User.findOne({ _id: data._id });
+    user.image = data.image;
+    return user.save();
+  } catch (error) {
+    console.log("can't update user avatar");
+  }
+}
+
+module.exports = { storeUser, updateUserData, deleteUser, getUserData, updateProfile, changeAvatar };

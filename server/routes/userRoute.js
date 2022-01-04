@@ -9,6 +9,7 @@ const {
   resetPassword,
   getUserProfile,
   updateUserProfile,
+  updateAvatar,
 } = require("../controllers/authController");
 
 router.get("/auth", auth, authentication);
@@ -17,6 +18,7 @@ router.post("/login", login);
 router.get("/logout", auth, logout);
 router.post("/profile", auth, getUserProfile);
 router.post("/profile/edit", auth, updateUserProfile);
+router.post("/change-avatar", auth, updateAvatar);
 //router.get("/reset-password", auth, resetPassword);
 
 module.exports = router;

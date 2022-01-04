@@ -162,6 +162,11 @@ function ClassDetail(props) {
             </>
           )}
           <hr />
+          <div className="class-detail__add-lesson">
+            <Button type="primary">
+              <Link to={`/classes/${id}/lessons/add`}>{t("add_lesson")}</Link>
+            </Button>
+          </div>
           {lessons.length ? <LessonList id={id} lessons={lessons} /> : null}
         </div>
         <Modal

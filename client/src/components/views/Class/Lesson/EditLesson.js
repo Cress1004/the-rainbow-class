@@ -325,7 +325,7 @@ function EditLesson(props) {
           </div>
         )}
         {time && (
-          <Item name="time" label={t("default_schedule")}>
+          <Item name="time" label={t("schedule")}>
             <Col span={8}>
               <DatePicker
                 value={convertDateStringToMoment(time.date)}

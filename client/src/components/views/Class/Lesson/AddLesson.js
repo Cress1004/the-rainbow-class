@@ -290,7 +290,7 @@ function AddLesson(props) {
             </Item>
           </div>
         )}
-        <Item name="time" label={t("default_schedule")}>
+        <Item name="time" label={t("schedule")}>
           <Col span={8}>
             <DatePicker
               onChange={onChangeDate}

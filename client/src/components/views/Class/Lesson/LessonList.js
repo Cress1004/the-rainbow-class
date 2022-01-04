@@ -77,7 +77,7 @@ function LessonList(props) {
     <div className="lesson-list">
       <Row>
         <div className="lesson-list__title">
-          {t("lesson_list")} ({`${data.length} ${t("class")}`})
+          {t("lesson_list")} ({`${data.length} ${t("lesson")}`})
         </div>
       </Row>
       <Table columns={columns} dataSource={data} />

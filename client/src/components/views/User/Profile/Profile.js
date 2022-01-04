@@ -148,7 +148,7 @@ function Profile() {
       )}
       <Modal
         className="profile__change-password"
-        title={t("modal_change_password")}
+        title={t("modal_change_password_title")}
         visible={showChangePassword}
         onOk={submitChangePassword}
         onCancel={() => setShowChangePassword(false)}

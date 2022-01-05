@@ -29,7 +29,7 @@ const updateSchedule = async (data) => {
     } else {
       const address = await storeAddress({
         address: data.address.address,
-        description: data.address.description
+        description: data.address.description,
       });
       schedule.address = address._id;
     }
@@ -40,6 +40,36 @@ const updateSchedule = async (data) => {
   } catch (error) {
     console.log("fail to store Schedule");
   }
-}
+};
 
-module.exports = { storeNewSchedule, deleteSchedule, updateSchedule };
+const addPaticipant = async (data) => {
+  try {
+    const schedule = await Schedule.findOne({ _id: data.scheduleId });
+    schedule.paticipants.push(data.userId);
+    schedule.save();
+  } catch (error) {
+    console.log("fail to add paticipant");
+  }
+};
+
+const removePaticipant = async (data) => {
+  try {
+    const schedule = await Schedule.findOne({ _id: data.scheduleId });
+    Promise.all(
+      schedule.paticipants.filter((userId) => userId != data.userId)
+    ).then((result) => {
+      schedule.paticipants = result;
+      schedule.save();
+    });
+  } catch (error) {
+    console.log("fail to remove paticipant");
+  }
+};
+
+module.exports = {
+  storeNewSchedule,
+  deleteSchedule,
+  updateSchedule,
+  addPaticipant,
+  removePaticipant,
+};

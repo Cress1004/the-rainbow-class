@@ -32,4 +32,14 @@
       color: #fff;
     }
   }
+  &__paticipant-list-title {
+    font-size: $sub-title-font-size;
+    font-weight: $title-font-weight;
+    color: $primary-color;
+    padding-bottom: $title-padding-bottom;
+    float: left;
+  }
+  &__assign-button {
+    float: right;
+  }
 }

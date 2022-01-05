@@ -12,6 +12,8 @@ const {
   getLessonData,
   deleteLessonData,
   editLessonData,
+  assignLesson,
+  unassignLesson,
 } = require("../controllers/lessonController");
 const { auth } = require("../middleware/auth");
 const router = express.Router();
@@ -26,5 +28,7 @@ router.post("/:id/get-lessons", auth, getListLessonByClass);
 router.post("/:id/lessons/:lessonId", auth, getLessonData);
 router.post("/:id/lessons/:lessonId/delete", auth, deleteLessonData);
 router.post("/:id/lessons/:lessonId/edit", auth, editLessonData);
+router.post("/:id/lessons/:lessonId/assign", auth, assignLesson);
+router.post("/:id/lessons/:lessonId/unassign", auth, unassignLesson);
 
 module.exports = router;

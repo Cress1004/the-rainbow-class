@@ -117,6 +117,12 @@ const resources = {
       confirm_new_password: "Nhập lại mật khẩu mới",
       confirm_password_is_not_match:
         "Mật khẩu xác nhận không khớp với mật khẩu mới",
+      unregister_person: "Chưa đăng kí",
+      unassign_this_schedule: "Hủy đăng kí",
+      assign_this_schedule: "Đăng kí",
+      //noti
+      assign_success: "Đăng kí thành công",
+      unassign_success: "Hủy đăng kí thành công",
       //modal:
       modal_change_password_title: "Đổi mật khẩu",
       modal_confirm_delete_class_title: "Xác nhận xóa lớp học",

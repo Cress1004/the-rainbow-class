@@ -5,6 +5,7 @@ const {
   deleteLesson,
   editLesson,
 } = require("../repository/lessonRepository");
+const { removePaticipant, addPaticipant } = require("../repository/scheduleRepository");
 
 const addLesson = async (req, res) => {
   try {
@@ -51,10 +52,30 @@ const editLessonData = async (req, res) => {
   }
 };
 
+const assignLesson = async (req, res) => {
+  try {
+    await addPaticipant(req.body);
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+const unassignLesson = async (req, res) => {
+  try {
+    await removePaticipant(req.body);
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 module.exports = {
   addLesson,
   getListLessonByClass,
   getLessonData,
   deleteLessonData,
   editLessonData,
+  assignLesson,
+  unassignLesson
 };

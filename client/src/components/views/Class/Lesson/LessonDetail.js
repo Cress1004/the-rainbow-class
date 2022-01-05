@@ -9,13 +9,16 @@ import {
   transformLessonTimeToString,
 } from "../../../common/transformData";
 import { OFFLINE_OPTION } from "../../../common/constant";
+import PaticipantList from "./Paticipant/PaticipantList";
 
 function LessonDetail(props) {
   const { t } = useTranslation();
+  const userId = localStorage.getItem("userId");
   const { id, lessonId } = useParams();
   const history = useHistory();
   const [lessonData, setLessonData] = useState({});
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [assign, setAssign] = useState(false);
 
   useEffect(() => {
     Axios.post(`/api/classes/${id}/lessons/${lessonId}`, {
@@ -24,6 +27,7 @@ function LessonDetail(props) {
       if (response.data.success) {
         const data = response.data.lessonData;
         setLessonData({
+          scheduleId: data.schedule._id,
           teachOption: data.schedule.teachOption,
           linkOnline: data.schedule.linkOnline,
           title: data.title,
@@ -32,6 +36,11 @@ function LessonDetail(props) {
           time: transformLessonTimeToString(data.schedule.time),
           paticipants: data.schedule.paticipants,
         });
+        data.schedule.paticipants.find(
+          (participant) => participant._id == userId
+        )
+          ? setAssign(true)
+          : setAssign(false);
       } else {
         alert(t("fail_to_get_api"));
       }
@@ -58,6 +67,36 @@ function LessonDetail(props) {
 
   const cancelDelete = () => {
     setConfirmDelete(false);
+  };
+
+  const assignSchedule = () => {
+    setAssign(true);
+    Axios.post(`/api/classes/${id}/lessons/${lessonId}}/assign`, {
+      userId: userId,
+      scheduleId: lessonData.scheduleId,
+    }).then((response) => {
+      if (response.data.success) {
+        alert(t("assign_success"));
+        window.location.reload();
+      } else {
+        alert(t("fail_to_delete_lesson"));
+      }
+    });
+  };
+
+  const unassignSchedule = () => {
+    setAssign(false);
+    Axios.post(`/api/classes/${id}/lessons/${lessonId}}/unassign`, {
+      userId: userId,
+      scheduleId: lessonData.scheduleId,
+    }).then((response) => {
+      if (response.data.success) {
+        alert(t("unassign_success"));
+        window.location.reload();
+      } else {
+        alert(t("fail_to_delete_lesson"));
+      }
+    });
   };
 
   const menu = (
@@ -133,15 +172,26 @@ function LessonDetail(props) {
             </Row>
             <hr />
             <Row>
-              <Col span={12}>
-                {`${t("paticipants")} - ${
+              <div className="lesson-detail__paticipant-list-title">
+                {`${t("paticipants")} (${
                   getArrayLength(lessonData.paticipants)
                     ? getArrayLength(lessonData.paticipants)
                     : t("unregister_person")
-                }`}
-              </Col>
+                })`}
+              </div>
+              <div className="lesson-detail__assign-button">
+                {assign ? (
+                  <Button onClick={unassignSchedule}>
+                    {t("unassign_this_schedule")}
+                  </Button>
+                ) : (
+                  <Button type="primary" onClick={assignSchedule}>
+                    {t("assign_this_schedule")}
+                  </Button>
+                )}
+              </div>
             </Row>
-            {/* Paticipant list and assign parson incharge */}
+            <PaticipantList participants={lessonData.paticipants} />
           </>
         )}
       </div>

@@ -66,10 +66,19 @@ const removePaticipant = async (data) => {
   }
 };
 
+const getAllSchedules = async (data) => {
+  try {
+    return await Schedule.find({ paticipants: data });
+  } catch (error) {
+    console.log("fail to get user schedule");
+  }
+};
+
 module.exports = {
   storeNewSchedule,
   deleteSchedule,
   updateSchedule,
   addPaticipant,
   removePaticipant,
+  getAllSchedules,
 };

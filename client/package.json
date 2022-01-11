@@ -12,6 +12,7 @@
     "moment": "^2.24.0",
     "react": "^16.8.6",
     "react-app-polyfill": "^1.0.6",
+    "react-big-calendar": "^0.38.4",
     "react-dom": "^16.8.6",
     "react-i18next": "^11.14.2",
     "react-icons": "^3.7.0",

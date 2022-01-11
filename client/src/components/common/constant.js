@@ -15,3 +15,30 @@ export const FORMAT_DATE = "YYYY/MM/DD";
 export const OFFLINE_OPTION = 1;
 export const ONLINE_OPTION = 0;
 
+export const CALENDAR_COLOR_EVENT = [
+  "#145114",
+  "#67dfc4",
+  "#a1c3c3",
+  "#a1b2c3",
+  "#33ff66",
+  "#66ffff",
+  "#47b264",
+  "#f49d80",
+  "#ff8da1",
+  "#00ebc7",
+  "#ff3333",
+  "#eafdff",
+  "#43249f",
+  "#277b4a",
+  "#4ffff2",
+  "#b6134a",
+  "#b6134a",
+  "#ffc600",
+  "#00ab4c",
+  "#2acaea",
+  "#c0ffee",
+  "#6666aa",
+  "#4666d0",
+  "#c5d2d3",
+  "#9fb5b7",
+];

@@ -53,6 +53,20 @@ const findLesson = async (lessonId) => {
   }
 };
 
+const getLessonBySchedule = async (scheduleId) => {
+  try {
+    return Lesson.findOne({ schedule: scheduleId }).populate([
+      {
+        path: "schedule",
+        populate: { path: "address paticipants" },
+      },
+      { path: "class", select: "name" },
+    ]);
+  } catch (error) {
+    console.log("fail to delete lesson");
+  }
+};
+
 const deleteLesson = async (lessonId) => {
   try {
     const lesson = await findLesson(lessonId);
@@ -88,4 +102,5 @@ module.exports = {
   findLesson,
   deleteLesson,
   editLesson,
+  getLessonBySchedule,
 };

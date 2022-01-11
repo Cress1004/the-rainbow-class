@@ -1,3 +1,4 @@
+const { STUDENT_ROLE } = require("../defaultValues/constant");
 const { Student } = require("../models/Student");
 const { storeUser, updateUserData, deleteUser } = require("./userRepository");
 
@@ -8,6 +9,7 @@ const storeStudent = async (data) => {
       email: data.email,
       phoneNumber: data.phoneNumber,
       address: data.address,
+      role: STUDENT_ROLE
     });
     const newStudent = await new Student({
       parentName: data.parentName,

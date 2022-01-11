@@ -1,6 +1,7 @@
 require("dotenv").config();
 const multer = require("multer");
 const path = require('path');
+const { DEFAULT_AVATAR_PATH } = require("../defaultValues/constant");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -20,7 +21,7 @@ const uploadAvatar = async (req, res) => {
       console.log("fail to upload avatar");
     }
     try {
-      const link = `${process.env.DEFAULT_AVATAR_PATH}${req.file.filename}`;
+      const link = `${DEFAULT_AVATAR_PATH}${req.file.filename}`;
       res.status(200).json({ success: true, link: link });
     } catch (error) {
         console.log("fail to upload avatar");

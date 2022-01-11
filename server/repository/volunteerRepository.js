@@ -1,6 +1,6 @@
 const { Volunteer } = require("../models/Volunteer");
 const { storeUser, updateUserData, deleteUser } = require("./userRepository");
-const { storeAddress, updateAddress } = require("./commonRepository");
+const { VOLUNTEER_ROLE } = require("../defaultValues/constant");
 
 const storeVolunteer = async (data) => {
   try {
@@ -8,6 +8,7 @@ const storeVolunteer = async (data) => {
       name: data.name,
       email: data.email,
       phoneNumber: data.phoneNumber,
+      role: VOLUNTEER_ROLE,
     });
     const newVolunteer = await new Volunteer({
       class: data.class,

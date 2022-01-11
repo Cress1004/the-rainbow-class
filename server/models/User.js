@@ -40,6 +40,7 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    role: Number  // student: 0, volunteer: 1
   },
   {
     timestamps: {

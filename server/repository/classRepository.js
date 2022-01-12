@@ -1,5 +1,9 @@
+const { VOLUNTEER_ROLE } = require("../defaultValues/constant");
 const { ClassName } = require("../models/ClassName");
+const { Volunteer } = require("../models/Volunteer");
 const { storeAddress, updateAddress } = require("./commonRepository");
+const { getLessonsByCLass } = require("./lessonRepository");
+const { getVolunteerByUserId } = require("./volunteerRepository");
 
 const findAllClasses = () => {
   return ClassName.find({});
@@ -47,6 +51,15 @@ const deleteClass = (id) => {
   return ClassName.deleteOne({ _id: id });
 };
 
+const getClassSchedule = async (userId) => {
+  try {
+    const volunteer = await getVolunteerByUserId(userId);
+    return await getLessonsByCLass(volunteer.class);
+  } catch (error) {
+    console.log("cant get class schedule");
+  }
+};
+
 const tranformClassData = async (className) => {
   try {
     const classData = await ClassName.findOne({ _id: className._id })
@@ -54,7 +67,18 @@ const tranformClassData = async (className) => {
       .populate("address", "_id address description");
     return classData;
   } catch (error) {
-    console.log("fail");
+    console.log("transform class data fail");
+  }
+};
+
+const getClassByUserId = async (userId) => {
+  try {
+    const volunteer = await Volunteer.findOne({ user: userId }).populate(
+      "class"
+    );
+    return volunteer.class;
+  } catch (error) {
+    console.log("cant get class By User ID");
   }
 };
 
@@ -65,4 +89,6 @@ module.exports = {
   findClassById,
   deleteClass,
   editClass,
+  getClassSchedule,
+  getClassByUserId,
 };

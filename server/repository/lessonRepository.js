@@ -36,7 +36,7 @@ const storeNewLesson = async (data) => {
 
 const getLessonsByCLass = async (classId) => {
   try {
-    return await Lesson.find({ class: classId }).populate("schedule");
+    return await Lesson.find({ class: classId }).populate("schedule").populate("class");
   } catch (error) {
     console.log("fail to get list lesson by class id");
   }

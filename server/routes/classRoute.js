@@ -15,11 +15,13 @@ const {
   assignLesson,
   unassignLesson,
 } = require("../controllers/lessonController");
+const { getMyClasschedule } = require("../controllers/userController");
 const { auth } = require("../middleware/auth");
 const router = express.Router();
 
 router.post("/add-class", auth, addClass);
 router.post("/get-classes", auth, getClasses);
+router.post("/my-class-schedules", auth, getMyClasschedule);
 router.post("/:id", auth, getClassData);
 router.post("/:id/delete", auth, deleteClassData);
 router.post("/:id/edit", auth, editClassData);

@@ -19,3 +19,11 @@
     bottom: 15px;
     position: absolute;
 }
+
+.class-schedule {
+  &__title {
+    font-size: $title-font-size;
+    font-weight: $title-font-weight;
+    color: $primary-color;
+  }
+}

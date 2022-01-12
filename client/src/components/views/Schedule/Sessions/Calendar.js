@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
-import {
-  transformEventOfLesson,
-  transformLessonTimeToString,
-} from "../../common/transformData";
-import { setColorForClass } from "../../common/function";
+import { setColorForClass } from "../../../common/function";
 import { useTranslation } from "react-i18next";
 import Axios from "axios";
-import { Popover, Icon } from "antd";
+import { Popover } from "antd";
 import { Link } from "react-router-dom";
+import { transformEventOfLesson, transformLessonTimeToString } from "../../../common/transformData";
 
 const localizer = momentLocalizer(moment);
 function MyCalendar(props) {
@@ -29,6 +26,9 @@ function MyCalendar(props) {
       }
     });
   }, []);
+
+console.log(data);
+console.log(classColors)
 
   const content = (event) => (
     <>
@@ -70,6 +70,7 @@ function MyCalendar(props) {
         style={{ height: 700 }}
         events={events}
         eventPropGetter={(event) => {
+          console.log(event.classId)
           const classId = event.classId;
           return {
             style: {

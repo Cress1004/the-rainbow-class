@@ -9,7 +9,7 @@ import DashboardLayoutRoute from "./views/Layouts/DashboardLayoutRoute";
 import UserPage from "./views/User/UserPage/UserPage";
 import LoginPage from "./views/User/LoginPage/LoginPage";
 import ResetPassword from "./views/User/ResetPassword/ResetPassword";
-import Dashboard from "./views/Dashboard/Dashboard";
+import Dashboard from "./views/Schedule/Dashboard/Dashboard";
 import ClassList from "./views/Class/ClassList";
 import VolunteerList from "./views/User/UserPage/Volunteer/VolunteerList";
 import AddVolunteer from "./views/User/UserPage/Volunteer/AddVolunteer";
@@ -28,6 +28,7 @@ import EditProfile from "./views/User/Profile/EditProfile";
 import AddLesson from "./views/Class/Lesson/AddLesson";
 import LessonDetail from "./views/Class/Lesson/LessonDetail";
 import EditLesson from "./views/Class/Lesson/EditLesson";
+import ClassSchedule from "./views/Schedule/ClassSchedule/ClassSchedule";
 
 class App extends Component {
   render() {
@@ -54,6 +55,10 @@ class App extends Component {
           <DashboardLayoutRoute
             path="/dashboard"
             component={Auth(Dashboard, null)}
+          />
+           <DashboardLayoutRoute
+            path="/schedules"
+            component={Auth(ClassSchedule, null)}
           />
           <DashboardLayoutRoute
             path="/classes"

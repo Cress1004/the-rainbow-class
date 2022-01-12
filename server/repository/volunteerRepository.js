@@ -1,6 +1,7 @@
 const { Volunteer } = require("../models/Volunteer");
 const { storeUser, updateUserData, deleteUser } = require("./userRepository");
 const { VOLUNTEER_ROLE } = require("../defaultValues/constant");
+const { User } = require("../models/User");
 
 const storeVolunteer = async (data) => {
   try {
@@ -23,12 +24,30 @@ const storeVolunteer = async (data) => {
 const getVolunteerById = async (id) => {
   try {
     return await Volunteer.findOne({ _id: id })
-    .populate({ path: "class", select: "name" })
-    .populate({
-      path: "user",
-      select: "name email phoneNumber gender image address",
-      populate: { path: "address", select: "address description" },
-    });
+      .populate({ path: "class", select: "name" })
+      .populate({
+        path: "user",
+        select: "name email phoneNumber gender image address",
+        populate: { path: "address", select: "address description" },
+      });
+  } catch (error) {
+    console.log("fail to get volunteer data");
+  }
+};
+
+const getVolunteerByUserId = async (userId) => {
+  try {
+    const user = await User.findOne({ _id: userId });
+    if (user.role == VOLUNTEER_ROLE) {
+      return await Volunteer.findOne({ user: user.id })
+        .populate({ path: "class", select: "name" })
+        .populate({
+          path: "user",
+          select: "name email phoneNumber gender image address",
+          populate: { path: "address", select: "address description" },
+        });
+    }
+    return null;
   } catch (error) {
     console.log("fail to get volunteer data");
   }
@@ -49,11 +68,11 @@ const updateVolunteer = async (data) => {
     const volunteer = await Volunteer.findOne({ _id: data.id });
     await updateUserData({
       id: volunteer.user._id,
-      email:data.email,
+      email: data.email,
       name: data.name,
       gender: data.gender,
       phoneNumber: data.phoneNumber,
-      address: data.address
+      address: data.address,
     });
     return volunteer.save();
   } catch (error) {
@@ -73,4 +92,5 @@ module.exports = {
   getVolunteerById,
   updateVolunteer,
   deleteVolunteer,
+  getVolunteerByUserId
 };

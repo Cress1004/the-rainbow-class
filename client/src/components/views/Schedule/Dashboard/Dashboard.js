@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Axios from "axios";
-import "./dashboard.scss";
-import {
-  convertDateStringToMoment,
-} from "../../common/transformData";
-import MyCalendar from "./Calendar";
+import "../schedule.scss";
+import MyCalendar from "../Sessions/Calendar";
 
 function Dashboard(props) {
   const { t } = useTranslation();
@@ -23,27 +20,6 @@ function Dashboard(props) {
       }
     );
   }, [t, userId]);
-  function getListData(value) {
-    let listData = schedule.filter(
-      (item) =>
-        convertDateStringToMoment(item.time.date).date() === value.date() &&
-        convertDateStringToMoment(item.time.date).month() === value.month() &&
-        convertDateStringToMoment(item.time.date).year() === value.year()
-    );
-    return listData || [];
-  }
-  const dateRender = (value) => {
-    const listData = getListData(value);
-    return (
-      <ul className="events">
-        {listData.map((item, index) => (
-          <li key={item._id}>
-            {/* <Badge status="warning" text={`Lesson`} /> */}
-          </li>
-        ))}
-      </ul>
-    );
-  };
 
   return (
     <div className="dashboard">

@@ -22,6 +22,15 @@ const storeUser = async (data) => {
   }
 };
 
+const getUserDataById = async (id) => {
+  try {
+    const user = await User.findOne({ _id: id });
+    return user;
+  } catch (error) {
+    console.log("fail to update user's basic infor");
+  }
+};
+
 const updateUserData = async (data) => {
   try {
     const user = await User.findOne({ _id: data.id });
@@ -112,4 +121,5 @@ module.exports = {
   updateProfile,
   changeAvatar,
   checkChangePassword,
+  getUserDataById,
 };

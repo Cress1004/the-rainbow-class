@@ -26,4 +26,7 @@
     font-weight: $title-font-weight;
     color: $primary-color;
   }
+  &__filter-input {
+    width: 100%;
+  }
 }

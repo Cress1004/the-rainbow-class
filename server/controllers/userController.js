@@ -1,10 +1,10 @@
-const { getClassSchedule } = require("../repository/classRepository");
+const { getClassScheduleByUserId, getClassByUserId } = require("../repository/classRepository");
 const { getLessonBySchedule } = require("../repository/lessonRepository");
-const { getAllSchedules } = require("../repository/scheduleRepository");
+const { getAllSchedulesByVolunteer } = require("../repository/scheduleRepository");
 
 const getMySchedule = async (req, res) => {
   try {
-    const schedules = await getAllSchedules(req.body.userId);
+    const schedules = await getAllSchedulesByVolunteer(req.body.userId);
     Promise.all(
       schedules.map((schedule) => getLessonBySchedule(schedule._id))
     ).then((result) => {
@@ -17,8 +17,9 @@ const getMySchedule = async (req, res) => {
 
 const getMyClasschedule = async (req, res) => {
   try {
-    const schedule = await getClassSchedule(req.body.userId);
-    res.status(200).json({ success: true, schedule:schedule });
+    const schedule = await getClassScheduleByUserId(req.body.userId);
+    const classData = await getClassByUserId(req.body.userId);
+    res.status(200).json({ success: true, schedule:schedule, classData: classData });
   } catch (error) {
     res.status(400).send(error);
   }

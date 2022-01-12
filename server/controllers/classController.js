@@ -6,6 +6,7 @@ const {
   deleteClass,
   editClass,
 } = require("../repository/classRepository");
+const { getLessonsByCLass } = require("../repository/lessonRepository");
 
 const getClasses = async (req, res) => {
   try {
@@ -58,4 +59,22 @@ const deleteClassData = async (req, res) => {
   }
 };
 
-module.exports = { addClass, getClasses, getClassData, deleteClassData, editClassData };
+const getClassSchedule = async (req, res) => {
+  try {
+    const classId = req.body.classId;
+    const schedule = await getLessonsByCLass(classId);
+    const classData = await findClassById(classId);
+    res.status(200).json({ success: true, schedule: schedule, classData: classData });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+module.exports = {
+  addClass,
+  getClasses,
+  getClassData,
+  deleteClassData,
+  editClassData,
+  getClassSchedule,
+};

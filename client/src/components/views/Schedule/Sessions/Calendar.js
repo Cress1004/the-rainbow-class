@@ -27,9 +27,6 @@ function MyCalendar(props) {
     });
   }, []);
 
-console.log(data);
-console.log(classColors)
-
   const content = (event) => (
     <>
       <p>
@@ -70,7 +67,6 @@ console.log(classColors)
         style={{ height: 700 }}
         events={events}
         eventPropGetter={(event) => {
-          console.log(event.classId)
           const classId = event.classId;
           return {
             style: {

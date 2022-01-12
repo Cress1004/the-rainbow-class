@@ -36,9 +36,15 @@ const storeNewLesson = async (data) => {
 
 const getLessonsByCLass = async (classId) => {
   try {
-    return await Lesson.find({ class: classId }).populate("schedule").populate("class");
+    if (classId == 0) {
+      return await getAllLessonsByClass();
+    } else {
+      return await Lesson.find({ class: classId })
+        .populate("schedule")
+        .populate("class");
+    }
   } catch (error) {
-    console.log("fail to get list lesson by class id");
+    console.log(e);
   }
 };
 
@@ -49,7 +55,7 @@ const findLesson = async (lessonId) => {
       populate: { path: "address paticipants" },
     });
   } catch (error) {
-    console.log("fail to get list lesson by class id");
+    console.log("fail to get lesson by class id");
   }
 };
 
@@ -96,6 +102,17 @@ const editLesson = async (lessonData) => {
   }
 };
 
+const getAllLessonsByClass = async () => {
+  try {
+    return await Lesson.find({}).populate({
+      path: "schedule",
+      populate: { path: "address paticipants" },
+    }).populate("class");
+  } catch (error) {
+    console.log("fail to get user schedule");
+  }
+};
+
 module.exports = {
   storeNewLesson,
   getLessonsByCLass,
@@ -103,4 +120,5 @@ module.exports = {
   deleteLesson,
   editLesson,
   getLessonBySchedule,
+  getAllLessonsByClass,
 };

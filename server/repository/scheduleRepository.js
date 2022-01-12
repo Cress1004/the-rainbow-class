@@ -66,7 +66,7 @@ const removePaticipant = async (data) => {
   }
 };
 
-const getAllSchedules = async (data) => {
+const getAllSchedulesByVolunteer = async (data) => {
   try {
     return await Schedule.find({ paticipants: data });
   } catch (error) {
@@ -80,5 +80,5 @@ module.exports = {
   updateSchedule,
   addPaticipant,
   removePaticipant,
-  getAllSchedules,
+  getAllSchedulesByVolunteer,
 };

@@ -10,7 +10,12 @@ const findAllClasses = () => {
 };
 
 const findClassById = (id) => {
-  return ClassName.findOne({ _id: id });
+  try {
+    if (id == 0) return null;
+    return ClassName.findOne({ _id: id });
+  } catch (error) {
+    console.log("cannot find class by user Id");
+  }
 };
 
 const storeClass = (data) => {
@@ -51,7 +56,7 @@ const deleteClass = (id) => {
   return ClassName.deleteOne({ _id: id });
 };
 
-const getClassSchedule = async (userId) => {
+const getClassScheduleByUserId = async (userId) => {
   try {
     const volunteer = await getVolunteerByUserId(userId);
     return await getLessonsByCLass(volunteer.class);
@@ -89,6 +94,6 @@ module.exports = {
   findClassById,
   deleteClass,
   editClass,
-  getClassSchedule,
+  getClassScheduleByUserId,
   getClassByUserId,
 };

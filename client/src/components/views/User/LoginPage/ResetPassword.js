@@ -2,69 +2,64 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import "./LoginPage.scss";
 import { Modal, Button, Form, Input } from "antd";
-// import { resetPassword } from "../../../../_actions/user_actions";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import Axios from "axios";
+import CustomFlashMessage from "../../FlashMessage/CustomFlashMessage";
+import { STATUS } from "../../../common/constant";
 
 function ResetPassword(props) {
   const { t } = useTranslation();
   const [showPopupResetPassword, setPopupResetPassword] = useState(false);
-  const [resetEmail, setResetEmail] = useState("");
-  // const [formErrorMessage, setFormErrorMessage] = useState("");
-  // const {
-  //   // values,
-  //   // touched,
-  //   // errors,
-  //   // isSubmitting,
-  //   // handleChange,
-  //   // handleBlur,
-  //   // handleSubmit,
-  // } = props;
+  const [message, setMessage] = useState({});
+
+  const formik = useFormik({
+    initialValues: {
+      resetEmail: "",
+    },
+    validationSchema: Yup.object({
+      resetEmail: Yup.string()
+        .email(t("invalid_email_message"))
+        .required("required_email_message"),
+    }),
+    onSubmit: (values) => {
+      Axios.post(`api/users/reset-password`, {
+        resetEmail: values.resetEmail,
+      }).then((response) => {
+        if (response.data.success) {
+          formik.values.resetEmail = "";
+          setPopupResetPassword(false);
+          setMessage({
+            type: STATUS.success,
+            content: t("reset_email_was_sent"),
+            showFlashMessage: true,
+          });
+        } else {
+          setMessage({
+            type: STATUS.error,
+            content: t("some_thing_went_wrong"),
+            showFlashMessage: true,
+          });
+        }
+      });
+    },
+  });
 
   const showModal = () => {
+    setMessage({});
     setPopupResetPassword(true);
   };
 
-  const handleOk = () => {
-    setPopupResetPassword(false);
-    // onSubmit={(values, { setSubmitting }) => {
-    //   setTimeout(() => {
-    //     let dataToSubmit = {
-    //       email: values.email,
-    //       password: values.password,
-    //     };
-
-    //     dispatch(loginUser(dataToSubmit))
-    //       .then((response) => {
-    //         if (response.payload.loginSuccess) {
-    //           window.localStorage.setItem(
-    //             "userId",
-    //             response.payload.userId
-    //           );
-    //           props.history.push("/");
-    //         } else {
-    //           setFormErrorMessage(t("error_email_or_password_message"));
-    //         }
-    //       })
-    //       .catch((err) => {
-    //         setFormErrorMessage(t("fail_to_login"));
-    //         setTimeout(() => {
-    //           setFormErrorMessage("");
-    //         }, 3000);
-    //       });
-    //     setSubmitting(false);
-    //   }, 500);
-    // }}
-  };
-
   const handleCancel = () => {
+    setMessage({});
     setPopupResetPassword(false);
   };
-
-  const handleChange = (event) => {
-    setResetEmail(event.target.value)
-  }
 
   return (
     <div>
+      {message.showFlashMessage ? (
+        <CustomFlashMessage message={message} />
+      ) : null}
       <a
         className="login-form-forgot"
         onClick={showModal}
@@ -73,7 +68,6 @@ function ResetPassword(props) {
         {t("forgot_password")}
       </a>
       <Modal
-        style={{ textAlign: "center" }}
         className="reset-password-modal"
         title={t("reset_password")}
         onCancel={handleCancel}
@@ -82,41 +76,36 @@ function ResetPassword(props) {
           <Button onClick={handleCancel}>{t("cancel")}</Button>,
           <Button
             type="primary"
-            onClick={handleOk}
+            onClick={formik.handleSubmit}
             className={
-              resetEmail === ""
+              formik.errors.resetEmail || formik.values.resetEmail === ""
                 ? "reset-pass-button-disable"
                 : ""
             }
-            disabled={resetEmail === ""}
+            disabled={
+              formik.errors.resetEmail || formik.values.resetEmail === ""
+            }
           >
             {t("ok")}
           </Button>,
         ]}
       >
         <p>{t("reset_password_message")}</p>
-        {/* <Form initialValues={{ resetEmail: "" }}> */}
-          <Form.Item className="input-reset-email">
+        <Form onSubmit={formik.handleSubmit}>
+          <div>
             <Input
-              id="resetEmail"
+              type="email"
               name="resetEmail"
-              value={resetEmail}
-              onChange={handleChange}
-              style={{ width: "60%" }}
-              placeholder={t("reset_email")}
-              rules={[
-                { required: true, message: t("required_email_message") },
-                {
-                  type: "email",
-                  message: t("invalid_email_message"),
-                },
-              ]}
+              value={formik.values.resetEmail}
+              onChange={formik.handleChange}
             />
-            {/* {errors.resetEmail && touched.resetEmail && (
-                    <div className="input-feedback">{errors.email}</div>
-                  )} */}
-          </Form.Item>
-        {/* </Form> */}
+            {formik.errors.resetEmail ? (
+              <p className="custom__error-message">
+                {formik.errors.resetEmail}
+              </p>
+            ) : null}
+          </div>
+        </Form>
       </Modal>
     </div>
   );

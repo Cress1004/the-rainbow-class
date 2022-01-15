@@ -42,3 +42,9 @@ export const CALENDAR_COLOR_EVENT = [
   "#c5d2d3",
   "#9fb5b7",
 ];
+
+export const STATUS = {
+  success: "success",
+  warning: "warning",
+  error: "error",
+}

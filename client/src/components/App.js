@@ -36,8 +36,13 @@ class App extends Component {
       <Suspense fallback={<div>Loading...</div>}>
         <Switch>
           <Route exact path="/">
-            <Redirect to="/dashboard" />
+            <Redirect to="/login" />
           </Route>
+          <DashboardLayoutRoute
+            path="/dashboard"
+            exact={true}
+            component={Auth(Profile, null)}
+          />
           <DashboardLayoutRoute
             path="/profile"
             exact={true}

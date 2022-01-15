@@ -148,6 +148,8 @@ const resources = {
       error_email_or_password_message:
         "Email hoặc mật khẩu bạn nhập vào là không đúng, hãy kiểm tra lại",
       fail_to_login: "Check out your Account or Password again",
+      reset_email_was_sent: "Email cấp lại mật khẩu đã được gửi. Hãy kiểm tra hòm thư!",
+      some_thing_went_wrong: "Lỗi hệ thống!"
     },
   },
 };

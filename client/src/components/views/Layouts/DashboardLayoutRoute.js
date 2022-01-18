@@ -15,20 +15,22 @@ const { Header, Content, Sider } = Layout;
 const DashboardLayout = ({ children, ...rest }) => {
   const { t } = useTranslation();
   const [collapsed, setCollapsed] = useState(false);
-  const [userRole, setUserRole] = useState();
+  const [userRole, setUserRole] = useState({});
   const handleCollapse = (collapsed) => {
     setCollapsed(collapsed);
   };
   const userId = localStorage.getItem("userId");
   useEffect(() => {
-    Axios.post(`/api/users/get-role`, { userId: userId }).then((response) => {
-      if (response.data.success) {
-        const data = response.data.userRole;
-        setUserRole(data);
-      } else {
-        alert(t("fail_to_get_api"));
+    Axios.post(`/api/users/get-role`, { userId: userId }).then(
+      (response) => {
+        if (response.data.success) {
+          const data = response.data.userRole;
+          setUserRole(data);
+        } else {
+          alert(t("fail_to_get_api"));
+        }
       }
-    });
+    );
   }, [t, userId]);
 
   return (

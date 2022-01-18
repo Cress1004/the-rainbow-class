@@ -44,6 +44,7 @@ function Profile() {
       },
     }).then((response) => {
       if (response.data.success) {
+        console.log(response.data.link)
         setUserData({ ...userData, image: response.data.link });
         setShowChangeAvatar(true);
       } else {

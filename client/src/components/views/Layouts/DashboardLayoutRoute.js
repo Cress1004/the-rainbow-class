@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Route } from "react-router-dom";
 import { Layout, Menu, Typography } from "antd";
 import { Link } from "react-router-dom";
 import "./style.scss";
 import RightMenu from "../NavBar/Sections/RightMenu";
 import { useTranslation } from "react-i18next";
+import { ADMIN, SUPER_ADMIN, VOLUNTEER } from "../../common/constant";
+import Axios from "axios";
 
 const { Title } = Typography;
 const { SubMenu } = Menu;
@@ -13,9 +15,21 @@ const { Header, Content, Sider } = Layout;
 const DashboardLayout = ({ children, ...rest }) => {
   const { t } = useTranslation();
   const [collapsed, setCollapsed] = useState(false);
+  const [userRole, setUserRole] = useState();
   const handleCollapse = (collapsed) => {
     setCollapsed(collapsed);
   };
+  const userId = localStorage.getItem("userId");
+  useEffect(() => {
+    Axios.post(`/api/users/get-role`, { userId: userId }).then((response) => {
+      if (response.data.success) {
+        const data = response.data.userRole;
+        setUserRole(data);
+      } else {
+        alert(t("fail_to_get_api"));
+      }
+    });
+  }, [t, userId]);
 
   return (
     <Layout>
@@ -28,45 +42,75 @@ const DashboardLayout = ({ children, ...rest }) => {
         </div>
       </Header>
       <Content>
-        <Layout>
-          <Sider collapsible collapsed={collapsed} onCollapse={handleCollapse}>
-            {/* <div className="logo" /> */}
-            <Menu defaultSelectedKeys={["1"]} mode="inline">
-              <Menu.Item key="my_schedule">
-                <Link to="/dashboard">{t("dashboard")}</Link>
-              </Menu.Item>
-              <Menu.Item key="2">
-                <Link to="/schedules">{t("schedule_manager")}</Link>
-              </Menu.Item>
-              <SubMenu key="sub1" title={t("user_manager")}>
-                <Menu.Item key="3">{t("admin")}</Menu.Item>
-                <Menu.Item key="4">{t("class_monitor")}</Menu.Item>
-                <Menu.Item key="5">
-                  {t("volunteer")}
-                  <Link to="/volunteers"></Link>
+        {userRole && (
+          <Layout>
+            <Sider
+              collapsible
+              collapsed={collapsed}
+              onCollapse={handleCollapse}
+            >
+              <Menu defaultSelectedKeys={["1"]} mode="inline">
+                <Menu.Item key="my_schedule">
+                  <Link to="/dashboard">{t("dashboard")}</Link>
                 </Menu.Item>
-                <Menu.Item key="6">
-                  {t("student")}
-                  <Link to="/students"></Link>
-                </Menu.Item>
-              </SubMenu>
-              <SubMenu key="sub2" title={t("class_manager")}>
-                <Menu.Item key="class_list">
-                  <Link to="/classes">{t("class_list")}</Link>
-                </Menu.Item>
-              </SubMenu>
-              <Menu.Item key="10">
-                {t("master_setting")}
-                <Link to="/master-setting"></Link>
-              </Menu.Item>
-            </Menu>
-          </Sider>
-          <Layout className="site-layout">
-            <Content>
-              <div className="site-layout-background">{children}</div>
-            </Content>
+                {userRole.role === VOLUNTEER &&
+                  userRole.subRole !== SUPER_ADMIN && (
+                    <Menu.Item key="2">
+                      <Link to="/schedules">{t("schedule_manager")}</Link>
+                    </Menu.Item>
+                  )}
+                {userRole.role === VOLUNTEER && (
+                  <SubMenu key="sub1" title={t("user_manager")}>
+                    {(userRole.subRole === SUPER_ADMIN ||
+                      userRole.subRole === ADMIN) && (
+                      <Menu.Item key="3">{t("admin")}</Menu.Item>
+                    )}
+                    {userRole.subRole !== SUPER_ADMIN && (
+                      <Menu.Item key="4">{t("class_monitor")}</Menu.Item>
+                    )}
+                    {userRole.subRole !== SUPER_ADMIN && (
+                      <Menu.Item key="5">
+                        {t("volunteer")}
+                        <Link to="/volunteers"></Link>
+                      </Menu.Item>
+                    )}
+                    {userRole.subRole !== SUPER_ADMIN && (
+                      <Menu.Item key="6">
+                        {t("student")}
+                        <Link to="/students"></Link>
+                      </Menu.Item>
+                    )}
+                  </SubMenu>
+                )}
+                {userRole.subRole === ADMIN && (
+                  <SubMenu key="sub2" title={t("class_manager")}>
+                    <Menu.Item key="class_list">
+                      <Link to="/classes">{t("class_list")}</Link>
+                    </Menu.Item>
+                  </SubMenu>
+                )}
+                {userRole.subRole === ADMIN && (
+                  <Menu.Item key="10">
+                    {t("master_setting")}
+                    <Link to="/master-setting"></Link>
+                  </Menu.Item>
+                )}
+                {(userRole.subRole !== SUPER_ADMIN ||
+                  userRole.subRole !== ADMIN) && (
+                  <Menu.Item key="10">
+                    {t("class_info")}
+                    <Link to="/master-setting"></Link>
+                  </Menu.Item>
+                )}
+              </Menu>
+            </Sider>
+            <Layout className="site-layout">
+              <Content>
+                <div className="site-layout-background">{children}</div>
+              </Content>
+            </Layout>
           </Layout>
-        </Layout>
+        )}
       </Content>
     </Layout>
   );

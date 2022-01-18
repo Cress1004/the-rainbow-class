@@ -8,7 +8,7 @@ const volunteerSchema = mongoose.Schema(
     },
     role: {
       type: Number,
-      default: 0, // 0: volunteer, 1: class_monitor, 2: sub_class_monitor, 3: admin, 4: superadmin
+      default: 1, // 1: volunteer, 2: class_monitor, 3: sub_class_monitor, 4: admin, 5: superadmin
     },
     class: {
       type: mongoose.Schema.Types.ObjectId,

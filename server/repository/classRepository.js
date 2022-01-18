@@ -1,4 +1,3 @@
-const { VOLUNTEER_ROLE } = require("../defaultValues/constant");
 const { ClassName } = require("../models/ClassName");
 const { Volunteer } = require("../models/Volunteer");
 const { storeAddress, updateAddress } = require("./commonRepository");
@@ -59,6 +58,10 @@ const deleteClass = (id) => {
 const getClassScheduleByUserId = async (userId) => {
   try {
     const volunteer = await getVolunteerByUserId(userId);
+    if(!volunteer) {
+      const filterClass = await ClassName.find({}).sort({ _id: -1 }).limit(1);
+      return await getLessonsByCLass(filterClass);
+    }
     return await getLessonsByCLass(volunteer.class);
   } catch (error) {
     console.log("cant get class schedule");

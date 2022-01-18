@@ -48,3 +48,10 @@ export const STATUS = {
   warning: "warning",
   error: "error",
 }
+
+export const STUDENT = 0;
+export const VOLUNTEER = 1;
+export const SUB_CLASS_MONITOR = 2;
+export const CLASS_MONITOR = 3;
+export const ADMIN = 4;
+export const SUPER_ADMIN = 5;

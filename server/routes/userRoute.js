@@ -13,7 +13,7 @@ const {
   changePassword,
   setNewPassword,
 } = require("../controllers/authController");
-const { getMySchedule } = require("../controllers/userController");
+const { getMySchedule, getRole } = require("../controllers/userController");
 
 router.get("/auth", auth, authentication);
 router.post("/register", register);
@@ -26,4 +26,5 @@ router.post("/change-password", auth, changePassword);
 router.post("/my-schedule", auth, getMySchedule);
 router.post("/reset-password", resetPassword);
 router.post("/set-new-password", setNewPassword);
+router.post("/get-role", auth, getRole);
 module.exports = router;

@@ -12,19 +12,15 @@ const {
 const fs = require("fs");
 const handlebars = require("handlebars");
 const { promisify } = require("util");
-const jwt = require("jsonwebtoken");
-const crypto = require('crypto');
-const moment = require("moment");
+const crypto = require("crypto");
 const readFile = promisify(fs.readFile);
 
 const authentication = (req, res) => {
   res.status(200).json({
     _id: req.user._id,
-    isAdmin: req.user.role === 0 ? false : true,
     isAuth: true,
     email: req.user.email,
     name: req.user.name,
-    lastname: req.user.lastname,
     role: req.user.role,
     image: req.user.image,
   });
@@ -44,7 +40,7 @@ const register = (req, res) => {
 const generateTokenToResetPassword = async (email) => {
   try {
     var user = await getUserDataByEmail(email);
-    var token = crypto.randomBytes(64).toString('hex');
+    var token = crypto.randomBytes(64).toString("hex");
     user.token = token;
     return user.save();
   } catch (error) {
@@ -59,7 +55,12 @@ const login = (req, res) => {
         loginSuccess: false,
         message: "Auth failed, email not found",
       });
-
+    if (!user.isActive) {
+      return res.json({
+        loginSuccess: false,
+        message: "Account was not active",
+      });
+    }
     user.comparePassword(req.body.password, (err, isMatch) => {
       if (!isMatch)
         return res.json({ loginSuccess: false, message: "Wrong password" });
@@ -127,24 +128,67 @@ const resetPassword = async (req, res) => {
   }
 };
 
+const activeAccount = async (email) => {
+  try {
+    const user = await generateTokenToResetPassword(email);
+    let html = await readFile("./server/mail/ActiveAccount.html", "utf8");
+    let template = handlebars.compile(html);
+    const data = {
+      username: user.name,
+      token: user.token,
+    };
+    let htmlToSend = template(data);
+    const transporter = nodemailer.createTransport({
+      service: process.env.EMAIL_SERVICE,
+      auth: {
+        user: process.env.SEND_EMAIL_ADDRESS,
+        pass: process.env.SEND_EMAIL_PASSWORD,
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.SEND_EMAIL_ADDRESS,
+      to: email,
+      subject: "Active Account",
+      html: htmlToSend,
+    };
+
+    transporter.sendMail(mailOptions, function (err, success) {
+      if (err) {
+        console.log('error tu day');
+        return false;
+      } else {
+        return true;
+      }
+    });
+  } catch (error) {
+    console.log('error tu kia')
+    return false;
+  }
+};
+
 const setNewPassword = async (req, res) => {
   try {
     const data = req.body;
     const user = await getUserDataByEmail(data.resetEmail);
-    if(user.token === data.verifyToken) {
+    if (user.token === data.verifyToken) {
       user.password = data.newPassword;
+      user.isActive = true;
       await user.save();
       res.status(200).json({ success: true });
     }
-    if(!user) 
-      res.status(200).json({ success: false, message: "Không thành công do thông tin tài khoản không chính xác!" });
+    if (!user)
+      res.status(200).json({
+        success: false,
+        message: "Không thành công do thông tin tài khoản không chính xác!",
+      });
     else {
       res.status(200).json({ success: false, message: "Lỗi hệ thống" });
     }
   } catch (error) {
     res.status(400).send(error);
   }
-}
+};
 
 const getUserProfile = async (req, res) => {
   try {
@@ -192,5 +236,6 @@ module.exports = {
   updateUserProfile,
   updateAvatar,
   changePassword,
-  setNewPassword
+  setNewPassword,
+  activeAccount,
 };

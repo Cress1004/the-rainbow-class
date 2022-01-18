@@ -5,10 +5,12 @@ const {
   updateVolunteer,
   deleteVolunteer,
 } = require("../repository/volunteerRepository");
+const { activeAccount } = require("./authController");
 
 const addNewVolunteer = async (req, res) => {
   try {
     await storeVolunteer(req.body);
+    await activeAccount(req.body.email);
     res.status(200).json({ success: true });
   } catch (error) {
     res.status(400).send(error);

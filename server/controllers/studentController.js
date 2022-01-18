@@ -5,10 +5,13 @@ const {
   updateStudent,
   deleteStudent,
 } = require("../repository/studentRepository");
+const { activeAccount } = require("./authController");
 
 const addNewStudent = async (req, res) => {
   try {
-    await storeStudent(req.body.studentData);
+    const studentData = req.body.studentData 
+    await storeStudent(studentData);
+    await activeAccount(studentData.email);
     res.status(200).json({ success: true });
   } catch (error) {
     res.status(400).send(error);

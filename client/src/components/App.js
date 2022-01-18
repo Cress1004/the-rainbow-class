@@ -41,7 +41,7 @@ class App extends Component {
           <DashboardLayoutRoute
             path="/dashboard"
             exact={true}
-            component={Auth(Profile, null)}
+            component={Auth(Dashboard, null)}
           />
           <DashboardLayoutRoute
             path="/profile"

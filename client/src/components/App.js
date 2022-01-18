@@ -36,7 +36,7 @@ class App extends Component {
       <Suspense fallback={<div>Loading...</div>}>
         <Switch>
           <Route exact path="/">
-            <Redirect to="/login" />
+            <Redirect to="/dashboard" />
           </Route>
           <DashboardLayoutRoute
             path="/dashboard"
@@ -61,7 +61,7 @@ class App extends Component {
             path="/dashboard"
             component={Auth(Dashboard, null)}
           />
-           <DashboardLayoutRoute
+          <DashboardLayoutRoute
             path="/schedules"
             component={Auth(ClassSchedule, null)}
           />
@@ -137,10 +137,14 @@ class App extends Component {
             exact={true}
             component={Auth(EditStudent, null)}
           />
-          <LoginLayoutRoute path="/login" component={Auth(LoginPage, false)} />
           <LoginLayoutRoute
             exact
-            path="/reset_user"
+            path="/login"
+            component={Auth(LoginPage, false)}
+          />
+          <LoginLayoutRoute
+            exact
+            path="/reset-password"
             component={Auth(ResetPassword, false)}
           />
           <DashboardLayoutRoute

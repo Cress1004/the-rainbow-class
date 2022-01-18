@@ -9,7 +9,7 @@ function CustomFlashMessage(props) {
   const getIcon = (type) => {
     if (type === STATUS.success) return "check-circle";
     if (type === STATUS.error) return "exclamation-circle";
-    if (type === STATUS.warning) return "warning";
+    if (type === STATUS.warning) return "close-circle";
   };
   return (
     <FlashMessage duration={5000} persistOnHover={true}>

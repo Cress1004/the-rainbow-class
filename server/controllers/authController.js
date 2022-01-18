@@ -7,7 +7,15 @@ const {
   updateProfile,
   changeAvatar,
   checkChangePassword,
+  getUserDataByEmail,
 } = require("../repository/userRepository");
+const fs = require("fs");
+const handlebars = require("handlebars");
+const { promisify } = require("util");
+const jwt = require("jsonwebtoken");
+const crypto = require('crypto');
+const moment = require("moment");
+const readFile = promisify(fs.readFile);
 
 const authentication = (req, res) => {
   res.status(200).json({
@@ -31,6 +39,17 @@ const register = (req, res) => {
       success: true,
     });
   });
+};
+
+const generateTokenToResetPassword = async (email) => {
+  try {
+    var user = await getUserDataByEmail(email);
+    var token = crypto.randomBytes(64).toString('hex');
+    user.token = token;
+    return user.save();
+  } catch (error) {
+    return "Generate token fail";
+  }
 };
 
 const login = (req, res) => {
@@ -70,29 +89,62 @@ const logout = (req, res) => {
   );
 };
 
-const resetPassword = (req, res) => {
-  const transporter = nodemailer.createTransport({
-    service: process.env.EMAIL_SERVICE,
-    auth: {
-      user: process.env.SEND_EMAIL_ADDRESS,
-      pass: process.env.SEND_EMAIL_PASSWORD,
-    },
-  });
+const resetPassword = async (req, res) => {
+  try {
+    const resetEmail = req.body.resetEmail;
+    const user = await generateTokenToResetPassword(resetEmail);
+    let html = await readFile("./server/mail/ResetPassword.html", "utf8");
+    let template = handlebars.compile(html);
+    const data = {
+      username: user.name,
+      token: user.token,
+    };
+    let htmlToSend = template(data);
+    const transporter = nodemailer.createTransport({
+      service: process.env.EMAIL_SERVICE,
+      auth: {
+        user: process.env.SEND_EMAIL_ADDRESS,
+        pass: process.env.SEND_EMAIL_PASSWORD,
+      },
+    });
 
-  const mailOptions = {
-    from: process.env.SEND_EMAIL_ADDRESS,
-    to: "leader.t.n.t.ship@gmail.com",
-    subject: "Test2",
-    text: "Test mail services",
-  };
-  transporter.sendMail(mailOptions, function (err, success) {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log("Email sent successfuly");
-    }
-  });
+    const mailOptions = {
+      from: process.env.SEND_EMAIL_ADDRESS,
+      to: resetEmail,
+      subject: "Reset Password",
+      html: htmlToSend,
+    };
+
+    transporter.sendMail(mailOptions, function (err, success) {
+      if (err) {
+        console.log(err);
+      } else {
+        res.status(200).json({ success: true });
+      }
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
 };
+
+const setNewPassword = async (req, res) => {
+  try {
+    const data = req.body;
+    const user = await getUserDataByEmail(data.resetEmail);
+    if(user.token === data.verifyToken) {
+      user.password = data.newPassword;
+      await user.save();
+      res.status(200).json({ success: true });
+    }
+    if(!user) 
+      res.status(200).json({ success: false, message: "Không thành công do thông tin tài khoản không chính xác!" });
+    else {
+      res.status(200).json({ success: false, message: "Lỗi hệ thống" });
+    }
+  } catch (error) {
+    res.status(400).send(error);
+  }
+}
 
 const getUserProfile = async (req, res) => {
   try {
@@ -140,4 +192,5 @@ module.exports = {
   updateUserProfile,
   updateAvatar,
   changePassword,
+  setNewPassword
 };

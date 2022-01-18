@@ -22,6 +22,15 @@ const storeUser = async (data) => {
   }
 };
 
+const getUserDataByEmail = async (email) => {
+  try {
+    const user = await User.findOne({ email: email });
+    return user;
+  } catch (error) {
+    console.log("fail to get user by Email");
+  }
+}
+
 const getUserDataById = async (id) => {
   try {
     const user = await User.findOne({ _id: id });
@@ -122,4 +131,5 @@ module.exports = {
   changeAvatar,
   checkChangePassword,
   getUserDataById,
+  getUserDataByEmail
 };

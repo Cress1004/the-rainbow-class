@@ -11,6 +11,7 @@ const {
   updateUserProfile,
   updateAvatar,
   changePassword,
+  setNewPassword,
 } = require("../controllers/authController");
 const { getMySchedule } = require("../controllers/userController");
 
@@ -23,6 +24,6 @@ router.post("/profile/edit", auth, updateUserProfile);
 router.post("/change-avatar", auth, updateAvatar);
 router.post("/change-password", auth, changePassword);
 router.post("/my-schedule", auth, getMySchedule);
-//router.get("/reset-password", auth, resetPassword);
-
+router.post("/reset-password", resetPassword);
+router.post("/set-new-password", setNewPassword);
 module.exports = router;

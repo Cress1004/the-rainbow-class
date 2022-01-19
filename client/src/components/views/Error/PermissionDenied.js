@@ -1,6 +1,6 @@
 import React from 'react';
 
-function PermittionDenied(props) {
+function PermissionDenied(props) {
     return (
         <div>
             403
@@ -8,4 +8,4 @@ function PermittionDenied(props) {
     );
 }
 
-export default PermittionDenied;
+export default PermissionDenied;

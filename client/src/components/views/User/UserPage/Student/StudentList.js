@@ -5,21 +5,28 @@ import Axios from "axios";
 import "./student.scss";
 import { Link } from "react-router-dom";
 import { transformStudentTypes } from "../../../../common/transformData";
+import useFetchRole from "../../../../../hook/useFetchRole";
+import { SUPER_ADMIN } from "../../../../common/constant";
+import PermissionDenied from "../../../Error/PermissionDenied";
+import { checkAdminAndMonitorRole } from "../../../../common/function";
 
 function StudentList(props) {
   const { t } = useTranslation();
   const [students, setStudents] = useState([]);
-
+  const userId = localStorage.getItem("userId");
+  const userRole = useFetchRole(userId);
   useEffect(() => {
-    Axios.post("/api/students/get-students", null).then((response) => {
-      if (response.data.success) {
-        const data = response.data.students;
-        setStudents(data);
-      } else {
-        alert(t("fail_to_get_api"));
+    Axios.post("/api/students/get-students", { userId: userId }).then(
+      (response) => {
+        if (response.data.success) {
+          const data = response.data.students;
+          setStudents(data);
+        } else {
+          alert(t("fail_to_get_api"));
+        }
       }
-    });
-  }, [t]);
+    );
+  }, [t, userId]);
 
   const columns = [
     {
@@ -56,26 +63,36 @@ function StudentList(props) {
     key: index,
     id: item._id,
     userName: item.user.name,
-    className: item.class ? item.class.name : t('unset'),
+    className: item.class ? item.class.name : t("unset"),
     phoneNumber: item.user.phoneNumber,
-    studentTypes: transformStudentTypes(item.studentTypes)
+    studentTypes: transformStudentTypes(item.studentTypes),
   }));
 
   const renderData = (text, key) => (
-    <Link to={`students/${key.id}`} className={'text-in-table-row'}>
+    <Link to={`students/${key.id}`} className={"text-in-table-row"}>
       <span>{text}</span>
     </Link>
   );
 
+  if (userRole && userRole.subRole === SUPER_ADMIN) {
+    return <PermissionDenied />;
+  }
+
   return (
     <div className="student-list">
-      <div className="student-list__title">
-        {t("student_list")} ({`${students?.length} ${t("student")}`})
-      </div>
-      <Button type="primary" className="add-student-button">
-        <Link to="/add-student">{t("add_student")}</Link>
-      </Button>
-      <Table columns={columns} dataSource={data} />
+      {userRole && userRole.subRole !== SUPER_ADMIN && (
+        <div>
+          <div className="student-list__title">
+            {t("student_list")} ({`${students?.length} ${t("student")}`})
+          </div>
+          {checkAdminAndMonitorRole(userRole) && (
+            <Button type="primary" className="add-student-button">
+              <Link to="/add-student">{t("add_student")}</Link>
+            </Button>
+          )}
+          <Table columns={columns} dataSource={data} />
+        </div>
+      )}
     </div>
   );
 }

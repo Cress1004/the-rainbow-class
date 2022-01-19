@@ -15,7 +15,7 @@ import {
   SUPER_ADMIN,
   VOLUNTEER,
 } from "../../../../common/constant";
-import PermittionDenied from "../../../Error/PermittionDenied";
+import PermissionDenied from "../../../Error/PermissionDenied";
 
 const { Option } = Select;
 
@@ -108,7 +108,7 @@ function AddVolunteer(props) {
       userRole.subRole === VOLUNTEER ||
       userRole.subRole === SUPER_ADMIN)
   )
-    return <PermittionDenied />;
+    return <PermissionDenied />;
 
   return (
     <div className="add-volunteer">

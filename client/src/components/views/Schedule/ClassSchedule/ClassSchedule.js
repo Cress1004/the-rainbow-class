@@ -5,7 +5,7 @@ import "../schedule.scss";
 import MyCalendar from "../Sessions/Calendar";
 import { Col, Form, Row, Select } from "antd";
 import { STUDENT, SUPER_ADMIN, VOLUNTEER } from "../../../common/constant";
-import PermittionDenied from "../../Error/PermittionDenied";
+import PermissionDenied from "../../Error/PermissionDenied";
 
 const { Option } = Select;
 function ClassSchedule() {
@@ -62,7 +62,7 @@ function ClassSchedule() {
   };
   return (
     <div className="class-schedule">
-      {userRole.role === STUDENT && <PermittionDenied />}
+      {userRole.role === STUDENT && <PermissionDenied />}
       {userRole.role === VOLUNTEER && userRole.subRole !== SUPER_ADMIN && (
         <div>
           <div className="class-schedule__title">{`${t("class_schedule")} - ${classData && classData.name}`}</div>

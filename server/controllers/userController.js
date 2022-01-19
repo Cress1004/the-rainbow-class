@@ -37,7 +37,7 @@ const getMyClasschedule = async (req, res) => {
       res.status(200).json({ success: true, schedule:schedule, classData: classData });  
     }
     else {
-      res.status(404).send("permittion denied");  
+      res.status(404).send("permission denied");  
     }
   } catch (error) {
     res.status(400).send(error);

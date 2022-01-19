@@ -11,7 +11,7 @@ import {
   SUB_CLASS_MONITOR,
   SUPER_ADMIN,
 } from "../../../../common/constant";
-import PermittionDenied from "../../../Error/PermittionDenied";
+import PermissionDenied from "../../../Error/PermissionDenied";
 
 const { Item } = Form;
 const layout = {
@@ -91,7 +91,7 @@ function VolunteerDetail(props) {
     return t("volunteer");
   };
   if (userRole.subRole === SUPER_ADMIN || !volunteerData) {
-    return <PermittionDenied />;
+    return <PermissionDenied />;
   }
   return (
     <div className="volunteer-detail">

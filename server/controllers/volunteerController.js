@@ -105,7 +105,7 @@ const deleteVolunteerData = async (req, res) => {
     const volunteerId = req.body.volunteerId;
     const user = await getUserDataById(userId);
     if (!(await deleteVolunteer(user, volunteerId)))
-      res.status(404).json({ success: false, messsage: "Permittion Denied" });
+      res.status(404).json({ success: false, messsage: "Permission Denied" });
     else {
       res.status(200).json({ success: true });
     }

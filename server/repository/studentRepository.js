@@ -83,11 +83,24 @@ const deleteStudent = async (id) => {
   return await Student.deleteOne({ _id: id });
 };
 
+const getStudentByClass = async (classId) => {
+  try {
+    return await Student.find({ class: classId })
+      .populate("user", "name phoneNumber")
+      .populate("class", "name")
+      .populate("studentTypes");
+  } catch (error) {
+    console.log("fail to get student by class");
+    return null;
+  }
+};
+
 module.exports = {
   storeStudent,
   getListStudents,
   getStudentById,
   updateStudent,
   deleteStudent,
-  getStudentByUserId
+  getStudentByUserId,
+  getStudentByClass,
 };

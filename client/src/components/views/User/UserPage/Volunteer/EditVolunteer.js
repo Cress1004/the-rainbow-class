@@ -14,7 +14,7 @@ import {
 } from "../../../../common/constant";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import PermittionDenied from "../../../Error/PermittionDenied";
+import PermissionDenied from "../../../Error/PermissionDenied";
 
 const { Option } = Select;
 const { Item } = Form;
@@ -186,7 +186,7 @@ function EditVolunteer(props) {
       userRole.subRole === SUPER_ADMIN ||
       userRole.subRole === VOLUNTEER)
   ) {
-    return <PermittionDenied />;
+    return <PermissionDenied />;
   }
 
   return (

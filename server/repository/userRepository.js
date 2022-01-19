@@ -1,5 +1,5 @@
 require("dotenv").config();
-const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const { DEFAULT_IMAGE_PATH } = require("../defaultValues/constant");
 const { User } = require("../models/User");
 const { storeAddress, updateAddress } = require("./commonRepository");
@@ -29,7 +29,7 @@ const getUserDataByEmail = async (email) => {
   } catch (error) {
     console.log("fail to get user by Email");
   }
-}
+};
 
 const getUserDataById = async (id) => {
   try {
@@ -124,12 +124,22 @@ const checkChangePassword = async (data) => {
 
 const checkDuplicateMail = async (email) => {
   try {
-    return await User.findOne({email: email});
+    return await User.findOne({ email: email });
   } catch (error) {
-    console.log("cannot check duplicate email")
+    console.log("cannot check duplicate email");
     return true;
   }
-}
+};
+
+const findUserByToken = async (token) => {
+  try {
+    var decoded = jwt.verify(token, "secret");
+    return await User.findOne({ _id: decoded, token: token });
+  } catch (error) {
+    console.log("Cannot find user by token");
+    return null;
+  }
+};
 
 module.exports = {
   storeUser,
@@ -141,5 +151,6 @@ module.exports = {
   checkChangePassword,
   getUserDataById,
   getUserDataByEmail,
-  checkDuplicateMail
+  checkDuplicateMail,
+  findUserByToken,
 };

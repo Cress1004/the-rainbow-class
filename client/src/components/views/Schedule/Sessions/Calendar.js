@@ -14,12 +14,12 @@ import {
 const localizer = momentLocalizer(moment);
 function MyCalendar(props) {
   const { t } = useTranslation();
-  const { data } = props;
+  const { data, userId } = props;
   const events = data.map((item) => transformEventOfLesson(item));
   const [classColors, setClassColors] = useState([]);
 
   useEffect(() => {
-    Axios.post(`/api/classes/get-classes/`, null).then((response) => {
+    Axios.post(`/api/classes/get-classes`, {userId: userId}).then((response) => {
       if (response.data.success) {
         const data = response.data.classes;
         const colors = setColorForClass(data);

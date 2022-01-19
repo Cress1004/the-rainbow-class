@@ -4,6 +4,7 @@ import { Table, Button } from "antd";
 import Axios from "axios";
 import "./volunteer.scss";
 import { Link } from "react-router-dom";
+import { checkAdminAndMonitorRole } from "../../../../common/function";
 
 const CLASS_MONITOR = 1;
 const SUB_CLASS_MONITOR = 2;
@@ -13,13 +14,24 @@ function VolunteerList(props) {
   const [volunteers, setVolunteers] = useState([]);
   const [volunteersNumber, setVolunteersNumber] = useState(0);
   const userId = localStorage.getItem("userId");
+  const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
-    Axios.post("/api/volunteers/get-volunteers", {userId: userId}).then((response) => {
+    Axios.post("/api/volunteers/get-volunteers", { userId: userId }).then(
+      (response) => {
+        if (response.data.success) {
+          const data = response.data.volunteers;
+          setVolunteers(data);
+          setVolunteersNumber(data.length);
+        } else {
+          alert(t("fail_to_get_api"));
+        }
+      }
+    );
+    Axios.post(`/api/users/get-role`, { userId: userId }).then((response) => {
       if (response.data.success) {
-        const data = response.data.volunteers;
-        setVolunteers(data);
-        setVolunteersNumber(data.length);
+        const data = response.data.userRole;
+        setUserRole(data);
       } else {
         alert(t("fail_to_get_api"));
       }
@@ -62,9 +74,8 @@ function VolunteerList(props) {
       return `${name} (${t("short_class_monitor")})`;
     }
     if (role === SUB_CLASS_MONITOR) {
-      return `${name} (${t('short_sub_class_monitor')})`;
-    }
-    else return name;
+      return `${name} (${t("short_sub_class_monitor")})`;
+    } else return name;
   };
 
   const data = volunteers.map((item, index) => ({
@@ -78,7 +89,7 @@ function VolunteerList(props) {
   }));
 
   const renderData = (text, key) => (
-    <Link to={`volunteers/${key.id}`} className={'text-in-table-row'}>
+    <Link to={`volunteers/${key.id}`} className={"text-in-table-row"}>
       <span>{text}</span>
     </Link>
   );
@@ -88,9 +99,11 @@ function VolunteerList(props) {
       <div className="volunteer-list__title">
         {t("volunteer_list")} ({`${volunteersNumber} ${t("volunteer")}`})
       </div>
-      <Button type="primary" className="add-volunteer-button">
-        <Link to="/add-volunteer">{t("add_volunteer")}</Link>
-      </Button>
+      {checkAdminAndMonitorRole(userRole) && (
+        <Button type="primary" className="add-volunteer-button">
+          <Link to="/add-volunteer">{t("add_volunteer")}</Link>
+        </Button>
+      )}
       <Table columns={columns} dataSource={data} />
     </div>
   );

@@ -24,7 +24,7 @@ function Dashboard(props) {
   return (
     <div className="dashboard">
       <div className="dashboard__title">{t("my_schedule")}</div>
-      <MyCalendar data={schedule}/>
+      <MyCalendar data={schedule} userId={userId}/>
     </div>
   );
 }

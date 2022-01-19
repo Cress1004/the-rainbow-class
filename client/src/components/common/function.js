@@ -1,4 +1,9 @@
-import { CALENDAR_COLOR_EVENT } from "./constant";
+import {
+  ADMIN,
+  CALENDAR_COLOR_EVENT,
+  CLASS_MONITOR,
+  SUB_CLASS_MONITOR,
+} from "./constant";
 
 export function generateKey() {
   return new Date().getTime();
@@ -14,4 +19,13 @@ export function setColorForClass(classes) {
           : index
       ],
   }));
+}
+
+export function checkAdminAndMonitorRole(userRole) {
+  return (
+    userRole &&
+    (userRole.subRole === ADMIN ||
+      userRole.subRole === CLASS_MONITOR ||
+      userRole.subRole === SUB_CLASS_MONITOR)
+  );
 }

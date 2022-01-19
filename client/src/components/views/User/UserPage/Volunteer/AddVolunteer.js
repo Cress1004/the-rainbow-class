@@ -23,7 +23,6 @@ function AddVolunteer(props) {
   const { t } = useTranslation();
   const [classes, setClasses] = useState(null);
   const history = useHistory();
-  const [className, setClassName] = useState(null);
   const [userRole, setUserRole] = useState(null);
   const userId = localStorage.getItem("userId");
   const layout = {

@@ -36,7 +36,7 @@ function ClassSchedule() {
         }
       }
     );
-    Axios.post(`/api/classes/get-classes/`, null).then((response) => {
+    Axios.post(`/api/classes/get-classes`, {userId, userId}).then((response) => {
       if (response.data.success) {
         setClasses(response.data.classes);
       } else {
@@ -95,7 +95,7 @@ function ClassSchedule() {
               </Col>
             </Row>
           )}
-          {schedule && <MyCalendar data={schedule} />}
+          {schedule && <MyCalendar data={schedule} userId={userId}/>}
         </div>
       )}
     </div>

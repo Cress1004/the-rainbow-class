@@ -1,7 +1,15 @@
 const { Volunteer } = require("../models/Volunteer");
 const { storeUser, updateUserData, deleteUser } = require("./userRepository");
-const { VOLUNTEER_ROLE } = require("../defaultValues/constant");
+const {
+  VOLUNTEER_ROLE,
+  SUPER_ADMIN,
+  ADMIN,
+  STUDENT_ROLE,
+  CLASS_MONITOR,
+  SUB_CLASS_MONITOR,
+} = require("../defaultValues/constant");
 const { User } = require("../models/User");
+const { getStudentByUserId } = require("./studentRepository");
 
 const storeVolunteer = async (data) => {
   try {
@@ -31,7 +39,22 @@ const getVolunteerById = async (id) => {
         populate: { path: "address", select: "address description" },
       });
   } catch (error) {
-    console.log("fail to get volunteer data");
+    console.log("fail to get volunteer data by ID");
+  }
+};
+
+const getVolunteerByIdAndClassId = async (id, classId) => {
+  try {
+    return await Volunteer.findOne({ _id: id, class: classId })
+      .populate({ path: "class", select: "name" })
+      .populate({
+        path: "user",
+        select: "name email phoneNumber gender image address",
+        populate: { path: "address", select: "address description" },
+      });
+  } catch (error) {
+    console.log("fail to get volunteer data by ID and class ID");
+    return null;
   }
 };
 
@@ -53,11 +76,27 @@ const getVolunteerByUserId = async (userId) => {
   }
 };
 
-const getListVolunteers = async () => {
+const getListVolunteers = async (user) => {
   try {
-    return await Volunteer.find({})
-      .populate("user", "name email phoneNumber")
-      .populate("class", "name");
+    if (user.role === VOLUNTEER_ROLE) {
+      const currentVolunteer = await getVolunteerByUserId(user._id);
+      if (currentVolunteer.role === SUPER_ADMIN) return null;
+      if (currentVolunteer.role === ADMIN)
+        return await Volunteer.find({})
+          .populate("user", "name email phoneNumber")
+          .populate("class", "name");
+      else {
+        return await Volunteer.find({ class: currentVolunteer.class })
+          .populate("user", "name email phoneNumber")
+          .populate("class", "name");
+      }
+    }
+    if (user.role === STUDENT_ROLE) {
+      const currentStudent = await getStudentByUserId(user._id);
+      return await Volunteer.find({ class: currentStudent.class })
+        .populate("user", "name email phoneNumber")
+        .populate("class", "name");
+    }
   } catch (error) {
     console.log("fail to get list volunteers");
   }
@@ -80,10 +119,25 @@ const updateVolunteer = async (data) => {
   }
 };
 
-const deleteVolunteer = async (id) => {
-  const volunteer = await Volunteer.findOne({ _id: id });
-  await deleteUser(volunteer.user._id);
-  return await Volunteer.deleteOne({ _id: id });
+const deleteVolunteer = async (user, volunteerId) => {
+  try {
+    if (user.role === VOLUNTEER_ROLE) {
+      const currentVolunteer = await getVolunteerByUserId(user._id);
+      console.log(currentVolunteer)
+      if (
+        currentVolunteer.role === ADMIN ||
+        currentVolunteer.role === CLASS_MONITOR ||
+        currentVolunteer.role === SUB_CLASS_MONITOR
+      ) {
+        const volunteer = await Volunteer.findOne({ _id: volunteerId });
+        await deleteUser(volunteer.user._id);
+        return await Volunteer.deleteOne({ _id: volunteerId });
+      }
+    } else return null;
+  } catch (error) {
+    console.log("Fail to delete user");
+    return null;
+  }
 };
 
 module.exports = {
@@ -92,5 +146,6 @@ module.exports = {
   getVolunteerById,
   updateVolunteer,
   deleteVolunteer,
-  getVolunteerByUserId
+  getVolunteerByUserId,
+  getVolunteerByIdAndClassId,
 };

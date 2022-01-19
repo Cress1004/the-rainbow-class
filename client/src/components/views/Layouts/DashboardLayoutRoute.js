@@ -5,7 +5,14 @@ import { Link } from "react-router-dom";
 import "./style.scss";
 import RightMenu from "../NavBar/Sections/RightMenu";
 import { useTranslation } from "react-i18next";
-import { ADMIN, SUPER_ADMIN, VOLUNTEER } from "../../common/constant";
+import {
+  ADMIN,
+  CLASS_MONITOR,
+  STUDENT,
+  SUB_CLASS_MONITOR,
+  SUPER_ADMIN,
+  VOLUNTEER,
+} from "../../common/constant";
 import Axios from "axios";
 
 const { Title } = Typography;
@@ -21,16 +28,14 @@ const DashboardLayout = ({ children, ...rest }) => {
   };
   const userId = localStorage.getItem("userId");
   useEffect(() => {
-    Axios.post(`/api/users/get-role`, { userId: userId }).then(
-      (response) => {
-        if (response.data.success) {
-          const data = response.data.userRole;
-          setUserRole(data);
-        } else {
-          alert(t("fail_to_get_api"));
-        }
+    Axios.post(`/api/users/get-role`, { userId: userId }).then((response) => {
+      if (response.data.success) {
+        const data = response.data.userRole;
+        setUserRole(data);
+      } else {
+        alert(t("fail_to_get_api"));
       }
-    );
+    });
   }, [t, userId]);
 
   return (
@@ -51,60 +56,91 @@ const DashboardLayout = ({ children, ...rest }) => {
               collapsed={collapsed}
               onCollapse={handleCollapse}
             >
-              <Menu defaultSelectedKeys={["1"]} mode="inline">
-                <Menu.Item key="my_schedule">
-                  <Link to="/dashboard">{t("dashboard")}</Link>
-                </Menu.Item>
-                {userRole.role === VOLUNTEER &&
-                  userRole.subRole !== SUPER_ADMIN && (
-                    <Menu.Item key="2">
-                      <Link to="/schedules">{t("schedule_manager")}</Link>
+              {userRole.role === STUDENT && (
+                <Menu defaultSelectedKeys={["1"]} mode="inline">
+                  <Menu.Item key="my_schedule">
+                    <Link to="/dashboard">{t("dashboard")}</Link>
+                  </Menu.Item>
+                  <Menu.Item key="volunteers">
+                      {t("volunteer")}
+                      <Link to="/volunteers"></Link>
                     </Menu.Item>
-                  )}
-                {userRole.role === VOLUNTEER && (
+                    <Menu.Item key="students">
+                      {t("student")}
+                      <Link to="/students"></Link>
+                    </Menu.Item>
+                </Menu>
+              )}
+              {userRole.subRole === SUPER_ADMIN && (
+                <Menu defaultSelectedKeys={["1"]} mode="inline">
+                  <Menu.Item key="list_admin">
+                    <Link to="/admins">{t("admins")}</Link>
+                  </Menu.Item>
+                </Menu>
+              )}
+              {userRole.subRole === ADMIN && (
+                <Menu defaultSelectedKeys={["1"]} mode="inline">
+                  <Menu.Item key="my_schedule">
+                    <Link to="/dashboard">{t("dashboard")}</Link>
+                  </Menu.Item>
+                  <Menu.Item key="2">
+                    <Link to="/schedules">{t("schedule_manager")}</Link>
+                  </Menu.Item>
                   <SubMenu key="sub1" title={t("user_manager")}>
-                    {(userRole.subRole === SUPER_ADMIN ||
-                      userRole.subRole === ADMIN) && (
-                      <Menu.Item key="3">{t("admin")}</Menu.Item>
-                    )}
-                    {userRole.subRole !== SUPER_ADMIN && (
-                      <Menu.Item key="4">{t("class_monitor")}</Menu.Item>
-                    )}
-                    {userRole.subRole !== SUPER_ADMIN && (
-                      <Menu.Item key="5">
-                        {t("volunteer")}
-                        <Link to="/volunteers"></Link>
-                      </Menu.Item>
-                    )}
-                    {userRole.subRole !== SUPER_ADMIN && (
-                      <Menu.Item key="6">
-                        {t("student")}
-                        <Link to="/students"></Link>
-                      </Menu.Item>
-                    )}
+                    <Menu.Item key="3">{t("admin")}</Menu.Item>
+                    <Menu.Item key="4">{t("class_monitor")}</Menu.Item>
+                    <Menu.Item key="5">
+                      {t("volunteer")}
+                      <Link to="/volunteers"></Link>
+                    </Menu.Item>
+                    <Menu.Item key="6">
+                      {t("student")}
+                      <Link to="/students"></Link>
+                    </Menu.Item>
                   </SubMenu>
-                )}
-                {userRole.subRole === ADMIN && (
                   <SubMenu key="sub2" title={t("class_manager")}>
                     <Menu.Item key="class_list">
                       <Link to="/classes">{t("class_list")}</Link>
                     </Menu.Item>
                   </SubMenu>
-                )}
-                {userRole.subRole === ADMIN && (
                   <Menu.Item key="10">
                     {t("master_setting")}
                     <Link to="/master-setting"></Link>
                   </Menu.Item>
-                )}
-                {(userRole.subRole !== SUPER_ADMIN ||
-                  userRole.subRole !== ADMIN) && (
-                  <Menu.Item key="10">
-                    {t("class_info")}
-                    <Link to="/master-setting"></Link>
+                </Menu>
+              )}
+              {(userRole.subRole === SUB_CLASS_MONITOR ||
+                userRole.subRole === CLASS_MONITOR ||
+                userRole.subRole === VOLUNTEER) && (
+                <Menu defaultSelectedKeys={["1"]} mode="inline">
+                  <Menu.Item key="my_schedule">
+                    <Link to="/dashboard">{t("dashboard")}</Link>
                   </Menu.Item>
-                )}
-              </Menu>
+                  <Menu.Item key="2">
+                    <Link to="/schedules">{t("schedule_manager")}</Link>
+                  </Menu.Item>
+                  <SubMenu key="sub1" title={t("user_manager")}>
+                    <Menu.Item key="3">{t("admin")}</Menu.Item>
+                    <Menu.Item key="4">
+                      {t("volunteer")}
+                      <Link to="/volunteers"></Link>
+                    </Menu.Item>
+                    <Menu.Item key="5">
+                      {t("student")}
+                      <Link to="/students"></Link>
+                    </Menu.Item>
+                  </SubMenu>
+                  <SubMenu key="sub2" title={t("class_manager")}>
+                    <Menu.Item key="class_list">
+                      <Link to="/classes">{t("class_list")}</Link>
+                    </Menu.Item>
+                    <Menu.Item key="10">
+                      {t("class_info")}
+                      <Link to="/master-setting"></Link>
+                    </Menu.Item>
+                  </SubMenu>
+                </Menu>
+              )}
             </Sider>
             <Layout className="site-layout">
               <Content>

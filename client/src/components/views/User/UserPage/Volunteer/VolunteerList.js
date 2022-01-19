@@ -12,9 +12,10 @@ function VolunteerList(props) {
   const { t } = useTranslation();
   const [volunteers, setVolunteers] = useState([]);
   const [volunteersNumber, setVolunteersNumber] = useState(0);
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
-    Axios.post("/api/volunteers/get-volunteers", null).then((response) => {
+    Axios.post("/api/volunteers/get-volunteers", {userId: userId}).then((response) => {
       if (response.data.success) {
         const data = response.data.volunteers;
         setVolunteers(data);

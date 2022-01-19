@@ -6,7 +6,10 @@ import { useTranslation } from "react-i18next";
 import Axios from "axios";
 import { Popover } from "antd";
 import { Link } from "react-router-dom";
-import { transformEventOfLesson, transformLessonTimeToString } from "../../../common/transformData";
+import {
+  transformEventOfLesson,
+  transformLessonTimeToString,
+} from "../../../common/transformData";
 
 const localizer = momentLocalizer(moment);
 function MyCalendar(props) {
@@ -60,27 +63,29 @@ function MyCalendar(props) {
 
   return (
     <div>
-      <Calendar
-        localizer={localizer}
-        startAccessor="start"
-        endAccessor="end"
-        style={{ height: 700 }}
-        events={events}
-        eventPropGetter={(event) => {
-          const classId = event.classId;
-          return {
-            style: {
-              backgroundColor: classColors.find(
-                (item) => item.classId === classId
-              ).color,
-            },
-          };
-        }}
-        popup={true}
-        components={{
-          event: EventComponent,
-        }}
-      />
+      {events && classColors.length && (
+        <Calendar
+          localizer={localizer}
+          startAccessor="start"
+          endAccessor="end"
+          style={{ height: 700 }}
+          events={events}
+          eventPropGetter={(event) => {
+            const classId = event.classId;
+            return {
+              style: {
+                backgroundColor: classColors.find(
+                  (item) => item.classId === classId
+                ).color,
+              },
+            };
+          }}
+          popup={true}
+          components={{
+            event: EventComponent,
+          }}
+        />
+      )}
     </div>
   );
 }

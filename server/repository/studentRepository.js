@@ -9,7 +9,7 @@ const storeStudent = async (data) => {
       email: data.email,
       phoneNumber: data.phoneNumber,
       address: data.address,
-      role: STUDENT_ROLE
+      role: STUDENT_ROLE,
     });
     const newStudent = await new Student({
       parentName: data.parentName,
@@ -37,6 +37,15 @@ const getStudentById = async (id) => {
   }
 };
 
+const getStudentByUserId = async (userId) => {
+  try {
+    return await Student.findOne({ user: userId });
+  } catch (error) {
+    console.log("fail to get student data by user id");
+    return error;
+  }
+};
+
 const getListStudents = async () => {
   try {
     return Student.find({})
@@ -57,7 +66,7 @@ const updateStudent = async (data) => {
       email: data.email,
       gender: data.gender,
       phoneNumber: data.phoneNumber,
-      address: data.address
+      address: data.address,
     };
     await updateUserData(userData);
     student.parentName = data.parentName;
@@ -80,4 +89,5 @@ module.exports = {
   getStudentById,
   updateStudent,
   deleteStudent,
+  getStudentByUserId
 };

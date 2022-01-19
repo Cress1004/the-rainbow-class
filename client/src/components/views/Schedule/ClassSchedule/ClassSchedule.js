@@ -4,7 +4,7 @@ import Axios from "axios";
 import "../schedule.scss";
 import MyCalendar from "../Sessions/Calendar";
 import { Col, Form, Row, Select } from "antd";
-import { STUDENT, VOLUNTEER } from "../../../common/constant";
+import { STUDENT, SUPER_ADMIN, VOLUNTEER } from "../../../common/constant";
 import PermittionDenied from "../../Error/PermittionDenied";
 
 const { Option } = Select;
@@ -63,37 +63,39 @@ function ClassSchedule() {
   return (
     <div className="class-schedule">
       {userRole.role === STUDENT && <PermittionDenied />}
-      {userRole.role === VOLUNTEER && userRole.subRole !== VOLUNTEER && (
+      {userRole.role === VOLUNTEER && userRole.subRole !== SUPER_ADMIN && (
         <div>
-          <div className="class-schedule__title">{t("class_schedule")}</div>
-          <Row className="class-schedule__filter">
-            <Col span={16}></Col>
-            <Col span={8}>
-              <Form.Item
-                label={t("select_class")}
-                labelCol={{ span: 8 }}
-                wrapperCol={{ span: 16 }}
-              >
-                <Select
-                  value={classData?.name}
-                  onChange={(value) => onSelectClass(value)}
-                  showSearch
-                  placeholder={t("select_class")}
-                  className="class-schedule__filter-input"
+          <div className="class-schedule__title">{`${t("class_schedule")} - ${classData && classData.name}`}</div>
+          {userRole.subRole !== VOLUNTEER && (
+            <Row className="class-schedule__filter">
+              <Col span={16}></Col>
+              <Col span={8}>
+                <Form.Item
+                  label={t("select_class")}
+                  labelCol={{ span: 8 }}
+                  wrapperCol={{ span: 16 }}
                 >
-                  <Option key="0" value="0">
-                    {t("all_option")}
-                  </Option>
-                  {classes.map((item) => (
-                    <Option key={item._id} value={item._id}>
-                      {item.name}
+                  <Select
+                    value={classData?.name}
+                    onChange={(value) => onSelectClass(value)}
+                    showSearch
+                    placeholder={t("select_class")}
+                    className="class-schedule__filter-input"
+                  >
+                    <Option key="0" value="0">
+                      {t("all_option")}
                     </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
-          <MyCalendar data={schedule} />
+                    {classes.map((item) => (
+                      <Option key={item._id} value={item._id}>
+                        {item.name}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+            </Row>
+          )}
+          {schedule && <MyCalendar data={schedule} />}
         </div>
       )}
     </div>

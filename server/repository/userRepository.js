@@ -122,6 +122,15 @@ const checkChangePassword = async (data) => {
   }
 };
 
+const checkDuplicateMail = async (email) => {
+  try {
+    return await User.findOne({email: email});
+  } catch (error) {
+    console.log("cannot check duplicate email")
+    return true;
+  }
+}
+
 module.exports = {
   storeUser,
   updateUserData,
@@ -131,5 +140,6 @@ module.exports = {
   changeAvatar,
   checkChangePassword,
   getUserDataById,
-  getUserDataByEmail
+  getUserDataByEmail,
+  checkDuplicateMail
 };

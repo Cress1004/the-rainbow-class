@@ -2,9 +2,12 @@ const {
   VOLUNTEER_ROLE,
   STUDENT_ROLE,
   SUPER_ADMIN,
+  CLASS_MONITOR,
+  SUB_CLASS_MONITOR,
+  ADMIN,
 } = require("../defaultValues/constant");
 const { getStudentByUserId } = require("../repository/studentRepository");
-const { getUserDataById } = require("../repository/userRepository");
+const { getUserDataById, checkDuplicateMail } = require("../repository/userRepository");
 const {
   storeVolunteer,
   getListVolunteers,
@@ -18,9 +21,30 @@ const { activeAccount } = require("./authController");
 
 const addNewVolunteer = async (req, res) => {
   try {
-    await storeVolunteer(req.body);
-    await activeAccount(req.body.email);
-    res.status(200).json({ success: true });
+    const userId = req.body.userId;
+    const volunteerData = req.body.volunteerData;
+    const user = await getUserDataById(userId);
+    if (user.role === VOLUNTEER_ROLE) {
+      const currentVolunteer = await getVolunteerByUserId(userId);
+      if (
+        currentVolunteer.role === ADMIN ||
+        currentVolunteer.role === CLASS_MONITOR ||
+        currentVolunteer.role === SUB_CLASS_MONITOR
+      ) {
+        if(await checkDuplicateMail(volunteerData.email)) {
+          res.status(200).json({ success: false, message: "Duplicate Email!" });
+        } else {
+          await storeVolunteer(volunteerData);
+          await activeAccount(volunteerData.email);
+          res.status(200).json({ success: true });      
+        }
+      }
+      else {
+        res.status(200).json({ success: false, message: "Permission Denied" });
+      }
+    } else {
+      res.status(200).json({ success: false, message: "Permission Denied" });
+    }
   } catch (error) {
     res.status(400).send(error);
   }

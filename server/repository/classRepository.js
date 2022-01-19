@@ -6,8 +6,15 @@ const { storeAddress, updateAddress } = require("./commonRepository");
 const { getLessonsByCLass } = require("./lessonRepository");
 const { getVolunteerByUserId } = require("./volunteerRepository");
 
-const findAllClasses = () => {
-  return ClassName.find({});
+const findAllClasses = (user) => {
+  try {
+    if (user.role === VOLUNTEER_ROLE) {
+      return ClassName.find({});
+    } else return null;
+  } catch (error) {
+    console.log("cant get all classes data");
+    return null;
+  }
 };
 
 const findClassById = (id) => {
@@ -60,7 +67,7 @@ const deleteClass = (id) => {
 const getClassScheduleByUserId = async (userId) => {
   try {
     const volunteer = await getVolunteerByUserId(userId);
-    if(!volunteer) {
+    if (!volunteer) {
       const filterClass = await ClassName.find({}).sort({ _id: -1 }).limit(1);
       return await getLessonsByCLass(filterClass);
     }
@@ -94,18 +101,26 @@ const getClassByUserId = async (userId) => {
 
 const getClassByUser = async (user) => {
   try {
-    if(user.role === VOLUNTEER_ROLE) {
+    if (user.role === VOLUNTEER_ROLE) {
       const volunteer = await Volunteer.findOne({ user: user._id }).populate(
         "class"
       );
       return volunteer.class;
     }
-    if(user.role === STUDENT_ROLE) {
+    if (user.role === STUDENT_ROLE) {
       const student = await Student.findOne({ user: user._id }).populate(
         "class"
       );
       return student.class;
     }
+  } catch (error) {
+    console.log("cant get class By User ID");
+  }
+};
+
+const findClassbyVolunteer = async (volunteer) => {
+  try {
+    return ClassName.find({_id: volunteer.class._id});
   } catch (error) {
     console.log("cant get class By User ID");
   }
@@ -120,5 +135,6 @@ module.exports = {
   editClass,
   getClassScheduleByUserId,
   getClassByUserId,
-  getClassByUser
+  getClassByUser,
+  findClassbyVolunteer
 };

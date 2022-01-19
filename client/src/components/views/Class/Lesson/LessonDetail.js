@@ -37,7 +37,7 @@ function LessonDetail(props) {
           paticipants: data.schedule.paticipants,
         });
         data.schedule.paticipants.find(
-          (participant) => participant._id == userId
+          (participant) => participant._id === userId
         )
           ? setAssign(true)
           : setAssign(false);
@@ -45,7 +45,7 @@ function LessonDetail(props) {
         alert(t("fail_to_get_api"));
       }
     });
-  }, [t, id, lessonId]);
+  }, [t, id, lessonId, userId]);
 
   const openDeletePopup = () => {
     setConfirmDelete(true);
@@ -124,6 +124,7 @@ function LessonDetail(props) {
         <div className="lesson-detail__more-option">
           <Dropdown overlay={menu} trigger={["click"]}>
             <a
+              href={() => false}
               className="ant-dropdown-link"
               onClick={(e) => e.preventDefault()}
             >

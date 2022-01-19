@@ -67,7 +67,7 @@ function AddLesson(props) {
         alert(t("fail_to_get_api"));
       }
     });
-  }, [t, id]);
+  }, [t, id, lessonData]);
 
   const handleChangeProvice = (value) => {
     const currentProvince = location.find((item) => value === item.id);

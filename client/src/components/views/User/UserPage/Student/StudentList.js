@@ -9,14 +9,12 @@ import { transformStudentTypes } from "../../../../common/transformData";
 function StudentList(props) {
   const { t } = useTranslation();
   const [students, setStudents] = useState([]);
-  const [studentsNumber, setStudentsNumber] = useState(0);
 
   useEffect(() => {
     Axios.post("/api/students/get-students", null).then((response) => {
       if (response.data.success) {
         const data = response.data.students;
         setStudents(data);
-        setStudentsNumber(data.length);
       } else {
         alert(t("fail_to_get_api"));
       }
@@ -72,7 +70,7 @@ function StudentList(props) {
   return (
     <div className="student-list">
       <div className="student-list__title">
-        {t("student_list")} ({`${studentsNumber} ${t("student")}`})
+        {t("student_list")} ({`${students?.length} ${t("student")}`})
       </div>
       <Button type="primary" className="add-student-button">
         <Link to="/add-student">{t("add_student")}</Link>

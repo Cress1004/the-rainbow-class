@@ -87,6 +87,7 @@ function ClassDetail(props) {
           <div className="class-detail__more-option">
             <Dropdown overlay={menu} trigger={["click"]}>
               <a
+                href={() => false}
                 className="ant-dropdown-link"
                 onClick={(e) => e.preventDefault()}
               >

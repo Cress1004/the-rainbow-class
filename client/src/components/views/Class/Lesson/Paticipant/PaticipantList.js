@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Row, Table } from "antd";
+import { Table } from "antd";
 
 function PaticipantList(props) {
   const { t } = useTranslation();

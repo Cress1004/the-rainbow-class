@@ -85,7 +85,7 @@ function Profile() {
 
   const checkConfirmPassword = (e) => {
     const value = e.target.value;
-    if (password.newPass == value) {
+    if (password.newPass === value) {
       setPassword({ ...password, passConfirm: value });
       setErrorMessage(undefined);
     } else {

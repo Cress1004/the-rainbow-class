@@ -12,7 +12,6 @@ const SUB_CLASS_MONITOR = 2;
 function VolunteerList(props) {
   const { t } = useTranslation();
   const [volunteers, setVolunteers] = useState([]);
-  const [volunteersNumber, setVolunteersNumber] = useState(0);
   const userId = localStorage.getItem("userId");
   const [userRole, setUserRole] = useState(null);
 
@@ -22,7 +21,6 @@ function VolunteerList(props) {
         if (response.data.success) {
           const data = response.data.volunteers;
           setVolunteers(data);
-          setVolunteersNumber(data.length);
         } else {
           alert(t("fail_to_get_api"));
         }
@@ -36,7 +34,7 @@ function VolunteerList(props) {
         alert(t("fail_to_get_api"));
       }
     });
-  }, [t]);
+  }, [t, userId]);
 
   const columns = [
     {
@@ -97,7 +95,7 @@ function VolunteerList(props) {
   return (
     <div className="volunteer-list">
       <div className="volunteer-list__title">
-        {t("volunteer_list")} ({`${volunteersNumber} ${t("volunteer")}`})
+        {t("volunteer_list")} ({`${volunteers?.length} ${t("volunteer")}`})
       </div>
       {checkAdminAndMonitorRole(userRole) && (
         <Button type="primary" className="add-volunteer-button">

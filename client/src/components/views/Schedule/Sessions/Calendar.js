@@ -28,7 +28,7 @@ function MyCalendar(props) {
         alert(t("fail_to_get_api"));
       }
     });
-  }, []);
+  }, [t, userId]);
 
   const content = (event) => (
     <>

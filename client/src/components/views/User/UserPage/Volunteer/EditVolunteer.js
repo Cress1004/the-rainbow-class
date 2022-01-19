@@ -83,7 +83,7 @@ function EditVolunteer(props) {
         }
       }
     );
-  }, [t, id]);
+  }, [t, id, userId]);
   const formik = useFormik({
     initialValues: volunteerData ? volunteerData : {},
     enableReinitialize: true,

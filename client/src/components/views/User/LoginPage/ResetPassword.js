@@ -61,6 +61,7 @@ function ResetPassword(props) {
         <CustomFlashMessage message={message} />
       ) : null}
       <a
+        href={() => false}
         className="login-form-forgot"
         onClick={showModal}
         style={{ float: "right" }}

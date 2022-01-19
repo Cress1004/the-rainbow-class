@@ -10,7 +10,7 @@ import {
   TimePicker,
   Col,
 } from "antd";
-import { useHistory, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Axios from "axios";
 import "./lesson.scss";
@@ -19,14 +19,12 @@ import {
   FORMAT_TIME_SCHEDULE,
   OFFLINE_OPTION,
   ONLINE_OPTION,
-  FORMAT_DATE,
 } from "../../../common/constant";
 import {
   convertTimeStringToMoment,
   convertDateStringToMoment,
 } from "../../../common/transformData";
 import { generateKey } from "../../../common/function";
-import moment from "moment";
 
 const { Item } = Form;
 const { TextArea } = Input;
@@ -35,7 +33,6 @@ const { Option } = Select;
 function EditLesson(props) {
   const { t } = useTranslation();
   const { id, lessonId } = useParams();
-  const history = useHistory();
   const [location, setLocation] = useState([]);
   const [province, setProvince] = useState("");
   const [districts, setDistricts] = useState([]);
@@ -95,7 +92,7 @@ function EditLesson(props) {
         alert(t("fail_to_get_api"));
       }
     });
-  }, [t, id]);
+  }, [t, id, lessonId]);
 
   const handleChangeProvice = (value) => {
     const currentProvince = location.find((item) => value === item.id);

@@ -59,7 +59,7 @@ function VolunteerDetail(props) {
         }
       }
     );
-  }, [t, id]);
+  }, [t, id, userId]);
 
   const openDeletePopup = () => {
     setConfirmDelete(true);

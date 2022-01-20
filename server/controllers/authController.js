@@ -8,6 +8,8 @@ const {
   changeAvatar,
   checkChangePassword,
   getUserDataByEmail,
+  getUserDataById,
+  comparePassword,
 } = require("../repository/userRepository");
 const fs = require("fs");
 const handlebars = require("handlebars");
@@ -155,14 +157,14 @@ const activeAccount = async (email) => {
 
     transporter.sendMail(mailOptions, function (err, success) {
       if (err) {
-        console.log('error tu day');
+        console.log("error tu day");
         return false;
       } else {
         return true;
       }
     });
   } catch (error) {
-    console.log('error tu kia')
+    console.log("error tu kia");
     return false;
   }
 };
@@ -219,8 +221,15 @@ const updateAvatar = async (req, res) => {
 
 const changePassword = async (req, res) => {
   try {
-    console.log(await checkChangePassword(req.body));
-    res.status(200).json({ success: true });
+    const data = req.body;
+    const user = await getUserDataById(data.userId);
+    if (await comparePassword(user, data.password)) {
+      user.password = data.password.newPassword;
+      user.save();
+      res.status(200).json({ success: true });
+    } else {
+      res.status(200).json({ success: false, message: "Old password is not match" });
+    }
   } catch (error) {
     res.status(400).send(error);
   }

@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import Axios from "axios";
 import "./profile.scss";
 import { transformAddressData } from "../../../common/transformData";
+import ChangePassword from "./ChangePassword";
 
 const { Item } = Form;
 const layout = {
@@ -16,10 +17,8 @@ function Profile() {
   const { t } = useTranslation();
   const userId = localStorage.getItem("userId");
   const [userData, setUserData] = useState({});
-  const [password, setPassword] = useState({});
   const [showChangeAvatar, setShowChangeAvatar] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(undefined);
 
   useEffect(() => {
     Axios.post(`/api/users/profile`, { userId: userId }).then((response) => {
@@ -30,7 +29,6 @@ function Profile() {
         alert(t("fail_to_get_api"));
       }
     });
-    setPassword({ userId: userId });
   }, [t, userId]);
 
   const handleChangeAvatar = (e) => {
@@ -44,7 +42,6 @@ function Profile() {
       },
     }).then((response) => {
       if (response.data.success) {
-        console.log(response.data.link)
         setUserData({ ...userData, image: response.data.link });
         setShowChangeAvatar(true);
       } else {
@@ -68,30 +65,9 @@ function Profile() {
     setShowChangeAvatar(true);
   };
 
-  const submitChangePassword = () => {
-    Axios.post(`/api/users/change-password`, password).then((response) => {
-      if (response.data.success) {
-        const result = response.data.result;
-        console.log(result);
-        if(!result) {
-          setShowChangePassword(false);
-          setPassword({userId: userId})
-        };
-      } else {
-        alert(t("fail_to_save_avatar"));
-      }
-    });
-  };
-
-  const checkConfirmPassword = (e) => {
-    const value = e.target.value;
-    if (password.newPass === value) {
-      setPassword({ ...password, passConfirm: value });
-      setErrorMessage(undefined);
-    } else {
-      setErrorMessage(t("confirm_password_is_not_match"));
-    }
-  };
+  const hideChangePasswordPopup = () => {
+    setShowChangePassword(false);
+  }
 
   //Ngay sinh, dia chi
   return (
@@ -147,7 +123,15 @@ function Profile() {
           </Row>
         </>
       )}
-      <Modal
+      {userData && (
+        <ChangePassword
+          showChangePassword={showChangePassword}
+          userId={userId}
+          layout={layout}
+          hideChangePasswordPopup={hideChangePasswordPopup}
+        />
+      )}
+      {/* <Modal
         className="profile__change-password"
         title={t("modal_change_password_title")}
         visible={showChangePassword}
@@ -193,7 +177,7 @@ function Profile() {
           </Item>
           <span className="error__modal-error">{errorMessage}</span>
         </Form>
-      </Modal>
+      </Modal> */}
     </div>
   );
 }

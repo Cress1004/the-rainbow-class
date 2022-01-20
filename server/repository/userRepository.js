@@ -1,5 +1,6 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 const { DEFAULT_IMAGE_PATH } = require("../defaultValues/constant");
 const { User } = require("../models/User");
 const { storeAddress, updateAddress } = require("./commonRepository");
@@ -44,7 +45,7 @@ const updateUserData = async (data) => {
   try {
     const user = await User.findOne({ _id: data.id });
     if (user.email !== data.email && (await checkDuplicateMail(data.email))) {
-      return {message: "Duplicate Email"};
+      return { message: "Duplicate Email" };
     } else {
       user.email = data.email;
       user.name = data.name;
@@ -107,20 +108,28 @@ const changeAvatar = async (data) => {
   }
 };
 
+const comparePassword = async (user, password) => {
+  try {
+    const match = await bcrypt.compare(password.oldPassword, user.password);
+    return match;
+  } catch (error) {
+    console.log("cant compare password");
+    return null;
+  }
+};
+
 const checkChangePassword = async (data) => {
   try {
-    var message;
     const user = await User.findOne({ _id: data.userId }, (err, user) => {
       user.comparePassword(data.oldPass, (err, isMatch) => {
         if (!isMatch) {
-          message = "Old Password is not correct!";
+          return { message: "Password is not match" };
         } else {
           user.password = data.newPass;
           user.save();
           return;
         }
       });
-      return message;
     });
   } catch (error) {
     console.log("can't update password");
@@ -158,4 +167,5 @@ module.exports = {
   getUserDataByEmail,
   checkDuplicateMail,
   findUserByToken,
+  comparePassword
 };

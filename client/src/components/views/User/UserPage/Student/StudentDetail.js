@@ -8,6 +8,13 @@ import {
   transformStudentTypes,
 } from "../../../../common/transformData";
 import Axios from "axios";
+import useFetchRole from "../../../../../hook/useFetchRole";
+import {
+  checkAdminAndMonitorRole,
+  checkStudentAndCurrentUserSameClass,
+} from "../../../../common/function";
+import { ADMIN, STUDENT } from "../../../../common/constant";
+import PermissionDenied from "../../../Error/PermissionDenied";
 
 const { Item } = Form;
 const layout = {
@@ -21,6 +28,9 @@ function StudentDetail(props) {
   const history = useHistory();
   const [studentData, setStudentData] = useState({});
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const userId = localStorage.getItem("userId");
+  const currentUserData = useFetchRole(userId);
+  const userRole = currentUserData?.userRole;
 
   useEffect(() => {
     Axios.post(`/api/students/${id}`, { studentId: id }).then((response) => {
@@ -37,6 +47,7 @@ function StudentDetail(props) {
           address: transformAddressData(data.user.address),
           phoneNumber: data.user.phoneNumber,
           className: data.class ? data.class.name : t("unset"),
+          classId: data.class?._id,
         });
       } else {
         alert(t("fail_to_get_api"));
@@ -44,14 +55,13 @@ function StudentDetail(props) {
     });
   }, [t, id]);
 
-
   const openDeletePopup = () => {
     setConfirmDelete(true);
   };
 
   const deleteStudent = () => {
     setConfirmDelete(false);
-    Axios.post(`/api/students/${id}/delete`, { studentId: id }).then(
+    Axios.post(`/api/students/${id}/delete`, { studentId: id, userId: userId }).then(
       (response) => {
         if (response.data.success) {
           alert(t("delete_student_success"));
@@ -67,26 +77,36 @@ function StudentDetail(props) {
     setConfirmDelete(false);
   };
 
+  if (
+    studentData &&
+    currentUserData &&
+    !checkStudentAndCurrentUserSameClass(studentData, currentUserData)
+  ) {
+    return <PermissionDenied />;
+  }
+
   return (
     <div className="student-detail">
       <div className="student-detail__title">{t("student_detail")}</div>
-      <Row>
-        <Col span={14} />
-        <Col span={6}>
-          <Button type="primary" className="edit-student-button">
-            <Link to={`/students/${id}/edit`}>{t("edit_student")}</Link>
-          </Button>
-        </Col>
-        <Col span={4}>
-          <Button
-            type="danger"
-            className="delete-student-button"
-            onClick={openDeletePopup}
-          >
-            {t("delete_student")}
-          </Button>
-        </Col>
-      </Row>
+      {userRole && checkAdminAndMonitorRole(userRole) && (
+        <Row>
+          <Col span={14} />
+          <Col span={6}>
+            <Button type="primary" className="edit-student-button">
+              <Link to={`/students/${id}/edit`}>{t("edit_student")}</Link>
+            </Button>
+          </Col>
+          <Col span={4}>
+            <Button
+              type="danger"
+              className="delete-student-button"
+              onClick={openDeletePopup}
+            >
+              {t("delete_student")}
+            </Button>
+          </Col>
+        </Row>
+      )}
       {studentData && (
         <>
           <Row>
@@ -105,7 +125,9 @@ function StudentDetail(props) {
                 <Item label={t("phone_number")}>{studentData.phoneNumber}</Item>
                 <Item label={t("parent_name")}>{studentData.parentName}</Item>
                 <Item label={t("address")}>{studentData.address}</Item>
-                <Item label={t("student_types")}>{studentData.studentTypes}</Item>
+                <Item label={t("student_types")}>
+                  {studentData.studentTypes}
+                </Item>
                 <Item label={t("class_name")}>{studentData.className}</Item>
               </Form>
             </Col>

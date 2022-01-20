@@ -3,6 +3,7 @@ import {
   CALENDAR_COLOR_EVENT,
   CLASS_MONITOR,
   SUB_CLASS_MONITOR,
+  SUPER_ADMIN,
 } from "./constant";
 
 export function generateKey() {
@@ -28,4 +29,11 @@ export function checkAdminAndMonitorRole(userRole) {
       userRole.subRole === CLASS_MONITOR ||
       userRole.subRole === SUB_CLASS_MONITOR)
   );
+}
+
+export function checkStudentAndCurrentUserSameClass(student, currentUserData) {
+  const userRole = currentUserData.userRole;
+  if (userRole.subRole === SUPER_ADMIN) return false;
+  else if (userRole.subRole === ADMIN) return true;
+  else return student.classId === currentUserData.userClassId;
 }

@@ -48,12 +48,13 @@ const getRole = async (req, res) => {
   try {
     const user = await getUserDataById(req.body.userId);
     var userRole = {};
+    var classData = await getClassByUserId(user._id);
     userRole.role = user.role;
     if(userRole.role === VOLUNTEER_ROLE) {
       const volunteer = await getVolunteerByUserId(user._id);
       userRole.subRole = volunteer.role;  
     }
-    res.status(200).json({ success: true, userRole: userRole });
+    res.status(200).json({ success: true, userRole: userRole, classId: classData._id });
   } catch (error) {
     res.status(400).send(error);
   }

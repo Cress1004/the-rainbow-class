@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Route } from "react-router-dom";
 import { Layout, Menu, Typography } from "antd";
 import { Link } from "react-router-dom";
@@ -13,7 +13,7 @@ import {
   SUPER_ADMIN,
   VOLUNTEER,
 } from "../../common/constant";
-import Axios from "axios";
+import useFetchRole from "../../../hook/useFetchRole";
 
 const { Title } = Typography;
 const { SubMenu } = Menu;
@@ -22,21 +22,11 @@ const { Header, Content, Sider } = Layout;
 const DashboardLayout = ({ children, ...rest }) => {
   const { t } = useTranslation();
   const [collapsed, setCollapsed] = useState(false);
-  const [userRole, setUserRole] = useState({});
+  const userId = localStorage.getItem("userId");
+  const userRole = useFetchRole(userId).userRole;
   const handleCollapse = (collapsed) => {
     setCollapsed(collapsed);
   };
-  const userId = localStorage.getItem("userId");
-  useEffect(() => {
-    Axios.post(`/api/users/get-role`, { userId: userId }).then((response) => {
-      if (response.data.success) {
-        const data = response.data.userRole;
-        setUserRole(data);
-      } else {
-        alert(t("fail_to_get_api"));
-      }
-    });
-  }, [t, userId]);
 
   return (
     <Layout>

@@ -23,7 +23,8 @@ const DashboardLayout = ({ children, ...rest }) => {
   const { t } = useTranslation();
   const [collapsed, setCollapsed] = useState(false);
   const userId = localStorage.getItem("userId");
-  const userRole = useFetchRole(userId).userRole;
+  const userData = useFetchRole(userId);
+  const userRole = userData.userRole;
   const handleCollapse = (collapsed) => {
     setCollapsed(collapsed);
   };

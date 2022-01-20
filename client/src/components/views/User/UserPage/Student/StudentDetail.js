@@ -13,7 +13,6 @@ import {
   checkAdminAndMonitorRole,
   checkStudentAndCurrentUserSameClass,
 } from "../../../../common/function";
-import { ADMIN, STUDENT } from "../../../../common/constant";
 import PermissionDenied from "../../../Error/PermissionDenied";
 
 const { Item } = Form;
@@ -61,7 +60,7 @@ function StudentDetail(props) {
 
   const deleteStudent = () => {
     setConfirmDelete(false);
-    Axios.post(`/api/students/${id}/delete`, { studentId: id, userId: userId }).then(
+    Axios.post(`/api/students/${id}/delete`, { studentId: id }).then(
       (response) => {
         if (response.data.success) {
           alert(t("delete_student_success"));

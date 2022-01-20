@@ -14,7 +14,8 @@ function StudentList(props) {
   const { t } = useTranslation();
   const [students, setStudents] = useState([]);
   const userId = localStorage.getItem("userId");
-  const userRole = useFetchRole(userId);
+  const userData = useFetchRole(userId);
+  const userRole = userData.userRole;
   useEffect(() => {
     Axios.post("/api/students/get-students", { userId: userId }).then(
       (response) => {
@@ -69,7 +70,7 @@ function StudentList(props) {
   }));
 
   const renderData = (text, key) => (
-    <Link to={`students/${key.id}`} className={"text-in-table-row"}>
+    <Link to={`/students/${key.id}`} className={"text-in-table-row"}>
       <span>{text}</span>
     </Link>
   );

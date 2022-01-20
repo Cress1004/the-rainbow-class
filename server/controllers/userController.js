@@ -1,15 +1,24 @@
 const { VOLUNTEER_ROLE, STUDENT_ROLE } = require("../defaultValues/constant");
-const { getClassScheduleByUserId, getClassByUserId, getClassByUser } = require("../repository/classRepository");
-const { getLessonBySchedule, getLessonsByCLass } = require("../repository/lessonRepository");
-const { getAllSchedulesByVolunteer } = require("../repository/scheduleRepository");
+const {
+  getClassScheduleByUserId,
+  getClassByUserId,
+  getClassByUser,
+} = require("../repository/classRepository");
+const {
+  getLessonBySchedule,
+  getLessonsByCLass,
+} = require("../repository/lessonRepository");
+const {
+  getAllSchedulesByVolunteer,
+} = require("../repository/scheduleRepository");
 const { getUserDataById } = require("../repository/userRepository");
-const { getVolunteerById, getVolunteerByUserId } = require("../repository/volunteerRepository");
+const { getVolunteerByUserId } = require("../repository/volunteerRepository");
 
 const getMySchedule = async (req, res) => {
   try {
     const userId = req.body.userId;
     const user = await getUserDataById(userId);
-    if(user.role === VOLUNTEER_ROLE) {
+    if (user.role === VOLUNTEER_ROLE) {
       const schedules = await getAllSchedulesByVolunteer(req.body.userId);
       Promise.all(
         schedules.map((schedule) => getLessonBySchedule(schedule._id))
@@ -17,7 +26,7 @@ const getMySchedule = async (req, res) => {
         res.status(200).json({ success: true, schedule: result });
       });
     }
-    if(user.role === STUDENT_ROLE) {
+    if (user.role === STUDENT_ROLE) {
       const className = getClassByUser(user);
       const schedule = await getLessonsByCLass(className._id);
       res.status(200).json({ success: true, schedule: schedule });
@@ -31,37 +40,40 @@ const getMyClasschedule = async (req, res) => {
   try {
     const userId = req.body.userId;
     const user = await getUserDataById(userId);
-    if(user.role === VOLUNTEER_ROLE) {
+    if (user.role === VOLUNTEER_ROLE) {
       const schedule = await getClassScheduleByUserId(userId);
       const classData = await getClassByUserId(userId);
-      res.status(200).json({ success: true, schedule:schedule, classData: classData });  
-    }
-    else {
-      res.status(404).send("permission denied");  
+      res
+        .status(200)
+        .json({ success: true, schedule: schedule, classData: classData });
+    } else {
+      res.status(404).send("permission denied");
     }
   } catch (error) {
     res.status(400).send(error);
   }
-}
+};
 
 const getRole = async (req, res) => {
   try {
     const user = await getUserDataById(req.body.userId);
+    const classData = await getClassByUser(user);
     var userRole = {};
-    var classData = await getClassByUserId(user._id);
     userRole.role = user.role;
-    if(userRole.role === VOLUNTEER_ROLE) {
+    if (userRole.role === VOLUNTEER_ROLE) {
       const volunteer = await getVolunteerByUserId(user._id);
-      userRole.subRole = volunteer.role;  
+      userRole.subRole = volunteer.role;
     }
-    res.status(200).json({ success: true, userRole: userRole, classId: classData._id });
+    res
+      .status(200)
+      .json({ success: true, userRole: userRole, classId: classData._id });
   } catch (error) {
     res.status(400).send(error);
   }
-}
+};
 
 module.exports = {
   getMySchedule,
   getMyClasschedule,
-  getRole
+  getRole,
 };

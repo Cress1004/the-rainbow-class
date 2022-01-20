@@ -52,18 +52,18 @@ function AddVolunteer(props) {
     }),
     onSubmit: (values, { setSubmitting }) => {
       setTimeout(() => {
-        Axios.post("/api/volunteers/add-volunteer", { volunteerData: values, userId: userId }).then(
-          (response) => {
-            if (response.data.success) {
-              history.push("/volunteers");
-            } else if (!response.data.success) {
-              alert(response.data.message);
-            }
-            else {
-              alert(t("fail_to_get_api"));
-            }
+        Axios.post("/api/volunteers/add-volunteer", {
+          volunteerData: values,
+          userId: userId,
+        }).then((response) => {
+          if (response.data.success) {
+            history.push("/volunteers");
+          } else if (!response.data.success) {
+            alert(response.data.message);
+          } else {
+            alert(t("fail_to_get_api"));
           }
-        );
+        });
         setSubmitting(false);
       }, 400);
     },
@@ -120,7 +120,11 @@ function AddVolunteer(props) {
           <div>
             {" "}
             <div className="add-volunteer__title">{t("add_volunteer")}</div>
-            <Form {...layout} name="control-hooks" onSubmit={formik.handleSubmit}>
+            <Form
+              {...layout}
+              name="control-hooks"
+              onSubmit={formik.handleSubmit}
+            >
               <Form.Item label={t("user_name")} required>
                 <Input
                   name="name"
@@ -180,6 +184,11 @@ function AddVolunteer(props) {
                     </Option>
                   ))}
                 </Select>
+                {formik.errors.class && formik.touched.class && (
+                  <span className="custom__error-message">
+                    {formik.errors.class}
+                  </span>
+                )}
               </Form.Item>
               <Form.Item {...tailLayout}>
                 <Button

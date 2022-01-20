@@ -41,10 +41,9 @@ const checkAdminAndMonitorRole = async (req, res, next) => {
       )
         next();
       else
-        res.json({
+        res.status(200).json({
           success: false,
           messsage: "Permission Denied",
-          error: true,
         });
     }
   } catch (error) {

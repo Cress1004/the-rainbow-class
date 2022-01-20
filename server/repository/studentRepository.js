@@ -15,6 +15,7 @@ const storeStudent = async (data) => {
       parentName: data.parentName,
       studentTypes: data.studentTypes,
       user: newUser._id,
+      class: data.class,
     });
     return newStudent.save();
   } catch (error) {

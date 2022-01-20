@@ -12,19 +12,22 @@ const {
   getStudentByUserId,
   getStudentByClass,
 } = require("../repository/studentRepository");
-const { getUserDataById, checkDuplicateMail } = require("../repository/userRepository");
+const {
+  getUserDataById,
+  checkDuplicateMail,
+} = require("../repository/userRepository");
 const { getVolunteerByUserId } = require("../repository/volunteerRepository");
 const { activeAccount } = require("./authController");
 
 const addNewStudent = async (req, res) => {
   try {
     const studentData = req.body.studentData;
-    if(await checkDuplicateMail(studentData.email)) {
+    if (await checkDuplicateMail(studentData.email)) {
       res.status(200).json({ success: false, message: "Duplicate Email!" });
     } else {
       await storeStudent(studentData);
       await activeAccount(studentData.email);
-      res.status(200).json({ success: true });      
+      res.status(200).json({ success: true });
     }
   } catch (error) {
     res.status(400).send(error);
@@ -66,8 +69,14 @@ const getStudentInfo = async (req, res) => {
 
 const editStudent = async (req, res) => {
   try {
-    await updateStudent(req.body.studentData);
-    res.status(200).json({ success: true });
+    const studentData = req.body.studentData;
+    const flag = await updateStudent(studentData);
+    if (flag && !flag.message) {
+      res.status(200).json({ success: true });
+    } else if (flag.message) {
+      res.status(200).json({ success: false, message: flag.message });
+    } else
+      res.status(200).json({ success: false, message: "something went wrong" });
   } catch (error) {
     res.status(400).send(error);
   }

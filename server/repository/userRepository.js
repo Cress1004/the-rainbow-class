@@ -43,19 +43,24 @@ const getUserDataById = async (id) => {
 const updateUserData = async (data) => {
   try {
     const user = await User.findOne({ _id: data.id });
-    user.email = data.email;
-    user.name = data.name;
-    user.gender = data.gender;
-    user.phoneNumber = data.phoneNumber;
-    if (user.address) {
-      await updateAddress(user.address, data.address);
+    if (user.email !== data.email && (await checkDuplicateMail(data.email))) {
+      return {message: "Duplicate Email"};
     } else {
-      const address = await storeAddress(data.address);
-      user.address = address._id;
+      user.email = data.email;
+      user.name = data.name;
+      user.gender = data.gender;
+      user.phoneNumber = data.phoneNumber;
+      if (user.address) {
+        await updateAddress(user.address, data.address);
+      } else {
+        const address = await storeAddress(data.address);
+        user.address = address._id;
+      }
+      return user.save();
     }
-    return user.save();
   } catch (error) {
     console.log("fail to update user's basic infor");
+    return null;
   }
 };
 

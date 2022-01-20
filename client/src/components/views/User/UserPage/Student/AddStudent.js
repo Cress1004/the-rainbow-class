@@ -241,7 +241,6 @@ function AddStudent(props) {
           </Radio.Group>
         </Item>
         <Item
-          name="address"
           label={t("address")}
           className="add-student__input-address-select-form"
         >

@@ -1,3 +1,4 @@
+const { message } = require("antd");
 const { STUDENT_ROLE } = require("../defaultValues/constant");
 const { Student } = require("../models/Student");
 const { storeUser, updateUserData, deleteUser } = require("./userRepository");
@@ -69,12 +70,20 @@ const updateStudent = async (data) => {
       phoneNumber: data.phoneNumber,
       address: data.address,
     };
-    await updateUserData(userData);
-    student.parentName = data.parentName;
-    student.studentTypes = data.studentTypes;
-    return student.save();
+    const flag = await updateUserData(userData);
+    if (flag && !flag.message) {
+      student.parentName = data.parentName;
+      student.studentTypes = data.studentTypes;
+      student.class = data.class;
+      return student.save();
+    } else if (flag.message) {
+      return {message: flag.message};
+    } else {
+      return null;
+    }
   } catch (error) {
     console.log("fail to update student");
+    return null;
   }
 };
 

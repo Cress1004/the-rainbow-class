@@ -40,15 +40,11 @@ const getMyClasschedule = async (req, res) => {
   try {
     const userId = req.body.userId;
     const user = await getUserDataById(userId);
-    if (user.role === VOLUNTEER_ROLE) {
-      const schedule = await getClassScheduleByUserId(userId);
-      const classData = await getClassByUserId(userId);
-      res
-        .status(200)
-        .json({ success: true, schedule: schedule, classData: classData });
-    } else {
-      res.status(404).send("permission denied");
-    }
+    const schedule = await getClassScheduleByUserId(userId);
+    const classData = await getClassByUser(user);
+    res
+      .status(200)
+      .json({ success: true, schedule: schedule, classData: classData });
   } catch (error) {
     res.status(400).send(error);
   }

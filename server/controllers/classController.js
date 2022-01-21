@@ -1,4 +1,4 @@
-const { VOLUNTEER_ROLE, ADMIN } = require("../defaultValues/constant");
+const { VOLUNTEER_ROLE, ADMIN, STUDENT_ROLE } = require("../defaultValues/constant");
 const {
   findAllClasses,
   tranformClassData,
@@ -7,8 +7,10 @@ const {
   deleteClass,
   editClass,
   findClassbyVolunteer,
+  findClassbyStudent,
 } = require("../repository/classRepository");
 const { getLessonsByCLass } = require("../repository/lessonRepository");
+const { getStudentByUserId } = require("../repository/studentRepository");
 const { getUserDataById } = require("../repository/userRepository");
 const { getVolunteerByUserId } = require("../repository/volunteerRepository");
 
@@ -33,6 +35,15 @@ const getClasses = async (req, res) => {
           }
         );    
       }
+    }
+    if(user.role === STUDENT_ROLE) {
+      const currentStudent = await getStudentByUserId(userId);
+      const classes = await findClassbyStudent(currentStudent);
+      Promise.all(classes.map((item) => tranformClassData(item))).then(
+        (value) => {
+          res.status(200).json({ success: true, classes: value });
+        }
+      );
     }
   } catch (error) {
     res.status(400).send(error);

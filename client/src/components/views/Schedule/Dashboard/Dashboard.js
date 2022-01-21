@@ -1,32 +1,25 @@
-import React, { useState, useEffect } from "react";
-import { useTranslation } from "react-i18next";
-import Axios from "axios";
+import React from "react";
 import "../schedule.scss";
-import MyCalendar from "../Sessions/Calendar";
+import useFetchRole from "../../../../hook/useFetchRole";
+import { STUDENT, SUPER_ADMIN } from "../../../common/constant";
+import PermissionDenied from "../../Error/PermissionDenied";
+import StudentTimesheet from "./StudentTimesheet";
+import VolunteerTimesheet from "./VolunteerTimesheet";
 
 function Dashboard(props) {
-  const { t } = useTranslation();
   const userId = localStorage.getItem("userId");
-  const [schedule, setSchedule] = useState([]);
-  useEffect(() => {
-    Axios.post(`/api/users/my-schedule`, { userId: userId }).then(
-      (response) => {
-        if (response.data.success) {
-          const data = response.data.schedule;
-          setSchedule(data);
-        } else {
-          alert(t("fail_to_get_api"));
-        }
-      }
-    );
-  }, [t, userId]);
+  const currentUserData = useFetchRole(userId);
+  const userRole = currentUserData.userRole;
 
-  return (
-    <div className="dashboard">
-      <div className="dashboard__title">{t("my_schedule")}</div>
-      <MyCalendar data={schedule} userId={userId}/>
-    </div>
-  );
+  if (userRole && userRole.role === STUDENT) {
+    return <StudentTimesheet userId={userId} />;
+  }
+
+  if (userRole && userRole.subRole === SUPER_ADMIN) {
+    return <PermissionDenied />;
+  }
+
+  return <VolunteerTimesheet userId={userId} />;
 }
 
 export default Dashboard;

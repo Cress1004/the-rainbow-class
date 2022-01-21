@@ -131,53 +131,6 @@ function Profile() {
           hideChangePasswordPopup={hideChangePasswordPopup}
         />
       )}
-      {/* <Modal
-        className="profile__change-password"
-        title={t("modal_change_password_title")}
-        visible={showChangePassword}
-        onOk={submitChangePassword}
-        onCancel={() => setShowChangePassword(false)}
-        okText={t("change_password")}
-        cancelText={t("cancel")}
-        footer={[
-          <Button
-            type="primary"
-            onClick={submitChangePassword }
-            disabled={errorMessage}
-            className={
-              errorMessage ? "disable-submit-button" : "enable-submit-lesson"
-            }
-          >
-            {t("change_password")}
-          </Button>,
-          <Button onClick={() => setShowChangePassword(false)}>
-            {t("cancel")}
-          </Button>,
-        ]}
-      >
-        <Form {...layout} className="profile__change-password-form">
-          <Item label={t("old_password")}>
-            <Input
-              type="password"
-              onChange={(e) =>
-                setPassword({ ...password, oldPass: e.target.value })
-              }
-            />
-          </Item>
-          <Item label={t("new_password")}>
-            <Input
-              type="password"
-              onChange={(e) =>
-                setPassword({ ...password, newPass: e.target.value })
-              }
-            />
-          </Item>
-          <Item label={t("confirm_new_password")}>
-            <Input type="password" onChange={(e) => checkConfirmPassword(e)} />
-          </Item>
-          <span className="error__modal-error">{errorMessage}</span>
-        </Form>
-      </Modal> */}
     </div>
   );
 }

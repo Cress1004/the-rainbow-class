@@ -65,6 +65,8 @@ function StudentType() {
       if (response.data.success) {
         setStudentTypes(studentTypes.filter((item) => item._id !== id));
         alert(t("delete success"));
+      } else if (!response.data.success) {
+        alert(response.data.message);
       }
     } catch (error) {
       alert(t("fail-to-send-data"));
@@ -78,7 +80,12 @@ function StudentType() {
         "/api/common-data/add-student-type",
         type
       );
-      if (response.data.success) openMessage();
+      if (response.data.success) {
+        alert("Success")
+      }
+      else if (!response.data.success) {
+        alert(response.data.message);
+      }
     } catch (error) {
       alert(t("fail-to-send-data"));
     }

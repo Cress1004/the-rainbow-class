@@ -2,8 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { Form, Input, Button, Select } from "antd";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import Axios from "axios";
 import "./profile.scss";
+import { phoneRegExp } from "../../../common/constant";
 
 const { Item } = Form;
 const { Option } = Select;
@@ -19,6 +22,7 @@ function EditProfile(props) {
   const [wards, setWards] = useState([]);
   const [ward, setWard] = useState({});
   const [province, setProvince] = useState({});
+  const [address, setAddress] = useState({});
 
   const layout = {
     labelCol: { span: 5 },
@@ -27,6 +31,35 @@ function EditProfile(props) {
   const tailLayout = {
     wrapperCol: { offset: 18, span: 4 },
   };
+
+  const formik = useFormik({
+    initialValues: userData ? userData : {},
+    enableReinitialize: true,
+    validationSchema: Yup.object({
+      name: Yup.string().required(t("required_name_message")),
+      email: Yup.string()
+        .email(t("invalid_email_message"))
+        .required(t("required_email_message")),
+      phoneNumber: Yup.string()
+        .matches(phoneRegExp, t("invalid_phone_number"))
+        .required(t("required_phone_number_message")),
+    }),
+    onSubmit: (values, { setSubmitting }) => {
+      setTimeout(() => {
+        const valuesToSend = { ...values, address };
+        Axios.post(`/api/users/profile/edit`, { userData: valuesToSend }).then(
+          (response) => {
+            if (response.data.success) {
+              history.push("/profile");
+            } else {
+              alert(t("fail_to_get_api"));
+            }
+          }
+        );
+        setSubmitting(false);
+      }, 400);
+    },
+  });
 
   useEffect(() => {
     Axios.post("/api/common-data/location", null).then((response) => {
@@ -38,9 +71,10 @@ function EditProfile(props) {
     });
     Axios.post(`/api/users/profile`, { userId: userId }).then((response) => {
       if (response.data.success) {
-        const data = response.data.userData; 
+        const data = response.data.userData;
         setUserData(data);
         if (data.address.address) {
+          setAddress(data.address);
           setProvince(data.address.address.province);
           setDistrict(data.address.address.district);
           setWard(data.address.address.ward);
@@ -57,14 +91,12 @@ function EditProfile(props) {
     setDistricts(currentProvince.districts);
     setDistrict({});
     setWard({});
-    setUserData({
-      ...userData,
+    setAddress({
+      ...address,
       address: {
-        address: {
-          province: {
-            id: currentProvince.id,
-            name: currentProvince.name,
-          },
+        province: {
+          id: currentProvince.id,
+          name: currentProvince.name,
         },
       },
     });
@@ -75,15 +107,13 @@ function EditProfile(props) {
     setDistrict({ id: currentDistrict.id, name: currentDistrict.name });
     setWards(currentDistrict.wards);
     setWard({});
-    setUserData({
-      ...userData,
+    setAddress({
+      ...address,
       address: {
-        address: {
-          province: userData.address.address.province,
-          district: {
-            id: currentDistrict.id,
-            name: currentDistrict.name,
-          },
+        province: address.address.province,
+        district: {
+          id: currentDistrict.id,
+          name: currentDistrict.name,
         },
       },
     });
@@ -92,41 +122,29 @@ function EditProfile(props) {
   const handleChangeWard = (value) => {
     const currentWard = wards.find((item) => value === item.id);
     setWard({ id: currentWard.id, name: currentWard.name });
-    setUserData({
-      ...userData,
+    setAddress({
+      ...address,
       address: {
-        address: {
-          province: userData.address.address.province,
-          district: userData.address.address.district,
-          ward: {
-            id: currentWard.id,
-            name: currentWard.name,
-          },
+        province: address.address.province,
+        district: address.address.district,
+        ward: {
+          id: currentWard.id,
+          name: currentWard.name,
         },
       },
     });
   };
 
   const handleChangeAddressDescription = (e) => {
-    setUserData({
-      ...userData,
-      address: {
-        address: userData.address.address,
-        description: e.target.value,
-      },
+    setAddress({
+      ...address,
+      description: e.target.value,
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    Axios.post(`/api/users/profile/edit`, { userData: userData }).then(
-      (response) => {
-        if (response.data.success) {
-          history.push("/profile")
-        } else {
-          alert(t("fail_to_get_api"));
-        }
-      }
+  const fieldError = (formik) => {
+    return (
+      !formik.errors.name && !formik.errors.email && !formik.errors.phoneNumber
     );
   };
 
@@ -137,43 +155,46 @@ function EditProfile(props) {
         {...layout}
         name="control-hooks"
         className="edit-profile__form"
-        onSubmit={handleSubmit}
+        onSubmit={formik.handleSubmit}
       >
-        <Item
-          name="name"
-          label={t("user_name")}
-          rules={[{ required: true, validateMessages: t("required_name") }]}
-        >
+        <Item label={t("user_name")} required>
           <Input
-            value={userData.name}
+            name="name"
+            value={formik.values.name}
             placeholder={t("input_name")}
-            onChange={(e) => setUserData({ ...userData, name: e.target.value })}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
           />
+          {formik.errors.name && formik.touched.name && (
+            <span className="custom__error-message">{formik.errors.name}</span>
+          )}
         </Item>
-        <Item
-          name="email"
-          label={t("email")}
-          rules={[{ required: true, validateMessages: t("required_email") }]}
-        >
+        <Item label={t("email")} required>
           <Input
-            value={userData.email}
+            name="email"
+            value={formik.values.email}
             placeholder={t("input_email")}
-            onChange={(e) =>
-              setUserData({ ...userData, email: e.target.value })
-            }
+            disabled={true}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
           />
+          {formik.errors.email && formik.touched.email && (
+            <span className="custom__error-message">{formik.errors.email}</span>
+          )}
         </Item>
-        <Item name="phone_number" label={t("phone_number")}>
+        <Item label={t("phone_number")} required>
           <Input
-            value={userData.phoneNumber}
+            name="phoneNumber"
+            value={formik.values.phoneNumber}
             placeholder={t("input_phone_number")}
-            onChange={(e) =>
-              setUserData({
-                ...userData,
-                phoneNumber: e.target.value,
-              })
-            }
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
           />
+          {formik.errors.phoneNumber && formik.touched.phoneNumber && (
+            <span className="custom__error-message">
+              {formik.errors.phoneNumber}
+            </span>
+          )}
         </Item>
         <Item
           name="address"
@@ -181,7 +202,7 @@ function EditProfile(props) {
           className="edit-profile__input-address-select-form"
         >
           <Select
-            value={province ? province.name : undefined}
+            value={address.address?.province?.name}
             showSearch
             placeholder={t("input_province")}
             onChange={handleChangeProvice}
@@ -193,7 +214,7 @@ function EditProfile(props) {
             ))}
           </Select>
           <Select
-            value={district ? district.name : undefined}
+            value={address.address?.district?.name}
             showSearch
             placeholder={t("input_district")}
             onChange={handleChangeDistrict}
@@ -208,7 +229,7 @@ function EditProfile(props) {
               : null}
           </Select>
           <Select
-            value={ward ? ward.name : undefined}
+            value={address.address?.ward?.name}
             showSearch
             placeholder={t("input_ward")}
             onChange={handleChangeWard}
@@ -222,17 +243,18 @@ function EditProfile(props) {
               : null}
           </Select>
           <Input
-            value={
-              userData.address && userData.address.description
-                ? userData.address.description
-                : ""
-            }
+            value={address.description}
             onChange={(e) => handleChangeAddressDescription(e)}
             placeholder={t("input_specific_address")}
           />
         </Item>
         <Item {...tailLayout}>
-          <Button type="primary" htmlType="submit">
+          <Button
+            type="primary"
+            htmlType="submit"
+            className={!fieldError(formik) ? "disable-submit-button" : ""}
+            disabled={!fieldError(formik)}
+          >
             {t("update")}
           </Button>
         </Item>

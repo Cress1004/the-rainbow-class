@@ -8,8 +8,12 @@ import {
   transformAddressData,
   transformLessonTimeToString,
 } from "../../../common/transformData";
-import { OFFLINE_OPTION } from "../../../common/constant";
+import { OFFLINE_OPTION, STUDENT, VOLUNTEER } from "../../../common/constant";
 import PaticipantList from "./Paticipant/PaticipantList";
+import useFetchRole from "../../../../hook/useFetchRole";
+import { checkCurrentUserBelongToCurrentClass } from "../../../common/checkRole";
+import PermissionDenied from "../../Error/PermissionDenied";
+import { checkAdminAndMonitorRole } from "../../../common/function";
 
 function LessonDetail(props) {
   const { t } = useTranslation();
@@ -19,10 +23,13 @@ function LessonDetail(props) {
   const [lessonData, setLessonData] = useState({});
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [assign, setAssign] = useState(false);
+  const currentUser = useFetchRole(userId);
+  const userRole = currentUser.userRole;
 
   useEffect(() => {
     Axios.post(`/api/classes/${id}/lessons/${lessonId}`, {
       lessonId: lessonId,
+      userId: userId,
     }).then((response) => {
       if (response.data.success) {
         const data = response.data.lessonData;
@@ -41,6 +48,8 @@ function LessonDetail(props) {
         )
           ? setAssign(true)
           : setAssign(false);
+      } else if (!response.data.success) {
+        alert(response.data.message);
       } else {
         alert(t("fail_to_get_api"));
       }
@@ -117,21 +126,27 @@ function LessonDetail(props) {
     </Menu>
   );
 
+  if (!checkCurrentUserBelongToCurrentClass(currentUser, id)) {
+    return <PermissionDenied />;
+  }
+
   return (
     <div className="lesson-detail">
       <Row>
         <div className="lesson-detail__title">{t("lesson_detail")}</div>
-        <div className="lesson-detail__more-option">
-          <Dropdown overlay={menu} trigger={["click"]}>
-            <a
-              href={() => false}
-              className="ant-dropdown-link"
-              onClick={(e) => e.preventDefault()}
-            >
-              <Icon type="more" />
-            </a>
-          </Dropdown>
-        </div>
+        {checkAdminAndMonitorRole(userRole) && (
+          <div className="lesson-detail__more-option">
+            <Dropdown overlay={menu} trigger={["click"]}>
+              <a
+                href={() => false}
+                className="ant-dropdown-link"
+                onClick={(e) => e.preventDefault()}
+              >
+                <Icon type="more" />
+              </a>
+            </Dropdown>
+          </div>
+        )}
       </Row>
       <div className="lesson-detail__info-area">
         {" "}
@@ -180,17 +195,19 @@ function LessonDetail(props) {
                     : t("unregister_person")
                 })`}
               </div>
-              <div className="lesson-detail__assign-button">
-                {assign ? (
-                  <Button onClick={unassignSchedule}>
-                    {t("unassign_this_schedule")}
-                  </Button>
-                ) : (
-                  <Button type="primary" onClick={assignSchedule}>
-                    {t("assign_this_schedule")}
-                  </Button>
-                )}
-              </div>
+              {userRole && userRole.role !== STUDENT && (
+                <div className="lesson-detail__assign-button">
+                  {assign ? (
+                    <Button onClick={unassignSchedule}>
+                      {t("unassign_this_schedule")}
+                    </Button>
+                  ) : (
+                    <Button type="primary" onClick={assignSchedule}>
+                      {t("assign_this_schedule")}
+                    </Button>
+                  )}
+                </div>
+              )}
             </Row>
             <PaticipantList participants={lessonData.paticipants} />
           </>

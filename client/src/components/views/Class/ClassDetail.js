@@ -24,11 +24,9 @@ function ClassDetail(props) {
   const { id } = useParams();
   const [classData, setClassData] = useState({});
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [lessons, setLessons] = useState([]);
   const userId = localStorage.getItem("userId");
   const currentUserData = useFetchRole(userId);
   const userRole = currentUserData.userRole;
-  const currentUserClassId = currentUserData.classId;
 
   useEffect(() => {
     Axios.post(`/api/classes/${id}`, { classId: id }).then((response) => {
@@ -38,15 +36,6 @@ function ClassDetail(props) {
         alert(t("fail_to_get_api"));
       }
     });
-    Axios.post(`/api/classes/${id}/get-lessons`, { classId: id }).then(
-      (response) => {
-        if (response.data.success) {
-          setLessons(response.data.lessons);
-        } else {
-          alert(t("fail_to_get_api"));
-        }
-      }
-    );
   }, [t, id]);
 
   const openDeletePopup = () => {
@@ -179,23 +168,21 @@ function ClassDetail(props) {
           )}
           <hr />
           {checkCurrentUserBelongToCurrentClass(currentUserData, id) && (
-              <div>
-                {checkAdminAndMonitorRole(userRole) && (
-                  <Row>
-                    <div className="class-detail__add-lesson">
-                      <Button type="primary">
-                        <Link to={`/classes/${id}/lessons/add`}>
-                          {t("add_lesson")}
-                        </Link>
-                      </Button>
-                    </div>
-                  </Row>
-                )}
-                {lessons.length ? (
-                  <LessonList id={id} lessons={lessons} />
-                ) : null}
-              </div>
-            )}
+            <div>
+              {checkAdminAndMonitorRole(userRole) && (
+                <Row>
+                  <div className="class-detail__add-lesson">
+                    <Button type="primary">
+                      <Link to={`/classes/${id}/lessons/add`}>
+                        {t("add_lesson")}
+                      </Link>
+                    </Button>
+                  </div>
+                </Row>
+              )}
+              <LessonList id={id} userId={userId} />
+            </div>
+          )}
         </div>
         <Modal
           title={t("modal_confirm_delete_class_title")}

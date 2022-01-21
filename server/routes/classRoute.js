@@ -6,6 +6,7 @@ const {
   deleteClassData,
   editClassData,
   getClassSchedule,
+  getAllClasses,
 } = require("../controllers/classController");
 const {
   addLesson,
@@ -17,11 +18,13 @@ const {
   unassignLesson,
 } = require("../controllers/lessonController");
 const { getMyClasschedule } = require("../controllers/userController");
-const { auth } = require("../middleware/auth");
+const { auth, checkAdminAndMonitorRole } = require("../middleware/auth");
+const { checkAdminAndVolunteerRole } = require("../middleware/checkRole");
 const router = express.Router();
 
 router.post("/add-class", auth, addClass);
 router.post("/get-classes", auth, getClasses);
+router.post("/get-all-classes", checkAdminAndVolunteerRole, getAllClasses);
 router.post("/my-class-schedules", auth, getMyClasschedule);
 router.post("/get-class-schedules", auth, getClassSchedule);
 router.post("/:id", auth, getClassData);

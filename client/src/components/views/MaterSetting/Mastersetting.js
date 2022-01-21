@@ -10,7 +10,7 @@ function Mastersetting(props) {
   const { t } = useTranslation();
   const userId = localStorage.getItem("userId");
   const userData = useFetchRole(userId);
-  if (userData && !checkAdminRole(userData)) {
+  if (userData && !checkAdminRole(userData.userRole)) {
     return <PermissionDenied />;
   }
   return (

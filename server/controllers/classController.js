@@ -1,4 +1,8 @@
-const { VOLUNTEER_ROLE, ADMIN, STUDENT_ROLE } = require("../defaultValues/constant");
+const {
+  VOLUNTEER_ROLE,
+  ADMIN,
+  STUDENT_ROLE,
+} = require("../defaultValues/constant");
 const {
   findAllClasses,
   tranformClassData,
@@ -8,6 +12,7 @@ const {
   editClass,
   findClassbyVolunteer,
   findClassbyStudent,
+  getAllClassesData,
 } = require("../repository/classRepository");
 const { getLessonsByCLass } = require("../repository/lessonRepository");
 const { getStudentByUserId } = require("../repository/studentRepository");
@@ -18,25 +23,25 @@ const getClasses = async (req, res) => {
   try {
     const userId = req.body.userId;
     const user = await getUserDataById(userId);
-    if(user.role === VOLUNTEER_ROLE) {
+    if (user.role === VOLUNTEER_ROLE) {
       const currentVolunteer = await getVolunteerByUserId(userId);
-      if(currentVolunteer.role === ADMIN) {
+      if (currentVolunteer.role === ADMIN) {
         const classes = await findAllClasses(user);
         Promise.all(classes.map((item) => tranformClassData(item))).then(
           (value) => {
             res.status(200).json({ success: true, classes: value });
           }
-        );    
+        );
       } else {
         const classes = await findClassbyVolunteer(currentVolunteer);
         Promise.all(classes.map((item) => tranformClassData(item))).then(
           (value) => {
             res.status(200).json({ success: true, classes: value });
           }
-        );    
+        );
       }
     }
-    if(user.role === STUDENT_ROLE) {
+    if (user.role === STUDENT_ROLE) {
       const currentStudent = await getStudentByUserId(userId);
       const classes = await findClassbyStudent(currentStudent);
       Promise.all(classes.map((item) => tranformClassData(item))).then(
@@ -45,6 +50,19 @@ const getClasses = async (req, res) => {
         }
       );
     }
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+const getAllClasses = async (req, res) => {
+  try {
+    const classes = await getAllClassesData();
+    Promise.all(classes.map((item) => tranformClassData(item))).then(
+      (value) => {
+        res.status(200).json({ success: true, classes: value });
+      }
+    );
   } catch (error) {
     res.status(400).send(error);
   }
@@ -93,7 +111,9 @@ const getClassSchedule = async (req, res) => {
     const classId = req.body.classId;
     const schedule = await getLessonsByCLass(classId);
     const classData = await findClassById(classId);
-    res.status(200).json({ success: true, schedule: schedule, classData: classData });
+    res
+      .status(200)
+      .json({ success: true, schedule: schedule, classData: classData });
   } catch (error) {
     res.status(400).send(error);
   }
@@ -106,4 +126,5 @@ module.exports = {
   deleteClassData,
   editClassData,
   getClassSchedule,
+  getAllClasses,
 };

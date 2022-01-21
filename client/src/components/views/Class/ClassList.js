@@ -8,15 +8,25 @@ import {
   transformAddressData,
   transformStudentTypes,
 } from "../../common/transformData";
+import useFetchRole from "../../../hook/useFetchRole";
+import {
+  checkAdminAndVolunteerRole,
+  checkAdminRole,
+} from "../../common/checkRole";
+import PermissionDenied from "../Error/PermissionDenied";
 
 function ClassList(props) {
   const { t } = useTranslation();
   const [classes, setClasses] = useState();
-
+  const userId = localStorage.getItem("userId");
+  const currentUserData = useFetchRole(userId);
+  const userRole = currentUserData.userRole;
   useEffect(() => {
-    Axios.post("/api/classes/get-classes", null).then((response) => {
+    Axios.post("/api/classes/get-all-classes", null).then((response) => {
       if (response.data.success) {
         setClasses(response.data.classes);
+      } else if (!response.data.success) {
+        alert(response.data.message);
       } else {
         alert(t("fail_to_get_api"));
       }
@@ -76,19 +86,23 @@ function ClassList(props) {
   ];
 
   const renderData = (text, key) => (
-    <Link to={`classes/${key.id}`} className={'text-in-table-row'}>
+    <Link to={`classes/${key.id}`} className={"text-in-table-row"}>
       <span>{text}</span>
     </Link>
   );
-
+  if (!userRole || !checkAdminAndVolunteerRole(userRole)) {
+    return <PermissionDenied />;
+  }
   return (
     <div className="class-list">
       <div className="class-list__title">
         {t("class_list")} ({`${data.length} ${t("class")}`})
       </div>
-      <Button type="primary" className="add-class-button">
-        <Link to="/add-class">{t("add_class")}</Link>
-      </Button>
+      {checkAdminRole(userRole) && (
+        <Button type="primary" className="add-class-button">
+          <Link to="/add-class">{t("add_class")}</Link>
+        </Button>
+      )}
       <Table columns={columns} dataSource={data} />
     </div>
   );

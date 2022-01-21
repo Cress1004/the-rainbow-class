@@ -19,6 +19,15 @@ const findAllClasses = (user) => {
   }
 };
 
+const getAllClassesData = () => {
+  try {
+    return ClassName.find({});
+  } catch (error) {
+    console.log("cant get all classes data");
+    return null;
+  }
+};
+
 const findClassById = (id) => {
   try {
     if (id == 0) return null;
@@ -69,7 +78,7 @@ const deleteClass = (id) => {
 const getClassScheduleByUserId = async (userId) => {
   try {
     const user = await getUserDataById(userId);
-    if(user.role === VOLUNTEER_ROLE) {
+    if (user.role === VOLUNTEER_ROLE) {
       const volunteer = await getVolunteerByUserId(userId);
       if (!volunteer) {
         const filterClass = await ClassName.find({}).sort({ _id: -1 }).limit(1);
@@ -77,11 +86,10 @@ const getClassScheduleByUserId = async (userId) => {
       }
       return await getLessonsByCLass(volunteer.class);
     }
-    if(user.role === STUDENT_ROLE) {
+    if (user.role === STUDENT_ROLE) {
       const student = await getStudentByUserId(userId);
       return await getLessonsByCLass(student.class);
     }
-
   } catch (error) {
     console.log("cant get class schedule");
   }
@@ -130,19 +138,19 @@ const getClassByUser = async (user) => {
 
 const findClassbyVolunteer = async (volunteer) => {
   try {
-    return ClassName.find({_id: volunteer.class._id});
+    return ClassName.find({ _id: volunteer.class._id });
   } catch (error) {
     console.log("cant get class By User ID");
   }
-}
+};
 
 const findClassbyStudent = async (student) => {
   try {
-    return ClassName.find({_id: student.class._id});
+    return ClassName.find({ _id: student.class._id });
   } catch (error) {
     console.log("cant get class By student");
   }
-}
+};
 
 module.exports = {
   findAllClasses,
@@ -155,5 +163,6 @@ module.exports = {
   getClassByUserId,
   getClassByUser,
   findClassbyVolunteer,
-  findClassbyStudent
+  findClassbyStudent,
+  getAllClassesData
 };

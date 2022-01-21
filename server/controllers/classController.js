@@ -2,6 +2,8 @@ const {
   VOLUNTEER_ROLE,
   ADMIN,
   STUDENT_ROLE,
+  CLASS_MONITOR,
+  SUB_CLASS_MONITOR,
 } = require("../defaultValues/constant");
 const {
   findAllClasses,
@@ -13,6 +15,7 @@ const {
   findClassbyVolunteer,
   findClassbyStudent,
   getAllClassesData,
+  getClassByUser,
 } = require("../repository/classRepository");
 const { getLessonsByCLass } = require("../repository/lessonRepository");
 const { getStudentByUserId } = require("../repository/studentRepository");
@@ -79,8 +82,25 @@ const addClass = async (req, res) => {
 
 const editClassData = async (req, res) => {
   try {
-    await editClass(req.body);
-    res.status(200).json({ success: true });
+    const data = req.body;
+    const currentUser = await getUserDataById(data.userId);
+    if (currentUser.role === VOLUNTEER_ROLE) {
+      const currentVolunteer = await getVolunteerByUserId(data.userId);
+      const userClass = await getClassByUser(currentUser);
+      if (
+        currentVolunteer.role === ADMIN ||
+        ((currentVolunteer.role === CLASS_MONITOR ||
+          currentVolunteer.role === SUB_CLASS_MONITOR) &&
+          userClass._id === data.classData.id)
+      ) {
+        await editClass(data.classData);
+        res.status(200).json({ success: true });
+      } else {
+        res.status(200).json({ success: false, message: "Permission Denied" });
+      }
+    } else {
+      res.status(200).json({ success: false, message: "Permission Denied" });
+    }
   } catch (error) {
     res.status(400).send(error);
   }

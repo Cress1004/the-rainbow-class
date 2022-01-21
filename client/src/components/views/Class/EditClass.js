@@ -3,20 +3,18 @@ import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Axios from "axios";
 import { useParams } from "react-router";
-import {
-  Form,
-  Input,
-  Select,
-  Button,
-  message,
-  Row,
-  Col,
-  TimePicker,
-  Icon,
-} from "antd";
+import { Form, Input, Select, Button, Row, Col, TimePicker, Icon } from "antd";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import { transformScheduleTime } from "../../common/transformData";
 import { generateKey } from "../../common/function";
 import { WEEKDAY, FORMAT_TIME_SCHEDULE } from "../../common/constant";
+import useFetchRole from "../../../hook/useFetchRole";
+import {
+  checkAdminRole,
+  checkCurrentMonitorBelongToCurrentClass,
+} from "../../common/checkRole";
+import PermissionDenied from "../Error/PermissionDenied";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -25,7 +23,6 @@ const { Item } = Form;
 function EditClass(props) {
   const { t } = useTranslation();
   const history = useHistory();
-  const key = "updatable";
   const layout = {
     labelCol: { span: 5 },
     wrapperCol: { span: 15 },
@@ -43,6 +40,45 @@ function EditClass(props) {
   const [province, setProvince] = useState({});
   const [studentTypes, setStudentTypes] = useState([]);
   const [defaultSchedule, setDefaultSchedule] = useState([]);
+  const [address, setAddress] = useState({});
+  const userId = localStorage.getItem("userId");
+  const currentUser = useFetchRole(userId);
+  const userRole = currentUser.userRole;
+
+  const formik = useFormik({
+    initialValues: classData ? classData : {},
+    enableReinitialize: true,
+    validationSchema: Yup.object({
+      name: Yup.string().required(t("required_class_name_message")),
+      description: Yup.string().required(
+        t("required_class_description_message")
+      ),
+      studentTypes: Yup.array().required(t("required_studentType_message")),
+    }),
+    onSubmit: (values, { setSubmitting }) => {
+      setTimeout(() => {
+        let valuesToSend;
+        if (defaultSchedule.length && !defaultSchedule[0].dayOfWeek)
+          valuesToSend = { ...values, address };
+        else {
+          valuesToSend = { ...values, address, defaultSchedule };
+        }
+        Axios.post(`/api/classes/${id}/edit`, {
+          classData: valuesToSend,
+          userId: userId,
+        }).then((response) => {
+          if (response.data.success) {
+            history.push(`/classes/${id}`);
+          } else if (!response.data.success) {
+            alert(response.data.message);
+          } else {
+            alert(t("fail_to_get_api"));
+          }
+        });
+        setSubmitting(false);
+      }, 400);
+    },
+  });
 
   useEffect(() => {
     Axios.post("/api/common-data/location", null).then((response) => {
@@ -73,6 +109,7 @@ function EditClass(props) {
           defaultSchedule: data.defaultSchedule,
         });
         if (data.address) {
+          setAddress(data.address);
           setProvince(data.address.address.province);
           setDistrict(data.address.address.district);
           setWard(data.address.address.ward);
@@ -90,14 +127,12 @@ function EditClass(props) {
     setDistricts(currentProvince.districts);
     setDistrict({});
     setWard({});
-    setClassData({
-      ...classData,
+    setAddress({
+      ...address,
       address: {
-        address: {
-          province: {
-            id: currentProvince.id,
-            name: currentProvince.name,
-          },
+        province: {
+          id: currentProvince.id,
+          name: currentProvince.name,
         },
       },
     });
@@ -108,15 +143,13 @@ function EditClass(props) {
     setDistrict({ id: currentDistrict.id, name: currentDistrict.name });
     setWards(currentDistrict.wards);
     setWard({});
-    setClassData({
-      ...classData,
+    setAddress({
+      ...address,
       address: {
-        address: {
-          province: classData.address.address.province,
-          district: {
-            id: currentDistrict.id,
-            name: currentDistrict.name,
-          },
+        province: address.address.province,
+        district: {
+          id: currentDistrict.id,
+          name: currentDistrict.name,
         },
       },
     });
@@ -125,28 +158,23 @@ function EditClass(props) {
   const handleChangeWard = (value) => {
     const currentWard = wards.find((item) => value === item.id);
     setWard({ id: currentWard.id, name: currentWard.name });
-    setClassData({
-      ...classData,
+    setAddress({
+      ...address,
       address: {
-        address: {
-          province: classData.address.address.province,
-          district: classData.address.address.district,
-          ward: {
-            id: currentWard.id,
-            name: currentWard.name,
-          },
+        province: address.address.province,
+        district: address.address.district,
+        ward: {
+          id: currentWard.id,
+          name: currentWard.name,
         },
       },
     });
   };
 
   const handleChangeAddressDescription = (e) => {
-    setClassData({
-      ...classData,
-      address: {
-        address: classData.address.address,
-        description: e.target.value,
-      },
+    setAddress({
+      ...address,
+      description: e.target.value,
     });
   };
 
@@ -165,29 +193,6 @@ function EditClass(props) {
       (schedule) => schedule.key !== key
     );
     setDefaultSchedule(newSchedule);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setClassData({ ...classData, defaultSchedule: defaultSchedule });
-    setClassData((classData) => {
-      Axios.post(`/api/classes/${id}/edit`, classData).then((response) => {
-        if (response.data.success) {
-          openMessage();
-          history.push(`/classes/${id}`);
-        } else {
-          alert(t("fail_to_get_api"));
-        }
-      });
-      return classData;
-    });
-  };
-
-  const openMessage = () => {
-    message.loading({ content: t("loading"), key });
-    setTimeout(() => {
-      message.success({ content: t("save_success"), key, duration: 3 });
-    }, 1000);
   };
 
   const schedule = (
@@ -272,42 +277,44 @@ function EditClass(props) {
     </>
   );
 
+  if (!checkCurrentMonitorBelongToCurrentClass(currentUser, id)) {
+    return <PermissionDenied />;
+  }
+
   return (
     <div className="edit-class">
       <div className="edit-class__title">{t("edit_class")}</div>
       {classData && (
-        <Form {...layout} name="control-hooks" onSubmit={handleSubmit}>
-          <Item
-            name="name"
-            label={t("class_name")}
-            rules={[
-              { required: true, validateMessages: t("required_class_name") },
-            ]}
-          >
+        <Form {...layout} name="control-hooks" onSubmit={formik.handleSubmit}>
+          <Item label={t("class_name")} required>
             <Input
-              value={classData.name}
+              name="name"
               placeholder={t("input_class_name")}
-              onChange={(e) =>
-                setClassData({ ...classData, name: e.target.value })
-              }
-            />
+              value={formik.values.name}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            />{" "}
+            {formik.errors.name && formik.touched.name && (
+              <span className="custom__error-message">
+                {formik.errors.name}
+              </span>
+            )}
           </Item>
-          <Item
-            name="description"
-            label={t("description")}
-            rules={[
-              { required: true, validateMessages: t("required_description") },
-            ]}
-          >
+          <Item label={t("description")} required>
             <TextArea
-              value={classData.description}
+              name="description"
               placeholder={t("input_description")}
-              onChange={(e) =>
-                setClassData({ ...classData, description: e.target.value })
-              }
+              value={formik.values.description}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
             />
+            {formik.errors.description && formik.touched.description && (
+              <span className="custom__error-message">
+                {formik.errors.description}
+              </span>
+            )}
           </Item>
-          <Item name="address" label={t("address")}>
+          <Item label={t("address")}>
             <Select
               showSearch
               style={{
@@ -315,7 +322,7 @@ function EditClass(props) {
                 width: "calc(33% - 12px)",
                 marginRight: "10px",
               }}
-              value={province.name}
+              value={address.address?.province?.name}
               placeholder={t("input_province")}
               onChange={handleChangeProvice}
             >
@@ -332,7 +339,7 @@ function EditClass(props) {
                 width: "calc(33% - 12px)",
                 margin: "0px 10px",
               }}
-              value={district.name}
+              value={address.address?.district?.name}
               placeholder={t("input_district")}
               onChange={handleChangeDistrict}
             >
@@ -351,7 +358,7 @@ function EditClass(props) {
                 width: "calc(33% - 12px)",
                 marginLeft: "10px",
               }}
-              value={ward.name}
+              value={address.address?.ward?.name}
               placeholder={t("input_ward")}
               onChange={handleChangeWard}
             >
@@ -364,7 +371,7 @@ function EditClass(props) {
                 : null}
             </Select>
             <Input
-              value={classData.address ? classData.address.description : ""}
+              value={address.description}
               placeholder={t("input_specific_address")}
               onChange={(e) => handleChangeAddressDescription(e)}
             />
@@ -378,11 +385,9 @@ function EditClass(props) {
                 width: "100%",
                 marginRight: "10px",
               }}
-              value={classData.studentTypes}
+              value={formik.values.studentTypes}
               placeholder={t("input_student_type")}
-              onChange={(value) =>
-                setClassData({ ...classData, studentTypes: value })
-              }
+              onChange={(value) => formik.setFieldValue("studentTypes", value)}
             >
               {studentTypes.map((option) => (
                 <Option key={option._id} value={option._id}>
@@ -395,7 +400,7 @@ function EditClass(props) {
             {schedule}
           </Item>
           <Item {...tailLayout}>
-            <Button type="primary" htmlType="submit" onClick={openMessage}>
+            <Button type="primary" htmlType="submit">
               {t("update")}
             </Button>
           </Item>

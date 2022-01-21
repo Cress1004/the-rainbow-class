@@ -32,7 +32,7 @@ router.post("/my-class-schedules", auth, getMyClasschedule);
 router.post("/get-class-schedules", auth, getClassSchedule);
 router.post("/:id", auth, getClassData);
 router.post("/:id/delete", checkAdminRole, deleteClassData);
-router.post("/:id/edit", auth, editClassData);
+router.post("/:id/edit", checkAdminAndMonitorRole, editClassData);
 router.post("/:id/add-lesson", auth, addLesson);
 router.post("/:id/get-lessons", auth, getListLessonByClass);
 router.post("/:id/lessons/:lessonId", auth, getLessonData);

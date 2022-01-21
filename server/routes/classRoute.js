@@ -19,16 +19,19 @@ const {
 } = require("../controllers/lessonController");
 const { getMyClasschedule } = require("../controllers/userController");
 const { auth, checkAdminAndMonitorRole } = require("../middleware/auth");
-const { checkAdminAndVolunteerRole } = require("../middleware/checkRole");
+const {
+  checkAdminAndVolunteerRole,
+  checkAdminRole,
+} = require("../middleware/checkRole");
 const router = express.Router();
 
-router.post("/add-class", auth, addClass);
+router.post("/add-class", checkAdminRole, addClass);
 router.post("/get-classes", auth, getClasses);
 router.post("/get-all-classes", checkAdminAndVolunteerRole, getAllClasses);
 router.post("/my-class-schedules", auth, getMyClasschedule);
 router.post("/get-class-schedules", auth, getClassSchedule);
 router.post("/:id", auth, getClassData);
-router.post("/:id/delete", auth, deleteClassData);
+router.post("/:id/delete", checkAdminRole, deleteClassData);
 router.post("/:id/edit", auth, editClassData);
 router.post("/:id/add-lesson", auth, addLesson);
 router.post("/:id/get-lessons", auth, getListLessonByClass);

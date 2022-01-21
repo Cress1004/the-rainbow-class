@@ -12,6 +12,11 @@ import {
   transformStudentTypes,
 } from "../../common/transformData";
 import LessonList from "./Lesson/LessonList";
+import useFetchRole from "../../../hook/useFetchRole";
+import { checkAdminAndMonitorRole } from "../../common/function";
+import { checkCurrentUserBelongToCurrentClass } from "../../common/checkRole";
+import { SUPER_ADMIN } from "../../common/constant";
+import PermissionDenied from "../Error/PermissionDenied";
 
 function ClassDetail(props) {
   const { t } = useTranslation();
@@ -20,6 +25,10 @@ function ClassDetail(props) {
   const [classData, setClassData] = useState({});
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [lessons, setLessons] = useState([]);
+  const userId = localStorage.getItem("userId");
+  const currentUserData = useFetchRole(userId);
+  const userRole = currentUserData.userRole;
+  const currentUserClassId = currentUserData.classId;
 
   useEffect(() => {
     Axios.post(`/api/classes/${id}`, { classId: id }).then((response) => {
@@ -79,22 +88,28 @@ function ClassDetail(props) {
     </Menu>
   );
 
+  if (!userRole || userRole.subRole === SUPER_ADMIN)
+    return <PermissionDenied />;
+
   return (
     <div>
       <div className="class-detail">
         <Row>
           <div className="class-detail__title">{t("class_detail")}</div>
-          <div className="class-detail__more-option">
-            <Dropdown overlay={menu} trigger={["click"]}>
-              <a
-                href={() => false}
-                className="ant-dropdown-link"
-                onClick={(e) => e.preventDefault()}
-              >
-                <Icon type="more" />
-              </a>
-            </Dropdown>
-          </div>
+          {currentUserData &&
+            checkAdminAndMonitorRole(currentUserData.userRole) && (
+              <div className="class-detail__more-option">
+                <Dropdown overlay={menu} trigger={["click"]}>
+                  <a
+                    href={() => false}
+                    className="ant-dropdown-link"
+                    onClick={(e) => e.preventDefault()}
+                  >
+                    <Icon type="more" />
+                  </a>
+                </Dropdown>
+              </div>
+            )}
         </Row>
         <div className="class-detail__info-area">
           {" "}
@@ -163,14 +178,24 @@ function ClassDetail(props) {
             </>
           )}
           <hr />
-          <Row>
-            <div className="class-detail__add-lesson">
-              <Button type="primary">
-                <Link to={`/classes/${id}/lessons/add`}>{t("add_lesson")}</Link>
-              </Button>
-            </div>
-          </Row>
-          {lessons.length ? <LessonList id={id} lessons={lessons} /> : null}
+          {checkCurrentUserBelongToCurrentClass(currentUserData, id) && (
+              <div>
+                {checkAdminAndMonitorRole(userRole) && (
+                  <Row>
+                    <div className="class-detail__add-lesson">
+                      <Button type="primary">
+                        <Link to={`/classes/${id}/lessons/add`}>
+                          {t("add_lesson")}
+                        </Link>
+                      </Button>
+                    </div>
+                  </Row>
+                )}
+                {lessons.length ? (
+                  <LessonList id={id} lessons={lessons} />
+                ) : null}
+              </div>
+            )}
         </div>
         <Modal
           title={t("modal_confirm_delete_class_title")}

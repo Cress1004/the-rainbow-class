@@ -11,3 +11,8 @@ export function checkAdminAndVolunteerRole(userRole) {
     return false;
   }
 }
+
+export function checkCurrentUserBelongToCurrentClass(userData, classId) {
+  if (userData?.subRole === ADMIN) return true;
+  else return userData.userClassId === classId;
+}

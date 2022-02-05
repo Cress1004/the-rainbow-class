@@ -1,8 +1,5 @@
 const { VOLUNTEER_ROLE, STUDENT_ROLE } = require("../defaultValues/constant");
 const { ClassName } = require("../models/ClassName");
-const { Student } = require("../models/Student");
-const { User } = require("../models/User");
-const { Volunteer } = require("../models/Volunteer");
 const { storeAddress, updateAddress } = require("./commonRepository");
 const { getLessonsByCLass } = require("./lessonRepository");
 const { getStudentByUserId } = require("./studentRepository");
@@ -107,41 +104,6 @@ const tranformClassData = async (className) => {
   }
 };
 
-// const getClassByUserId = async (userId) => {
-//   try {
-//     const user = await User.findOne({ _id: userId }).populate(
-//       "class"
-//     );
-//     if(user.class) {
-//       return user.class;
-//     } else {
-//       console.log("no class");
-//       return null;
-//     }
-//   } catch (error) {
-//     console.log("cant get class By User ID");
-//   }
-// };
-
-// const getClassByUser = async (user) => {
-//   try {
-//     if (user.role === VOLUNTEER_ROLE) {
-//       const volunteer = await Volunteer.findOne({ user: user._id }).populate(
-//         "class"
-//       );
-//       return volunteer.class;
-//     }
-//     if (user.role === STUDENT_ROLE) {
-//       const student = await Student.findOne({ user: user._id }).populate(
-//         "class"
-//       );
-//       return student.class;
-//     }
-//   } catch (error) {
-//     console.log("cant get class By User ID");
-//   }
-// };
-
 const getClassByUser = async (user) => {
   try {
     if (user.class) {
@@ -156,36 +118,6 @@ const getClassByUser = async (user) => {
   }
 };
 
-// const findClassbyVolunteer = async (volunteer) => {
-//   try {
-//     return ClassName.find({ _id: volunteer.class._id });
-//   } catch (error) {
-//     console.log("cant get class By User ID");
-//   }
-// };
-
-// const findClassbyStudent = async (student) => {
-//   try {
-//     return ClassName.find({ _id: student.class._id });
-//   } catch (error) {
-//     console.log("cant get class By student");
-//   }
-// };
-
-const findClassByUser = async (user) => {
-  try {
-    if (user.class) {
-      return ClassName.find({ _id: user.class._id });
-    } else {
-      console.log("no class");
-      return null;
-    }
-  } catch (error) {
-    console.log("cant get class By user");
-    return null;
-  }
-};
-
 module.exports = {
   findAllClasses,
   tranformClassData,
@@ -195,8 +127,5 @@ module.exports = {
   editClass,
   getClassScheduleByUserId,
   getClassByUser,
-  // findClassbyVolunteer,
-  // findClassbyStudent,
-  findClassByUser,
   getAllClassesData,
 };

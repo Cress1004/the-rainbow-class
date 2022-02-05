@@ -1,7 +1,6 @@
 const { VOLUNTEER_ROLE, STUDENT_ROLE } = require("../defaultValues/constant");
 const {
   getClassScheduleByUserId,
-  getClassByUserId,
   getClassByUser,
 } = require("../repository/classRepository");
 const {

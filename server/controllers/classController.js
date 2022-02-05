@@ -1,25 +1,19 @@
 const {
   VOLUNTEER_ROLE,
   ADMIN,
-  STUDENT_ROLE,
   CLASS_MONITOR,
   SUB_CLASS_MONITOR,
 } = require("../defaultValues/constant");
 const {
-  findAllClasses,
   tranformClassData,
   storeClass,
   findClassById,
   deleteClass,
   editClass,
-  findClassbyVolunteer,
-  findClassbyStudent,
   getAllClassesData,
   getClassByUser,
-  findClassByUser,
 } = require("../repository/classRepository");
 const { getLessonsByCLass } = require("../repository/lessonRepository");
-const { getStudentByUserId } = require("../repository/studentRepository");
 const { getUserDataById } = require("../repository/userRepository");
 const { getVolunteerByUserId } = require("../repository/volunteerRepository");
 
@@ -27,34 +21,7 @@ const getClasses = async (req, res) => {
   try {
     const userId = req.body.userId;
     const user = await getUserDataById(userId);
-    // if (user.role === VOLUNTEER_ROLE) {
-    //   const currentVolunteer = await getVolunteerByUserId(userId);
-    //   if (currentVolunteer.role === ADMIN) {
-    //     const classes = await findAllClasses(user);
-    //     Promise.all(classes.map((item) => tranformClassData(item))).then(
-    //       (value) => {
-    //         res.status(200).json({ success: true, classes: value });
-    //       }
-    //     );
-    //   } else {
-    //     const classes = await findClassbyVolunteer(currentVolunteer);
-    //     Promise.all(classes.map((item) => tranformClassData(item))).then(
-    //       (value) => {
-    //         res.status(200).json({ success: true, classes: value });
-    //       }
-    //     );
-    //   }
-    // }
-    // if (user.role === STUDENT_ROLE) {
-    //   const currentStudent = await getStudentByUserId(userId);
-    //   const classes = await findClassbyStudent(currentStudent);
-    //   Promise.all(classes.map((item) => tranformClassData(item))).then(
-    //     (value) => {
-    //       res.status(200).json({ success: true, classes: value });
-    //     }
-    //   );
-    // }
-    const classes = await findClassByUser(user);
+    const classes = await getClassByUser(user);
     if(classes) {
       Promise.all(classes.map((item) => tranformClassData(item))).then(
         (value) => {

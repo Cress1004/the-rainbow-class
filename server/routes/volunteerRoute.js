@@ -3,7 +3,6 @@ const { addNewVolunteer, getAllVolunteer, getVolunteerData, editVolunteer, delet
 const router = express.Router();
 const { auth, checkAdminAndMonitorRole } = require("../middleware/auth");
 
-//router.get("/reset-password", auth, resetPassword);
 router.post("/add-volunteer", auth, addNewVolunteer);
 router.post("/get-volunteers", auth, getAllVolunteer);
 router.post("/:id", auth, getVolunteerData);

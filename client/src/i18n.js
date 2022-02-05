@@ -33,7 +33,7 @@ const resources = {
       class_monitor: "Lớp trưởng",
       target_student: "Đối tượng",
       number_of_student: "Sĩ số",
-      my_schedule: "Lịch dạy cá nhân",
+      my_schedule: "Lịch cá nhân",
       cancel: "Quay lại",
       volunteer_list: "Danh sách Tình nguyện viên",
       volunteer: "Tình nguyện viên",
@@ -120,6 +120,9 @@ const resources = {
       unregister_person: "Chưa đăng kí",
       unassign_this_schedule: "Hủy đăng kí",
       assign_this_schedule: "Đăng kí",
+      class_schedule: "Lịch hoạt động",
+      select_class: "Chọn lớp",
+      detail: "Chi tiết >>>",
       //noti
       assign_success: "Đăng kí thành công",
       unassign_success: "Hủy đăng kí thành công",

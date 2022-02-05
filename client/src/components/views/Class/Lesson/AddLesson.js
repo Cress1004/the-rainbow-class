@@ -10,11 +10,19 @@ import {
   TimePicker,
   Col,
 } from "antd";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import { useHistory, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Axios from "axios";
 import "./lesson.scss";
-import { WEEKDAY, FORMAT_TIME_SCHEDULE, OFFLINE_OPTION, ONLINE_OPTION } from "../../../common/constant";
+import {
+  WEEKDAY,
+  FORMAT_TIME_SCHEDULE,
+  OFFLINE_OPTION,
+  ONLINE_OPTION,
+  urlRegExp,
+} from "../../../common/constant";
 import { transformScheduleTime } from "../../../common/transformData";
 import { generateKey } from "../../../common/function";
 
@@ -32,8 +40,8 @@ function AddLesson(props) {
   const [district, setDistrict] = useState("");
   const [wards, setWards] = useState([]);
   const [ward, setWard] = useState("");
+  const [address, setAddress] = useState({});
   const [defaultSchedule, setDefaultSchedule] = useState({});
-  const [teachOption, setTeachOption] = useState(OFFLINE_OPTION);
   const [classData, setClassData] = useState({});
   const [lessonData, setLessonData] = useState({});
   const [time, setTime] = useState({});
@@ -45,12 +53,53 @@ function AddLesson(props) {
     wrapperCol: { offset: 18, span: 4 },
   };
 
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      description: "",
+      teachOption: OFFLINE_OPTION,
+      linkOnline: "",
+      time: "",
+    },
+    validationSchema: Yup.object({
+      name: Yup.string().required(t("required_lesson_name_message")),
+      description: Yup.string().required(
+        t("required_lesson_description_message")
+      ),
+      teachOption: Yup.number().required(t("required_teach_option")),
+      linkOnline: Yup.string().matches(urlRegExp, t("link_is_invalid")),
+    }),
+    onSubmit: (values, { setSubmitting }) => {
+      setTimeout(() => {
+        let valuesToSend;
+        if (values.teachOption === ONLINE_OPTION) {
+          valuesToSend = { ...values, time };
+        }
+        if (values.teachOption === OFFLINE_OPTION) {
+          valuesToSend = { ...values, address, time };
+        }
+        // Axios.post("/api/classes/add-class", valuesToSend).then((response) => {
+        //   if (response.data.success) {
+        //     history.push("/classes");
+        //   } else if (!response.data.success) {
+        //     alert(response.data.message);
+        //   } else {
+        //     alert(t("fail_to_get_api"));
+        //   }
+        // });
+        alert(JSON.stringify(valuesToSend));
+        setSubmitting(false);
+      }, 400);
+    },
+  });
+
   useEffect(() => {
     Axios.post(`/api/classes/${id}`, { classId: id }).then((response) => {
       if (response.data.success) {
         const data = response.data.classData;
         setClassData(data);
         if (data.address) {
+          setAddress(data.address);
           setLessonData({ ...lessonData, address: data.address });
           setProvince(data.address.address.province);
           setDistrict(data.address.address.district);
@@ -75,14 +124,12 @@ function AddLesson(props) {
     setDistricts(currentProvince.districts);
     setDistrict({});
     setWard({});
-    setLessonData({
-      ...lessonData,
+    setAddress({
+      ...address,
       address: {
-        address: {
-          province: {
-            id: currentProvince.id,
-            name: currentProvince.name,
-          },
+        province: {
+          id: currentProvince.id,
+          name: currentProvince.name,
         },
       },
     });
@@ -93,15 +140,13 @@ function AddLesson(props) {
     setDistrict({ id: currentDistrict.id, name: currentDistrict.name });
     setWards(currentDistrict.wards);
     setWard({});
-    setLessonData({
-      ...lessonData,
+    setAddress({
+      ...address,
       address: {
-        address: {
-          province: lessonData.address.address.province,
-          district: {
-            id: currentDistrict.id,
-            name: currentDistrict.name,
-          },
+        province: address.address.province,
+        district: {
+          id: currentDistrict.id,
+          name: currentDistrict.name,
         },
       },
     });
@@ -110,28 +155,23 @@ function AddLesson(props) {
   const handleChangeWard = (value) => {
     const currentWard = wards.find((item) => value === item.id);
     setWard({ id: currentWard.id, name: currentWard.name });
-    setLessonData({
-      ...setLessonData,
+    setAddress({
+      ...address,
       address: {
-        address: {
-          province: lessonData.address.address.province,
-          district: lessonData.address.address.district,
-          ward: {
-            id: currentWard.id,
-            name: currentWard.name,
-          },
+        province: address.address.province,
+        district: address.address.district,
+        ward: {
+          id: currentWard.id,
+          name: currentWard.name,
         },
       },
     });
   };
 
   const handleChangeAddressDescription = (e) => {
-    setLessonData({
-      ...lessonData,
-      address: {
-        address: lessonData.address.address,
-        description: e.target.value,
-      },
+    setAddress({
+      ...address,
+      description: e.target.value,
     });
   };
 
@@ -160,25 +200,27 @@ function AddLesson(props) {
         });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setLessonData({
-      ...lessonData,
-      classId: id,
-      teachOption: teachOption,
-      time: time,
-    });
-    setLessonData((lessonData) => {
-      Axios.post(`/api/classes/${id}/add-lesson`, lessonData).then((response) => {
-        if (response.data.success) {
-          history.push(`/classes/${id}`);
-        } else {
-          alert(t("fail_to_get_api"));
-        }
-      });
-      return lessonData;
-    });
-  };
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   setLessonData({
+  //     ...lessonData,
+  //     classId: id,
+  //     teachOption: teachOption,
+  //     time: time,
+  //   });
+  //   setLessonData((lessonData) => {
+  //     Axios.post(`/api/classes/${id}/add-lesson`, lessonData).then(
+  //       (response) => {
+  //         if (response.data.success) {
+  //           history.push(`/classes/${id}`);
+  //         } else {
+  //           alert(t("fail_to_get_api"));
+  //         }
+  //       }
+  //     );
+  //     return lessonData;
+  //   });
+  // };
 
   const offlineAddress = (
     <Item name="add-lesson__offline-address" label={t("address")}>
@@ -245,48 +287,70 @@ function AddLesson(props) {
     </Item>
   );
 
+  const handleChangeTeachOption = (e) => {
+    console.log(e.target.value);
+    const option = e.target.value;
+    formik.setValues("teachOption", option);
+    if (option === OFFLINE_OPTION) {
+      formik.setValues("linkOnline", "");
+    }
+  };
+
   return (
     <div className="add-lesson">
       <Row className="add-lesson__title">
         {t("add_lesson")} - {classData.name}
       </Row>
-      <Form {...layout} name="control-hooks" onSubmit={handleSubmit}>
-        <Item name="name" label={t("lesson_name")}>
+      <Form {...layout} name="control-hooks" onSubmit={formik.handleSubmit}>
+        <Item label={t("lesson_name")} required>
           <Input
             placeholder={t("input_lesson_name")}
-            onChange={(e) =>
-              setLessonData({ ...lessonData, title: e.target.value })
-            }
+            name="name"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
           />
+          {formik.errors.name && formik.touched.name && (
+            <span className="custom__error-message">{formik.errors.name}</span>
+          )}
         </Item>
-        <Item name="description" label={t("description")}>
+        <Item label={t("description")} required>
           <TextArea
+            name="description"
             placeholder={t("input_description")}
-            onChange={(e) =>
-              setLessonData({ ...lessonData, description: e.target.value })
-            }
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
           />
+          {formik.errors.description && formik.touched.description && (
+            <span className="custom__error-message">
+              {formik.errors.description}
+            </span>
+          )}
         </Item>
         <Item name="teachOption" label={t("teach_option")}>
           <Radio.Group
-            defaultValue={teachOption}
-            onChange={(e) => setTeachOption(e.target.value)}
+            defaultValue={formik.values.teachOption}
+            onChange={(e) => handleChangeTeachOption(e)}
           >
             <Radio value={OFFLINE_OPTION}>{t("offline")}</Radio>
             <Radio value={ONLINE_OPTION}>{t("online")}</Radio>
           </Radio.Group>
         </Item>
-        {teachOption === OFFLINE_OPTION ? (
+        {formik.values.teachOption === OFFLINE_OPTION ? (
           <div>{offlineAddress}</div>
         ) : (
           <div>
-            <Item name="linkOnline" label={t("link_online")}>
+            <Item label={t("link_online")}>
               <Input
                 placeholder="input_link"
-                onChange={(e) =>
-                  setLessonData({ ...lessonData, linkOnline: e.target.value })
-                }
-              ></Input>
+                name="linkOnline"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              {formik.errors.linkOnline && (
+                <span className="custom__error-message">
+                  {formik.errors.linkOnline}
+                </span>
+              )}
             </Item>
           </div>
         )}

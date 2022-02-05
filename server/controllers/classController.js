@@ -16,6 +16,7 @@ const {
   findClassbyStudent,
   getAllClassesData,
   getClassByUser,
+  findClassByUser,
 } = require("../repository/classRepository");
 const { getLessonsByCLass } = require("../repository/lessonRepository");
 const { getStudentByUserId } = require("../repository/studentRepository");
@@ -26,32 +27,42 @@ const getClasses = async (req, res) => {
   try {
     const userId = req.body.userId;
     const user = await getUserDataById(userId);
-    if (user.role === VOLUNTEER_ROLE) {
-      const currentVolunteer = await getVolunteerByUserId(userId);
-      if (currentVolunteer.role === ADMIN) {
-        const classes = await findAllClasses(user);
-        Promise.all(classes.map((item) => tranformClassData(item))).then(
-          (value) => {
-            res.status(200).json({ success: true, classes: value });
-          }
-        );
-      } else {
-        const classes = await findClassbyVolunteer(currentVolunteer);
-        Promise.all(classes.map((item) => tranformClassData(item))).then(
-          (value) => {
-            res.status(200).json({ success: true, classes: value });
-          }
-        );
-      }
-    }
-    if (user.role === STUDENT_ROLE) {
-      const currentStudent = await getStudentByUserId(userId);
-      const classes = await findClassbyStudent(currentStudent);
+    // if (user.role === VOLUNTEER_ROLE) {
+    //   const currentVolunteer = await getVolunteerByUserId(userId);
+    //   if (currentVolunteer.role === ADMIN) {
+    //     const classes = await findAllClasses(user);
+    //     Promise.all(classes.map((item) => tranformClassData(item))).then(
+    //       (value) => {
+    //         res.status(200).json({ success: true, classes: value });
+    //       }
+    //     );
+    //   } else {
+    //     const classes = await findClassbyVolunteer(currentVolunteer);
+    //     Promise.all(classes.map((item) => tranformClassData(item))).then(
+    //       (value) => {
+    //         res.status(200).json({ success: true, classes: value });
+    //       }
+    //     );
+    //   }
+    // }
+    // if (user.role === STUDENT_ROLE) {
+    //   const currentStudent = await getStudentByUserId(userId);
+    //   const classes = await findClassbyStudent(currentStudent);
+    //   Promise.all(classes.map((item) => tranformClassData(item))).then(
+    //     (value) => {
+    //       res.status(200).json({ success: true, classes: value });
+    //     }
+    //   );
+    // }
+    const classes = await findClassByUser(user);
+    if(classes) {
       Promise.all(classes.map((item) => tranformClassData(item))).then(
         (value) => {
           res.status(200).json({ success: true, classes: value });
         }
       );
+    } else {
+      res.status(200).json({ success: true, classes: {}, message: "No class" });
     }
   } catch (error) {
     res.status(400).send(error);

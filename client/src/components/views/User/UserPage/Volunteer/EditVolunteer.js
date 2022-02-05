@@ -15,6 +15,7 @@ import {
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import PermissionDenied from "../../../Error/PermissionDenied";
+import useFetchRole from "../../../../../hook/useFetchRole";
 
 const { Option } = Select;
 const { Item } = Form;
@@ -31,6 +32,8 @@ function EditVolunteer(props) {
   const tailLayout = {
     wrapperCol: { offset: 18, span: 4 },
   };
+  const userData = useFetchRole(userId);
+  const userRole = userData.userRole;
 
   const [volunteerData, setVolunteerData] = useState({});
   const [location, setLocation] = useState([]);
@@ -39,18 +42,9 @@ function EditVolunteer(props) {
   const [wards, setWards] = useState([]);
   const [ward, setWard] = useState({});
   const [province, setProvince] = useState({});
-  const [userRole, setUserRole] = useState(null);
   const [address, setAddress] = useState({});
 
   useEffect(() => {
-    Axios.post(`/api/users/get-role`, { userId: userId }).then((response) => {
-      if (response.data.success) {
-        const data = response.data.userRole;
-        setUserRole(data);
-      } else {
-        alert(t("fail_to_get_api"));
-      }
-    });
     Axios.post("/api/common-data/location", null).then((response) => {
       if (response.data.success) {
         setLocation(response.data.location);
@@ -70,7 +64,7 @@ function EditVolunteer(props) {
             address: data.user.address,
             phoneNumber: data.user.phoneNumber,
             role: data.role,
-            className: data.class.name,
+            className: data.user?.class?.name,
           });
           if (data.user.address.address) {
             setAddress(data.user.address);
@@ -174,9 +168,7 @@ function EditVolunteer(props) {
 
   const fieldError = (formik) => {
     return (
-      !formik.errors.name &&
-      !formik.errors.email &&
-      !formik.errors.phoneNumber
+      !formik.errors.name && !formik.errors.email && !formik.errors.phoneNumber
     );
   };
 

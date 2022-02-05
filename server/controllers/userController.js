@@ -62,7 +62,7 @@ const getRole = async (req, res) => {
     }
     res
       .status(200)
-      .json({ success: true, userRole: userRole, classId: classData._id });
+      .json({ success: true, userRole: userRole, classId: classData });
   } catch (error) {
     res.status(400).send(error);
   }

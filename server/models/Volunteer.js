@@ -10,10 +10,10 @@ const volunteerSchema = mongoose.Schema(
       type: Number,
       default: 1, // 1: volunteer, 2: class_monitor, 3: sub_class_monitor, 4: admin, 5: superadmin
     },
-    class: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "ClassName",
-    },
+    // class: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "ClassName",
+    // },
   },
   {
     timestamps: {

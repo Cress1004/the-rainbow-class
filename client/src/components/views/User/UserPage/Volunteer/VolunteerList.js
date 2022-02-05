@@ -35,6 +35,7 @@ function VolunteerList(props) {
       }
     });
   }, [t, userId]);
+  console.log(volunteers)
 
   const columns = [
     {
@@ -80,14 +81,14 @@ function VolunteerList(props) {
     key: index,
     id: item._id,
     userName: transformRoleName(item.user.name, item.role),
-    className: item.class.name,
+    className: item.user.class ? item.user.class.name : t("unset"),
     phoneNumber: item.user.phoneNumber,
     role: item.role,
     email: item.user.email,
   }));
 
   const renderData = (text, key) => (
-    <Link to={`volunteers/${key.id}`} className={"text-in-table-row"}>
+    <Link to={`/volunteers/${key.id}`} className={"text-in-table-row"}>
       <span>{text}</span>
     </Link>
   );

@@ -16,6 +16,7 @@ const storeUser = async (data) => {
       phoneNumber: data.phoneNumber,
       address: address._id,
       role: data.role,
+      class: data.class,
     });
     return newUser.save();
   } catch (error) {
@@ -37,7 +38,7 @@ const getUserDataById = async (id) => {
     const user = await User.findOne({ _id: id });
     return user;
   } catch (error) {
-    console.log("fail to update user's basic infor");
+    console.log("fail to get user's basic infor");
   }
 };
 

@@ -51,7 +51,7 @@ function VolunteerDetail(props) {
                 address: transformAddressData(data.user.address),
                 phoneNumber: data.user.phoneNumber,
                 role: data.role,
-                className: data.class.name,
+                className: data.user.class ? data.user.class.name : t("unset"),
               })
             : setVolunteerData(null);
         } else {
@@ -93,6 +93,7 @@ function VolunteerDetail(props) {
   if (userRole.subRole === SUPER_ADMIN || !volunteerData) {
     return <PermissionDenied />;
   }
+  console.log(volunteerData.address)
   return (
     <div className="volunteer-detail">
       <div className="volunteer-detail__title">{t("volunteer_detail")}</div>

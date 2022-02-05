@@ -70,7 +70,7 @@ function AddVolunteer(props) {
   });
 
   useEffect(() => {
-    Axios.post("/api/classes/get-classes", { userId: userId }).then(
+    Axios.post("/api/classes/get-all-classes", null).then(
       (response) => {
         if (response.data.success) {
           const data = response.data.classes;

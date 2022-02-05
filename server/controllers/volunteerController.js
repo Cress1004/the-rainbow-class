@@ -67,12 +67,14 @@ const getVolunteerData = async (req, res) => {
     const volunteerId = req.body.id;
     const user = await getUserDataById(userId);
     var volunteer;
+    //TODO: check
     if (user.role === STUDENT_ROLE) {
       const student = await getStudentByUserId(userId);
       volunteer = await getVolunteerByIdAndClassId(volunteerId, student.class);
     }
     if (user.role === VOLUNTEER_ROLE) {
       const currentVolunteer = await getVolunteerByUserId(userId);
+      // TODO: check get volunteer in same class
       if (currentVolunteer.role === VOLUNTEER_ROLE) {
         volunteer = await getVolunteerByIdAndClassId(
           volunteerId,

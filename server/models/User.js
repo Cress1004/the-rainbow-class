@@ -40,7 +40,11 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    role: Number  // student: 0, volunteer: 1
+    role: Number,  // student: 0, volunteer: 1
+    class: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ClassName",
+    },
   },
   {
     timestamps: {

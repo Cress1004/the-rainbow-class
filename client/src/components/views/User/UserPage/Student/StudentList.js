@@ -64,7 +64,7 @@ function StudentList(props) {
     key: index,
     id: item._id,
     userName: item.user.name,
-    className: item.class ? item.class.name : t("unset"),
+    className: item.user.class ? item.user.class.name : t("unset"),
     phoneNumber: item.user.phoneNumber,
     studentTypes: transformStudentTypes(item.studentTypes),
   }));

@@ -92,7 +92,7 @@ function AddStudent(props) {
         alert(t("fail_to_get_api"));
       }
     });
-    Axios.post(`/api/classes/get-classes`, { userId: userId }).then(
+    Axios.post(`/api/classes/get-all-classes`, null).then(
       (response) => {
         if (response.data.success) {
           setClasses(response.data.classes);

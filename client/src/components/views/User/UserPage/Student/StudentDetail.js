@@ -45,7 +45,7 @@ function StudentDetail(props) {
           image: data.user.image,
           address: transformAddressData(data.user.address),
           phoneNumber: data.user.phoneNumber,
-          className: data.class ? data.class.name : t("unset"),
+          className: data.user.class ? data.user.class.name : t("unset"),
           classId: data.class?._id,
         });
       } else {

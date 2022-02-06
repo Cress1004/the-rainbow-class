@@ -74,7 +74,7 @@ function EditStudent(props) {
   });
 
   useEffect(() => {
-    Axios.post(`/api/classes/get-classes`, { userId: userId }).then(
+    Axios.post(`/api/classes/get-all-classes`, { userId: userId }).then(
       (response) => {
         if (response.data.success) {
           setClasses(response.data.classes);
@@ -110,7 +110,7 @@ function EditStudent(props) {
           image: data.user.image,
           phoneNumber: data.user.phoneNumber,
           address: data.user.address,
-          class: data.class?._id,
+          class: data.user.class?._id,
         });
         if (data.user.address) {
           setAddress(data.user.address);

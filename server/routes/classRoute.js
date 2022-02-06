@@ -27,7 +27,7 @@ const router = express.Router();
 
 router.post("/add-class", checkAdminRole, addClass);
 router.post("/get-classes", auth, getClasses);
-router.post("/get-all-classes", checkAdminAndVolunteerRole, getAllClasses);
+router.post("/get-all-classes", auth, getAllClasses);
 router.post("/my-class-schedules", auth, getMyClasschedule);
 router.post("/get-class-schedules", auth, getClassSchedule);
 router.post("/:id", auth, getClassData);

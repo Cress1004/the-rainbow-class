@@ -52,6 +52,7 @@ const updateUserData = async (data) => {
       user.name = data.name;
       user.gender = data.gender;
       user.phoneNumber = data.phoneNumber;
+      user.class = data.class;
       if (user.address) {
         await updateAddress(user.address, data.address);
       } else {

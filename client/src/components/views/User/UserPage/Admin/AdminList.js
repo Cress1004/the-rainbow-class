@@ -1,31 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Table, Button } from "antd";
+import { Table } from "antd";
 import Axios from "axios";
-// import "./student.scss";
-import { Link } from "react-router-dom";
-import useFetchRole from "../../../../../hook/useFetchRole";
-import { SUPER_ADMIN } from "../../../../common/constant";
-import { checkAdminAndMonitorRole } from "../../../../common/function";
+import "./admin.scss";
 
 function AdminList(props) {
   const { t } = useTranslation();
-  const [admins, setAdmins] = useState([]);
-  const userId = localStorage.getItem("userId");
-  const userData = useFetchRole(userId);
-  const userRole = userData.userRole;
+  const [admin, setAdmin] = useState([]);
+
   useEffect(() => {
     Axios.post("/api/admin/get-admin", null).then((response) => {
       const result = response.data;
       if (result.success) {
-        setAdmins(result.admin);
+        setAdmin(result.admin);
       } else if (!result.success) {
         alert(result.message);
       } else {
         alert(t("fail_to_get_api"));
       }
     });
-  }, [t, userId]);
+  }, [t]);
 
   const columns = [
     {
@@ -51,7 +45,7 @@ function AdminList(props) {
     },
   ];
 
-  const data = admins.map((item, index) => ({
+  const data = admin.map((item, index) => ({
     key: index,
     id: item._id,
     userName: item.user.name,
@@ -64,10 +58,10 @@ function AdminList(props) {
   );
 
   return (
-    <div className="student-list">
+    <div className="admin-list">
       <div>
-        <div className="student-list__title">
-          {t("admin")} ({`${admins?.length}`})
+        <div className="admin-list__title">
+          {t("admin")} ({`${admin?.length}`})
         </div>
         <Table columns={columns} dataSource={data} />
       </div>

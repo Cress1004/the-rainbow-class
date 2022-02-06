@@ -17,25 +17,6 @@ const { getLessonsByCLass } = require("../repository/lessonRepository");
 const { getUserDataById } = require("../repository/userRepository");
 const { getVolunteerByUserId } = require("../repository/volunteerRepository");
 
-const getClasses = async (req, res) => {
-  try {
-    const userId = req.body.userId;
-    const user = await getUserDataById(userId);
-    const classes = await getClassByUser(user);
-    if(classes) {
-      Promise.all(classes.map((item) => tranformClassData(item))).then(
-        (value) => {
-          res.status(200).json({ success: true, classes: value });
-        }
-      );
-    } else {
-      res.status(200).json({ success: true, classes: {}, message: "No class" });
-    }
-  } catch (error) {
-    res.status(400).send(error);
-  }
-};
-
 const getAllClasses = async (req, res) => {
   try {
     const classes = await getAllClassesData();
@@ -119,7 +100,6 @@ const getClassSchedule = async (req, res) => {
 
 module.exports = {
   addClass,
-  getClasses,
   getClassData,
   deleteClassData,
   editClassData,

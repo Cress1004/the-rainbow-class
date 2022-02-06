@@ -94,7 +94,6 @@ const getListVolunteers = async (user) => {
       }
     }
     if (user.role === STUDENT_ROLE) {
-      const currentStudent = await getStudentByUserId(user._id);
       return allVolunteersData.filter(item => compareObjectId(item.user.class._id, user.class))
     }
   } catch (error) {
@@ -140,6 +139,21 @@ const deleteVolunteer = async (user, volunteerId) => {
   }
 };
 
+const getVolunteerByClass = async (className) => {
+  try {
+    const allStudents = await Volunteer.find({}).populate({
+      path: "user",
+      select: "name class",
+    });
+    return allStudents.filter((item) =>
+      compareObjectId(item.user.class._id, className._id)
+    );
+  } catch (error) {
+    console.log("fail to get student by class");
+    return null;
+  }
+};
+
 module.exports = {
   storeVolunteer,
   getListVolunteers,
@@ -148,4 +162,5 @@ module.exports = {
   deleteVolunteer,
   getVolunteerByUserId,
   getVolunteerByIdAndClassId,
+  getVolunteerByClass
 };

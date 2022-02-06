@@ -1,4 +1,5 @@
 const { STUDENT_ROLE } = require("../defaultValues/constant");
+const { compareObjectId } = require("../function/commonFunction");
 const { Student } = require("../models/Student");
 const { storeUser, updateUserData, deleteUser } = require("./userRepository");
 
@@ -73,7 +74,7 @@ const updateStudent = async (data) => {
       gender: data.gender,
       phoneNumber: data.phoneNumber,
       address: data.address,
-      class: data.class
+      class: data.class,
     };
     const flag = await updateUserData(userData);
     if (flag && !flag.message) {
@@ -97,15 +98,15 @@ const deleteStudent = async (id) => {
   return await Student.deleteOne({ _id: id });
 };
 
-const getStudentByClass = async (classId) => {
+const getStudentByClass = async (className) => {
   try {
-    return await Student.find({ class: classId })
-      .populate({
-        path: "user",
-        select: "name phoneNumber class",
-        populate: { path: "class", select: "name" },
-      })
-      .populate("studentTypes");
+    const allStudents = await Student.find({}).populate({
+      path: "user",
+      select: "name class",
+    });
+    return allStudents.filter((item) =>
+      compareObjectId(item.user.class._id, className._id)
+    );
   } catch (error) {
     console.log("fail to get student by class");
     return null;

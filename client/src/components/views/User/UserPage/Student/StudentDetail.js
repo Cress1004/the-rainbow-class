@@ -46,7 +46,7 @@ function StudentDetail(props) {
           address: transformAddressData(data.user.address),
           phoneNumber: data.user.phoneNumber,
           className: data.user.class ? data.user.class.name : t("unset"),
-          classId: data.class?._id,
+          classId: data.user.class?._id,
         });
       } else {
         alert(t("fail_to_get_api"));

@@ -25,6 +25,9 @@ import {
 } from "../../../common/constant";
 import { transformScheduleTime } from "../../../common/transformData";
 import { generateKey } from "../../../common/function";
+import PermissionDenied from "../../Error/PermissionDenied";
+import { checkCurrentMonitorBelongToCurrentClass } from "../../../common/checkRole";
+import useFetchRole from "../../../../hook/useFetchRole";
 
 const { Item } = Form;
 const { TextArea } = Input;
@@ -45,6 +48,10 @@ function AddLesson(props) {
   const [classData, setClassData] = useState({});
   const [lessonData, setLessonData] = useState({});
   const [time, setTime] = useState({});
+  const [teachOption, setTeachOption] = useState(OFFLINE_OPTION);
+  const userId = localStorage.getItem("userId");
+  const currentUser = useFetchRole(userId);
+
   const layout = {
     labelCol: { span: 5 },
     wrapperCol: { span: 15 },
@@ -57,7 +64,7 @@ function AddLesson(props) {
     initialValues: {
       name: "",
       description: "",
-      teachOption: OFFLINE_OPTION,
+      classId: id,
       linkOnline: "",
       time: "",
     },
@@ -66,27 +73,28 @@ function AddLesson(props) {
       description: Yup.string().required(
         t("required_lesson_description_message")
       ),
-      teachOption: Yup.number().required(t("required_teach_option")),
       linkOnline: Yup.string().matches(urlRegExp, t("link_is_invalid")),
     }),
     onSubmit: (values, { setSubmitting }) => {
       setTimeout(() => {
         let valuesToSend;
-        if (values.teachOption === ONLINE_OPTION) {
-          valuesToSend = { ...values, time };
+        if (teachOption === ONLINE_OPTION) {
+          valuesToSend = { ...values, teachOption, time };
         }
-        if (values.teachOption === OFFLINE_OPTION) {
-          valuesToSend = { ...values, address, time };
+        if (teachOption === OFFLINE_OPTION) {
+          valuesToSend = { ...values, teachOption, address, time };
         }
-        // Axios.post("/api/classes/add-class", valuesToSend).then((response) => {
-        //   if (response.data.success) {
-        //     history.push("/classes");
-        //   } else if (!response.data.success) {
-        //     alert(response.data.message);
-        //   } else {
-        //     alert(t("fail_to_get_api"));
-        //   }
-        // });
+        Axios.post(`/api/classes/${id}/add-lesson`, valuesToSend).then(
+          (response) => {
+            if (response.data.success) {
+              history.push(`/classes/${id}`);
+            } else if (!response.data.success) {
+              alert(response.data.message);
+            } else {
+              alert(t("fail_to_get_api"));
+            }
+          }
+        );
         alert(JSON.stringify(valuesToSend));
         setSubmitting(false);
       }, 400);
@@ -99,7 +107,10 @@ function AddLesson(props) {
         const data = response.data.classData;
         setClassData(data);
         if (data.address) {
-          setAddress(data.address);
+          setAddress({
+            address: data.address.address,
+            description: data.address.description,
+          });
           setLessonData({ ...lessonData, address: data.address });
           setProvince(data.address.address.province);
           setDistrict(data.address.address.district);
@@ -116,7 +127,7 @@ function AddLesson(props) {
         alert(t("fail_to_get_api"));
       }
     });
-  }, [t, id, lessonData]);
+  }, [t, id]);
 
   const handleChangeProvice = (value) => {
     const currentProvince = location.find((item) => value === item.id);
@@ -200,28 +211,6 @@ function AddLesson(props) {
         });
   };
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   setLessonData({
-  //     ...lessonData,
-  //     classId: id,
-  //     teachOption: teachOption,
-  //     time: time,
-  //   });
-  //   setLessonData((lessonData) => {
-  //     Axios.post(`/api/classes/${id}/add-lesson`, lessonData).then(
-  //       (response) => {
-  //         if (response.data.success) {
-  //           history.push(`/classes/${id}`);
-  //         } else {
-  //           alert(t("fail_to_get_api"));
-  //         }
-  //       }
-  //     );
-  //     return lessonData;
-  //   });
-  // };
-
   const offlineAddress = (
     <Item name="add-lesson__offline-address" label={t("address")}>
       <Select
@@ -281,20 +270,15 @@ function AddLesson(props) {
       </Select>
       <Input
         placeholder={t("input_specific_address")}
-        value={classData.address ? classData.address.description : undefined}
+        value={address.description}
         onChange={(e) => handleChangeAddressDescription(e)}
       />
     </Item>
   );
 
-  const handleChangeTeachOption = (e) => {
-    console.log(e.target.value);
-    const option = e.target.value;
-    formik.setValues("teachOption", option);
-    if (option === OFFLINE_OPTION) {
-      formik.setValues("linkOnline", "");
-    }
-  };
+  if (!checkCurrentMonitorBelongToCurrentClass(currentUser, id)) {
+    return <PermissionDenied />;
+  }
 
   return (
     <div className="add-lesson">
@@ -328,14 +312,14 @@ function AddLesson(props) {
         </Item>
         <Item name="teachOption" label={t("teach_option")}>
           <Radio.Group
-            defaultValue={formik.values.teachOption}
-            onChange={(e) => handleChangeTeachOption(e)}
+            value={teachOption}
+            onChange={(e) => setTeachOption(e.target.value)}
           >
             <Radio value={OFFLINE_OPTION}>{t("offline")}</Radio>
             <Radio value={ONLINE_OPTION}>{t("online")}</Radio>
           </Radio.Group>
         </Item>
-        {formik.values.teachOption === OFFLINE_OPTION ? (
+        {teachOption === OFFLINE_OPTION ? (
           <div>{offlineAddress}</div>
         ) : (
           <div>

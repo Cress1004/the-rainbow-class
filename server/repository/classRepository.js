@@ -2,6 +2,8 @@ const { VOLUNTEER_ROLE, STUDENT_ROLE } = require("../defaultValues/constant");
 const { ClassName } = require("../models/ClassName");
 const { storeAddress, updateAddress } = require("./commonRepository");
 const { getLessonsByCLass } = require("./lessonRepository");
+const { getStudentByClass } = require("./studentRepository");
+const { getVolunteerByClass } = require("./volunteerRepository");
 
 const findAllClasses = (user) => {
   try {
@@ -83,6 +85,8 @@ const tranformClassData = async (className) => {
     const classData = await ClassName.findOne({ _id: className._id })
       .populate("studentTypes")
       .populate("address", "_id address description");
+    classData.students = await getStudentByClass(className);
+    classData.volunteers = await getVolunteerByClass(className);
     return classData;
   } catch (error) {
     console.log("transform class data fail");

@@ -23,14 +23,14 @@ const storeNewLesson = async (data) => {
       time: data.time,
     });
     const newLesson = await new Lesson({
-      title: data.title,
+      title: data.name,
       description: data.description,
       schedule: schedule._id,
       class: data.classId,
     });
     return newLesson.save();
   } catch (error) {
-    console.log("fail to store lesson");
+    return null;
   }
 };
 
@@ -104,10 +104,12 @@ const editLesson = async (lessonData) => {
 
 const getAllLessonsByClass = async () => {
   try {
-    return await Lesson.find({}).populate({
-      path: "schedule",
-      populate: { path: "address paticipants" },
-    }).populate("class");
+    return await Lesson.find({})
+      .populate({
+        path: "schedule",
+        populate: { path: "address paticipants" },
+      })
+      .populate("class");
   } catch (error) {
     console.log("fail to get user schedule");
   }

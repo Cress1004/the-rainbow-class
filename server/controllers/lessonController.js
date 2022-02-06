@@ -95,7 +95,15 @@ const unassignLesson = async (req, res) => {
 };
 
 const checkCurrentUserBelongToClass = async (currentUser, classId) => {
-  return compareObjectId(currentUser.class._id, classId)
+  if (currentUser.role === STUDENT_ROLE) {
+    return compareObjectId(currentUser.class._id, classId)
+  } else {
+    const currentVolunteer = await getVolunteerByUserId(currentUser._id);
+    if (currentVolunteer.role === ADMIN) return true;
+    else {
+      return compareObjectId(currentUser.class._id, classId)
+    }
+  }
 };
 
 module.exports = {

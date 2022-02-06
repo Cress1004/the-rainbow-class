@@ -93,7 +93,7 @@ function App(props) {
           component={Auth(AddClass, null)}
         />
         <DashboardLayoutRoute
-          path="/admins"
+          path="/admin"
           component={Auth(AdminList, null)}
         />
         <DashboardLayoutRoute

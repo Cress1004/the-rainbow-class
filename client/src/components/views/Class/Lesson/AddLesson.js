@@ -79,7 +79,7 @@ function AddLesson(props) {
       setTimeout(() => {
         let valuesToSend;
         if (teachOption === ONLINE_OPTION) {
-          valuesToSend = { ...values, teachOption, time };
+          valuesToSend = { ...values, teachOption,time };
         }
         if (teachOption === OFFLINE_OPTION) {
           valuesToSend = { ...values, teachOption, address, time };
@@ -95,7 +95,6 @@ function AddLesson(props) {
             }
           }
         );
-        alert(JSON.stringify(valuesToSend));
         setSubmitting(false);
       }, 400);
     },

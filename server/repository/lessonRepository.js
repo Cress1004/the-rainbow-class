@@ -93,12 +93,12 @@ const editLesson = async (lessonData) => {
       _id: lessonData.scheduleId,
       teachOption: lessonData.teachOption,
       linkOnline: lessonData.linkOnline,
-      address: lessonData.address,
+      address: lessonData?.address,
       time: lessonData.time,
     });
-    lesson.save();
+    return lesson.save();
   } catch (error) {
-    console.log("fail to delete lesson");
+    console.log("fail to edit lesson");
   }
 };
 

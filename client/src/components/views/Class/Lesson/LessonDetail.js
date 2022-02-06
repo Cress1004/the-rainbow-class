@@ -176,7 +176,7 @@ function LessonDetail(props) {
               ) : (
                 <Col span={16}>
                   <Row>{t("online")}</Row>
-                  <Row>{lessonData.linkOnline}</Row>
+                  <Row><a href={lessonData.linkOnline}>{lessonData.linkOnline}</a></Row>
                 </Col>
               )}
             </Row>

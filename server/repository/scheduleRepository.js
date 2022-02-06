@@ -24,14 +24,16 @@ const deleteSchedule = async (id) => {
 const updateSchedule = async (data) => {
   try {
     const schedule = await Schedule.findOne({ _id: data._id });
-    if (schedule.address) {
-      await updateAddress(schedule.address, data.address);
-    } else {
-      const address = await storeAddress({
-        address: data.address.address,
-        description: data.address.description,
-      });
-      schedule.address = address._id;
+    if (data.address) {
+      if (schedule.address) {
+        await updateAddress(schedule.address, data.address);
+      } else {
+        const address = await storeAddress({
+          address: data.address.address,
+          description: data.address.description,
+        });
+        schedule.address = address._id;
+      }
     }
     schedule.teachOption = data.teachOption;
     schedule.linkOnline = data.linkOnline;

@@ -19,12 +19,18 @@ import {
   FORMAT_TIME_SCHEDULE,
   OFFLINE_OPTION,
   ONLINE_OPTION,
+  urlRegExp,
 } from "../../../common/constant";
 import {
   convertTimeStringToMoment,
   convertDateStringToMoment,
 } from "../../../common/transformData";
 import { generateKey } from "../../../common/function";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import useFetchRole from "../../../../hook/useFetchRole";
+import PermissionDenied from "../../Error/PermissionDenied";
+import { checkCurrentMonitorBelongToCurrentClass } from "../../../common/checkRole";
 
 const { Item } = Form;
 const { TextArea } = Input;
@@ -43,6 +49,10 @@ function EditLesson(props) {
   const [classData, setClassData] = useState({});
   const [lessonData, setLessonData] = useState({});
   const [time, setTime] = useState({});
+  const [address, setAddress] = useState({});
+  const [teachOption, setTeachOption] = useState();
+  const userId = localStorage.getItem("userId");
+  const currentUser = useFetchRole(userId);
   const layout = {
     labelCol: { span: 5 },
     wrapperCol: { span: 15 },
@@ -68,6 +78,7 @@ function EditLesson(props) {
       }
     });
     Axios.post(`/api/classes/${id}/lessons/${lessonId}`, {
+      userId: userId,
       lessonId: lessonId,
     }).then((response) => {
       if (response.data.success) {
@@ -80,10 +91,13 @@ function EditLesson(props) {
           title: data.title,
           description: data.description,
           address: data.schedule.address,
+          time: data.schedule.time,
           // paticipants: data.schedule.paticipants,
         });
         setTime(data.schedule.time);
+        setTeachOption(data.schedule.teachOption);
         if (data.schedule.address) {
+          setAddress(data.schedule.address);
           setProvince(data.schedule.address.address.province);
           setDistrict(data.schedule.address.address.district);
           setWard(data.schedule.address.address.ward);
@@ -94,20 +108,61 @@ function EditLesson(props) {
     });
   }, [t, id, lessonId]);
 
+  const formik = useFormik({
+    initialValues: {
+      title: lessonData.title,
+      description: lessonData.description,
+      classId: id,
+      _id: lessonId,
+      scheduleId: lessonData.scheduleId,
+      linkOnline: lessonData.linkOnline,
+      time: lessonData.time,
+    },
+    enableReinitialize: true,
+    validationSchema: Yup.object({
+      title: Yup.string().required(t("required_lesson_name_message")),
+      description: Yup.string().required(
+        t("required_lesson_description_message")
+      ),
+      linkOnline: Yup.string().matches(urlRegExp, t("link_is_invalid")),
+    }),
+    onSubmit: (values, { setSubmitting }) => {
+      setTimeout(() => {
+        let valuesToSend;
+        if (teachOption === ONLINE_OPTION) {
+          valuesToSend = { ...values, teachOption, time };
+        }
+        if (teachOption === OFFLINE_OPTION) {
+          valuesToSend = { ...values, teachOption, address, time };
+        }
+        Axios.post(`/api/classes/${id}/lessons/${lessonId}/edit`, {
+          lessonData: valuesToSend,
+        }).then((response) => {
+          if (response.data.success) {
+            // history.push(`/classes/${id}`);
+          } else if (!response.data.success) {
+            alert(response.data.message);
+          } else {
+            alert(t("fail_to_get_api"));
+          }
+        });
+        setSubmitting(false);
+      }, 400);
+    },
+  });
+
   const handleChangeProvice = (value) => {
     const currentProvince = location.find((item) => value === item.id);
     setProvince({ id: currentProvince.id, name: currentProvince.name });
     setDistricts(currentProvince.districts);
     setDistrict({});
     setWard({});
-    setLessonData({
-      ...lessonData,
+    setAddress({
+      ...address,
       address: {
-        address: {
-          province: {
-            id: currentProvince.id,
-            name: currentProvince.name,
-          },
+        province: {
+          id: currentProvince.id,
+          name: currentProvince.name,
         },
       },
     });
@@ -118,15 +173,13 @@ function EditLesson(props) {
     setDistrict({ id: currentDistrict.id, name: currentDistrict.name });
     setWards(currentDistrict.wards);
     setWard({});
-    setLessonData({
-      ...lessonData,
+    setAddress({
+      ...address,
       address: {
-        address: {
-          province: lessonData.address.address.province,
-          district: {
-            id: currentDistrict.id,
-            name: currentDistrict.name,
-          },
+        province: address.address.province,
+        district: {
+          id: currentDistrict.id,
+          name: currentDistrict.name,
         },
       },
     });
@@ -135,28 +188,23 @@ function EditLesson(props) {
   const handleChangeWard = (value) => {
     const currentWard = wards.find((item) => value === item.id);
     setWard({ id: currentWard.id, name: currentWard.name });
-    setLessonData({
-      ...lessonData,
+    setAddress({
+      ...address,
       address: {
-        address: {
-          province: lessonData.address.address.province,
-          district: lessonData.address.address.district,
-          ward: {
-            id: currentWard.id,
-            name: currentWard.name,
-          },
+        province: address.address.province,
+        district: address.address.district,
+        ward: {
+          id: currentWard.id,
+          name: currentWard.name,
         },
       },
     });
   };
 
   const handleChangeAddressDescription = (e) => {
-    setLessonData({
-      ...lessonData,
-      address: {
-        address: lessonData.address.address,
-        description: e.target.value,
-      },
+    setAddress({
+      ...address,
+      description: e.target.value,
     });
   };
 
@@ -183,27 +231,6 @@ function EditLesson(props) {
           endTime: undefined,
           startTime: undefined,
         });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setLessonData({
-      ...lessonData,
-      classId: id,
-      time: time,
-    });
-    setLessonData((lessonData) => {
-      Axios.post(`/api/classes/${id}/lessons/${lessonId}/edit`, {
-        lessonData: lessonData,
-      }).then((response) => {
-        if (response.data.success) {
-          // history.push(`/classes/${id}`);
-        } else {
-          alert(t("fail_to_get_api"));
-        }
-      });
-      return lessonData;
-    });
   };
 
   const offlineAddress = (
@@ -265,64 +292,78 @@ function EditLesson(props) {
       </Select>
       <Input
         placeholder={t("input_specific_address")}
-        value={lessonData.address ? lessonData.address.description : undefined}
+        value={address.description}
         onChange={(e) => handleChangeAddressDescription(e)}
       />
     </Item>
   );
+  if (!checkCurrentMonitorBelongToCurrentClass(currentUser, id)) {
+    return <PermissionDenied />;
+  }
 
   return (
     <div className="add-lesson">
       <Row className="add-lesson__title">
-        {t("add_lesson")} - {classData.name}
+        {t("edit_lesson")} - {classData.name}
       </Row>
-      <Form {...layout} name="control-hooks" onSubmit={handleSubmit}>
-        <Item name="name" label={t("lesson_name")}>
+      <Form {...layout} name="control-hooks" onSubmit={formik.handleSubmit}>
+        <Item label={t("lesson_name")} required>
           <Input
-            value={lessonData.title}
+            name="title"
+            value={formik.values.title}
             placeholder={t("input_lesson_name")}
-            onChange={(e) =>
-              setLessonData({ ...lessonData, title: e.target.value })
-            }
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
           />
+          {formik.errors.title && formik.touched.title && (
+            <span className="custom__error-message">{formik.errors.title}</span>
+          )}
         </Item>
-        <Item name="description" label={t("description")}>
+        <Item label={t("description")} required>
           <TextArea
-            value={lessonData.description}
+            name="description"
+            value={formik.values.description}
             placeholder={t("input_description")}
-            onChange={(e) =>
-              setLessonData({ ...lessonData, description: e.target.value })
-            }
+            onBlur={formik.handleBlur}
+            onChange={formik.handleChange}
           />
+          {formik.errors.description && formik.touched.description && (
+            <span className="custom__error-message">
+              {formik.errors.description}
+            </span>
+          )}
         </Item>
-        <Item name="teachOption" label={t("teach_option")}>
+        <Item label={t("teach_option")}>
           <Radio.Group
-            value={lessonData.teachOption}
-            onChange={(e) =>
-              setLessonData({ ...lessonData, teachOption: e.target.value })
-            }
+            value={teachOption}
+            onChange={(e) => setTeachOption(e.target.value)}
           >
             <Radio value={OFFLINE_OPTION}>{t("offline")}</Radio>
             <Radio value={ONLINE_OPTION}>{t("online")}</Radio>
           </Radio.Group>
         </Item>
-        {lessonData.teachOption === OFFLINE_OPTION ? (
+        {teachOption === OFFLINE_OPTION ? (
           <div>{offlineAddress}</div>
         ) : (
           <div>
-            <Item name="linkOnline" label={t("link_online")}>
+            <Item label={t("link_online")} required>
               <Input
-                value={lessonData.linkOnline}
                 placeholder="input_link"
-                onChange={(e) =>
-                  setLessonData({ ...lessonData, linkOnline: e.target.value })
-                }
-              ></Input>
+                name="linkOnline"
+                value={formik.values.linkOnline}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              {formik.errors.linkOnline && (
+                <span className="custom__error-message">
+                  {formik.errors.linkOnline}
+                </span>
+              )}
             </Item>
           </div>
         )}
         {time && (
-          <Item name="time" label={t("schedule")}>
+          <Item name="time" label={t("schedule")} required>
             <Col span={8}>
               <DatePicker
                 value={convertDateStringToMoment(time.date)}

@@ -100,8 +100,11 @@ const deleteStudent = async (id) => {
 const getStudentByClass = async (classId) => {
   try {
     return await Student.find({ class: classId })
-      .populate("user", "name phoneNumber")
-      .populate("class", "name")
+      .populate({
+        path: "user",
+        select: "name phoneNumber class",
+        populate: { path: "class", select: "name" },
+      })
       .populate("studentTypes");
   } catch (error) {
     console.log("fail to get student by class");

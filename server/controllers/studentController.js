@@ -3,14 +3,13 @@ const {
   SUPER_ADMIN,
   ADMIN,
 } = require("../defaultValues/constant");
+const { compareObjectId } = require("../function/commonFunction");
 const {
   storeStudent,
   getListStudents,
   getStudentById,
   updateStudent,
   deleteStudent,
-  getStudentByUserId,
-  getStudentByClass,
 } = require("../repository/studentRepository");
 const {
   getUserDataById,
@@ -38,18 +37,18 @@ const getStudents = async (req, res) => {
   try {
     const userId = req.body.userId;
     const user = await getUserDataById(userId);
+   const allStudents = await getListStudents();
     let students;
     if (user.role === STUDENT_ROLE) {
-      const currentStudent = await getStudentByUserId(userId);
-      students = await getStudentByClass(currentStudent.class);
+      students = allStudents.filter(item => compareObjectId(item.user.class._id, user.class))
     } else {
       const currentVolunteer = await getVolunteerByUserId(userId);
       if (currentVolunteer.role === SUPER_ADMIN) {
         students = null;
       } else if (currentVolunteer.role === ADMIN) {
-        students = await getListStudents();
+        students = allStudents;
       } else {
-        students = await getStudentByClass(currentVolunteer.class);
+        students = allStudents.filter(item => compareObjectId(item.user.class._id, user.class))
       }
     }
     res.status(200).json({ success: true, students: students });

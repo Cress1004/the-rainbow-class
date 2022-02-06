@@ -10,6 +10,7 @@ const {
 } = require("../defaultValues/constant");
 const { User } = require("../models/User");
 const { getStudentByUserId } = require("./studentRepository");
+const { compareObjectId } = require("../function/commonFunction");
 
 const storeVolunteer = async (data) => {
   try {
@@ -78,29 +79,23 @@ const getVolunteerByUserId = async (userId) => {
 
 const getListVolunteers = async (user) => {
   try {
+    const allVolunteersData = await Volunteer.find({}).populate({
+      path: "user",
+      select: "name email phoneNumber class",
+      populate: { path: "class" },
+    });
     if (user.role === VOLUNTEER_ROLE) {
       const currentVolunteer = await getVolunteerByUserId(user._id);
       if (currentVolunteer.role === SUPER_ADMIN) return null;
       if (currentVolunteer.role === ADMIN)
-        return await Volunteer.find({}).populate({
-          path: "user",
-          select: "name email phoneNumber class",
-          populate: { path: "class", select: "name" },
-        });
+        return allVolunteersData;
       else {
-        //TODO: get volunteer by class
-        return await Volunteer.find({}).populate({
-          path: "user",
-          select: "name email phoneNumber class",
-          populate: { path: "class", select: "name" },
-        });
+        return allVolunteersData.filter(item => item.user.class._id.toString() === user.class.toString())
       }
     }
     if (user.role === STUDENT_ROLE) {
       const currentStudent = await getStudentByUserId(user._id);
-      return await Volunteer.find({ class: currentStudent.class })
-        .populate("user", "name email phoneNumber")
-        .populate("class", "name");
+      return allVolunteersData.filter(item => compareObjectId(item.user.class._id, user.class))
     }
   } catch (error) {
     console.log("fail to get list volunteers");

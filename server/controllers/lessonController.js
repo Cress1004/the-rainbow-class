@@ -1,4 +1,5 @@
 const { STUDENT_ROLE, ADMIN } = require("../defaultValues/constant");
+const { compareObjectId } = require("../function/commonFunction");
 const { getClassByUser } = require("../repository/classRepository");
 const {
   storeNewLesson,
@@ -94,18 +95,7 @@ const unassignLesson = async (req, res) => {
 };
 
 const checkCurrentUserBelongToClass = async (currentUser, classId) => {
-  if (currentUser.role === STUDENT_ROLE) {
-    const studentClass = await getClassByUser(currentUser);
-    if (studentClass._id.toString() == classId) return true;
-    else return false;
-  } else {
-    const currentVolunteer = await getVolunteerByUserId(currentUser._id);
-    if (currentVolunteer.role === ADMIN) return true;
-    else {
-      if (currentVolunteer.class._id.toString() == classId) return true;
-      else return false;
-    }
-  }
+  return compareObjectId(currentUser.class._id, classId)
 };
 
 module.exports = {

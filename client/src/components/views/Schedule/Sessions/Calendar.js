@@ -19,7 +19,7 @@ function MyCalendar(props) {
   const [classColors, setClassColors] = useState([]);
 
   useEffect(() => {
-    Axios.post(`/api/classes/get-classes`, {userId: userId}).then((response) => {
+    Axios.post(`/api/classes/get-all-classes`, {userId: userId}).then((response) => {
       if (response.data.success) {
         const data = response.data.classes;
         const colors = setColorForClass(data);

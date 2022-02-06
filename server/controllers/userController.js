@@ -1,7 +1,7 @@
 const { VOLUNTEER_ROLE, STUDENT_ROLE } = require("../defaultValues/constant");
 const {
-  getClassScheduleByUserId,
   getClassByUser,
+  getClassScheduleByUser,
 } = require("../repository/classRepository");
 const {
   getLessonBySchedule,
@@ -39,7 +39,7 @@ const getMyClasschedule = async (req, res) => {
   try {
     const userId = req.body.userId;
     const user = await getUserDataById(userId);
-    const schedule = await getClassScheduleByUserId(userId);
+    const schedule = await getClassScheduleByUser(user);
     const classData = await getClassByUser(user);
     res
       .status(200)

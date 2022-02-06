@@ -2,9 +2,6 @@ const { VOLUNTEER_ROLE, STUDENT_ROLE } = require("../defaultValues/constant");
 const { ClassName } = require("../models/ClassName");
 const { storeAddress, updateAddress } = require("./commonRepository");
 const { getLessonsByCLass } = require("./lessonRepository");
-const { getStudentByUserId } = require("./studentRepository");
-const { getUserDataById } = require("./userRepository");
-const { getVolunteerByUserId } = require("./volunteerRepository");
 
 const findAllClasses = (user) => {
   try {
@@ -73,21 +70,9 @@ const deleteClass = (id) => {
   return ClassName.deleteOne({ _id: id });
 };
 
-const getClassScheduleByUserId = async (userId) => {
+const getClassScheduleByUser = async (user) => {
   try {
-    const user = await getUserDataById(userId);
-    if (user.role === VOLUNTEER_ROLE) {
-      const volunteer = await getVolunteerByUserId(userId);
-      if (!volunteer) {
-        const filterClass = await ClassName.find({}).sort({ _id: -1 }).limit(1);
-        return await getLessonsByCLass(filterClass);
-      }
-      return await getLessonsByCLass(volunteer.class);
-    }
-    if (user.role === STUDENT_ROLE) {
-      const student = await getStudentByUserId(userId);
-      return await getLessonsByCLass(student.class);
-    }
+    return await getLessonsByCLass(user.class);
   } catch (error) {
     console.log("cant get class schedule");
   }
@@ -107,7 +92,7 @@ const tranformClassData = async (className) => {
 const getClassByUser = async (user) => {
   try {
     if (user.class) {
-      return user.class;
+      return ClassName.findOne({ _id: user.class });
     } else {
       console.log("no class");
       return null;
@@ -125,7 +110,7 @@ module.exports = {
   findClassById,
   deleteClass,
   editClass,
-  getClassScheduleByUserId,
+  getClassScheduleByUser,
   getClassByUser,
   getAllClassesData,
 };

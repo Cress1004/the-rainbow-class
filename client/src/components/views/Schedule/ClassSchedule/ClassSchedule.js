@@ -36,7 +36,7 @@ function ClassSchedule() {
         }
       }
     );
-    Axios.post(`/api/classes/get-classes`, {userId: userId}).then((response) => {
+    Axios.post(`/api/classes/get-all-classes`, {userId: userId}).then((response) => {
       if (response.data.success) {
         setClasses(response.data.classes);
       } else {

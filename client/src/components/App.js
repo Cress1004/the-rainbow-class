@@ -29,6 +29,7 @@ import AddLesson from "./views/Class/Lesson/AddLesson";
 import LessonDetail from "./views/Class/Lesson/LessonDetail";
 import EditLesson from "./views/Class/Lesson/EditLesson";
 import ClassSchedule from "./views/Schedule/ClassSchedule/ClassSchedule";
+import AdminList from "./views/User/UserPage/Admin/AdminList";
 
 function App(props) {
   return (
@@ -90,6 +91,10 @@ function App(props) {
         <DashboardLayoutRoute
           path="/add-class"
           component={Auth(AddClass, null)}
+        />
+        <DashboardLayoutRoute
+          path="/admins"
+          component={Auth(AdminList, null)}
         />
         <DashboardLayoutRoute
           path="/add-volunteer"

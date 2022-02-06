@@ -78,7 +78,7 @@ const DashboardLayout = ({ children, ...rest }) => {
                     <Link to="/schedules">{t("schedule_manager")}</Link>
                   </Menu.Item>
                   <SubMenu key="sub1" title={t("user_manager")}>
-                    <Menu.Item key="3">{t("admin")}</Menu.Item>
+                    <Menu.Item key="3"><Link to="/admins">{t("admin")}</Link></Menu.Item>
                     <Menu.Item key="4">{t("class_monitor")}</Menu.Item>
                     <Menu.Item key="5">
                       {t("volunteer")}
@@ -111,7 +111,7 @@ const DashboardLayout = ({ children, ...rest }) => {
                     <Link to="/schedules">{t("schedule_manager")}</Link>
                   </Menu.Item>
                   <SubMenu key="sub1" title={t("user_manager")}>
-                    <Menu.Item key="3">{t("admin")}</Menu.Item>
+                    <Menu.Item key="3"><Link to="/admins">{t("admin")}</Link></Menu.Item>
                     <Menu.Item key="4">
                       {t("volunteer")}
                       <Link to="/volunteers"></Link>

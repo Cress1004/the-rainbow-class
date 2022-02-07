@@ -14,6 +14,7 @@ import useFetchRole from "../../../../hook/useFetchRole";
 import { checkCurrentUserBelongToCurrentClass } from "../../../common/checkRole";
 import PermissionDenied from "../../Error/PermissionDenied";
 import { checkAdminAndMonitorRole } from "../../../common/function";
+import { checkOverTimeToRegister, checkUserCanRegisterAction, checkUserCanUnRegisterAction } from "../../../common/checkCondition";
 
 function LessonDetail(props) {
   const { t } = useTranslation();
@@ -41,7 +42,9 @@ function LessonDetail(props) {
           description: data.description,
           address: transformAddressData(data.schedule.address),
           time: transformLessonTimeToString(data.schedule.time),
+          date: new Date(data.schedule.time.date),
           paticipants: data.schedule.paticipants,
+          personIncharge: data.schedule.personIncharge,
         });
         data.schedule.paticipants.find(
           (participant) => participant._id === userId
@@ -79,13 +82,13 @@ function LessonDetail(props) {
   };
 
   const assignSchedule = () => {
-    setAssign(true);
     Axios.post(`/api/classes/${id}/lessons/${lessonId}}/assign`, {
       userId: userId,
       scheduleId: lessonData.scheduleId,
     }).then((response) => {
       if (response.data.success) {
         alert(t("assign_success"));
+        setAssign(true);
         window.location.reload();
       } else {
         alert(t("fail_to_delete_lesson"));
@@ -94,13 +97,13 @@ function LessonDetail(props) {
   };
 
   const unassignSchedule = () => {
-    setAssign(false);
     Axios.post(`/api/classes/${id}/lessons/${lessonId}}/unassign`, {
       userId: userId,
       scheduleId: lessonData.scheduleId,
     }).then((response) => {
       if (response.data.success) {
         alert(t("unassign_success"));
+        setAssign(false);
         window.location.reload();
       } else {
         alert(t("fail_to_delete_lesson"));
@@ -129,6 +132,12 @@ function LessonDetail(props) {
   if (!checkCurrentUserBelongToCurrentClass(currentUser, id)) {
     return <PermissionDenied />;
   }
+
+  const disableUnRegisterButton = !checkUserCanUnRegisterAction(
+    userId,
+    lessonData.personIncharge?.id,
+    lessonData.date
+  );
 
   return (
     <div className="lesson-detail">
@@ -176,7 +185,9 @@ function LessonDetail(props) {
               ) : (
                 <Col span={16}>
                   <Row>{t("online")}</Row>
-                  <Row><a href={lessonData.linkOnline}>{lessonData.linkOnline}</a></Row>
+                  <Row>
+                    <a href={lessonData.linkOnline}>{lessonData.linkOnline}</a>
+                  </Row>
                 </Col>
               )}
             </Row>
@@ -198,11 +209,11 @@ function LessonDetail(props) {
               {userRole && userRole.role !== STUDENT && (
                 <div className="lesson-detail__assign-button">
                   {assign ? (
-                    <Button onClick={unassignSchedule}>
+                    <Button onClick={unassignSchedule} disabled={checkOverTimeToRegister(lessonData.date)}>
                       {t("unassign_this_schedule")}
                     </Button>
                   ) : (
-                    <Button type="primary" onClick={assignSchedule}>
+                    <Button type="primary" onClick={assignSchedule} disabled={disableUnRegisterButton}>
                       {t("assign_this_schedule")}
                     </Button>
                   )}

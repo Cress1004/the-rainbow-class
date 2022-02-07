@@ -14,7 +14,11 @@ import useFetchRole from "../../../../hook/useFetchRole";
 import { checkCurrentUserBelongToCurrentClass } from "../../../common/checkRole";
 import PermissionDenied from "../../Error/PermissionDenied";
 import { checkAdminAndMonitorRole } from "../../../common/function";
-import { checkOverTimeToRegister, checkUserCanRegisterAction, checkUserCanUnRegisterAction } from "../../../common/checkCondition";
+import {
+  checkOverTimeToRegister,
+  checkUserCanRegisterAction,
+  checkUserCanUnRegisterAction,
+} from "../../../common/checkCondition";
 
 function LessonDetail(props) {
   const { t } = useTranslation();
@@ -44,7 +48,7 @@ function LessonDetail(props) {
           time: transformLessonTimeToString(data.schedule.time),
           date: new Date(data.schedule.time.date),
           paticipants: data.schedule.paticipants,
-          personIncharge: data.schedule.personIncharge,
+          personInCharge: data.schedule.personInCharge,
         });
         data.schedule.paticipants.find(
           (participant) => participant._id === userId
@@ -135,9 +139,10 @@ function LessonDetail(props) {
 
   const disableUnRegisterButton = !checkUserCanUnRegisterAction(
     userId,
-    lessonData.personIncharge?.id,
+    lessonData.personInCharge?._id,
     lessonData.date
   );
+  console.log(disableUnRegisterButton);
 
   return (
     <div className="lesson-detail">
@@ -200,27 +205,39 @@ function LessonDetail(props) {
             <hr />
             <Row>
               <div className="lesson-detail__paticipant-list-title">
-                {`${t("paticipants")} (${
-                  getArrayLength(lessonData.paticipants)
-                    ? getArrayLength(lessonData.paticipants)
-                    : t("unregister_person")
-                })`}
+                {`${t("paticipants")} (${getArrayLength(
+                  lessonData.paticipants
+                )})`}
               </div>
               {userRole && userRole.role !== STUDENT && (
                 <div className="lesson-detail__assign-button">
                   {assign ? (
-                    <Button onClick={unassignSchedule} disabled={checkOverTimeToRegister(lessonData.date)}>
+                    <Button
+                      onClick={unassignSchedule}
+                      disabled={disableUnRegisterButton}
+                    >
                       {t("unassign_this_schedule")}
                     </Button>
                   ) : (
-                    <Button type="primary" onClick={assignSchedule} disabled={disableUnRegisterButton}>
+                    <Button
+                      type="primary"
+                      onClick={assignSchedule}
+                      disabled={checkOverTimeToRegister(lessonData.date)}
+                    >
                       {t("assign_this_schedule")}
                     </Button>
                   )}
                 </div>
               )}
             </Row>
-            <PaticipantList participants={lessonData.paticipants} />
+            {getArrayLength(lessonData.paticipants) ? (
+              <PaticipantList
+                participants={lessonData.paticipants}
+                checkAdminAndMonitorRole={checkAdminAndMonitorRole(userRole)}
+                personInCharge={lessonData.personInCharge}
+                scheduleId={lessonData.scheduleId}
+              />
+            ) : null}
           </>
         )}
       </div>

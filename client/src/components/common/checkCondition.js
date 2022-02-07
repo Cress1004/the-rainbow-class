@@ -9,6 +9,9 @@ export function checkOverTimeToRegister(date) {
 }
 
 export function checkUserCanUnRegisterAction(userId, personInChargeId, date) {
-  if(personInChargeId && personInChargeId === userId) return false;
-  return !checkOverTimeToRegister(date);
+  if(checkOverTimeToRegister(date)) return false;
+  else {
+    if(personInChargeId && personInChargeId === userId) return false;
+    else return true;
+  }
 }

@@ -1,6 +1,5 @@
 const { STUDENT_ROLE, ADMIN } = require("../defaultValues/constant");
 const { compareObjectId } = require("../function/commonFunction");
-const { getClassByUser } = require("../repository/classRepository");
 const {
   storeNewLesson,
   getLessonsByCLass,

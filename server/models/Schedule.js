@@ -5,12 +5,10 @@ const scheduleSchema = mongoose.Schema({
     type: Number,
     default: 0, // 0: lesson, 1: meeting, 2: interview
   },
-  personInCharge: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-  ],
+  personInCharge: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
   teachOption: Number,
   linkOnline: String,
   address: {

@@ -76,6 +76,18 @@ const getAllSchedulesByVolunteer = async (data) => {
   }
 };
 
+const updatePersonInCharge = async (scheduleId, personInChargeId) => {
+  try {
+    const schedule = await Schedule.findOne({ _id: scheduleId });
+    console.log(scheduleId)
+    schedule.personInCharge = personInChargeId;
+    return schedule.save();
+  } catch (error) {
+    console.log("fail to update person incharge");
+    return null;
+  }
+};
+
 module.exports = {
   storeNewSchedule,
   deleteSchedule,
@@ -83,4 +95,5 @@ module.exports = {
   addPaticipant,
   removePaticipant,
   getAllSchedulesByVolunteer,
+  updatePersonInCharge,
 };

@@ -1,11 +1,12 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Table } from "antd";
+import SetPersonInCharge from "./SetPersonInCharge";
 
 function PaticipantList(props) {
   const { t } = useTranslation();
-  const { participants } = props;
-
+  const { participants, checkAdminAndMonitorRole, personInCharge, scheduleId } =
+    props;
   const data = participants
     ? participants.map((item, index) => ({
         key: index,
@@ -34,6 +35,14 @@ function PaticipantList(props) {
 
   return (
     <div className="participant-list">
+      {checkAdminAndMonitorRole && data.length && (
+        <SetPersonInCharge
+          t={t}
+          participants={data}
+          personInCharge={personInCharge}
+          scheduleId={scheduleId}
+        />
+      )}
       <Table columns={columns} dataSource={data} />
     </div>
   );

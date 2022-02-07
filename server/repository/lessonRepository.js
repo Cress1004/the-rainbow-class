@@ -52,7 +52,7 @@ const findLesson = async (lessonId) => {
   try {
     return await Lesson.findOne({ _id: lessonId }).populate({
       path: "schedule",
-      populate: { path: "address paticipants" },
+      populate: { path: "address paticipants personInCharge" },
     });
   } catch (error) {
     console.log("fail to get lesson by class id");

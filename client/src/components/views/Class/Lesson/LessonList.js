@@ -38,6 +38,7 @@ function LessonList(props) {
         //   : `(${t("unset")})`,
         // targetStudent: transformStudentTypes(item.studentTypes),
         // numberOfStudent: item.students.length,
+        personInCharge: item.schedule.personInCharge?.name,
       }))
     : [];
 

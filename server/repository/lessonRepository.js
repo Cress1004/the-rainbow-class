@@ -40,7 +40,10 @@ const getLessonsByCLass = async (classId) => {
       return await getAllLessonsByClass();
     } else {
       return await Lesson.find({ class: classId })
-        .populate("schedule")
+        .populate({
+          path: "schedule",
+          populate: { path: "personInCharge" },
+        })
         .populate("class");
     }
   } catch (error) {
@@ -107,7 +110,7 @@ const getAllLessonsByClass = async () => {
     return await Lesson.find({})
       .populate({
         path: "schedule",
-        populate: { path: "address paticipants" },
+        populate: { path: "address paticipants personInCharge" },
       })
       .populate("class");
   } catch (error) {

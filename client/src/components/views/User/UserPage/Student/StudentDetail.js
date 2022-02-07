@@ -14,6 +14,7 @@ import {
   checkStudentAndCurrentUserSameClass,
 } from "../../../../common/function";
 import PermissionDenied from "../../../Error/PermissionDenied";
+import Description from "./StudentDescription/Description";
 
 const { Item } = Form;
 const layout = {
@@ -47,6 +48,9 @@ function StudentDetail(props) {
           phoneNumber: data.user.phoneNumber,
           className: data.user.class ? data.user.class.name : t("unset"),
           classId: data.user.class?._id,
+          overview: data.overview,
+          interest: data.interest,
+          character: data.character,
         });
       } else {
         alert(t("fail_to_get_api"));
@@ -131,6 +135,11 @@ function StudentDetail(props) {
               </Form>
             </Col>
           </Row>
+          <hr />
+          {checkStudentAndCurrentUserSameClass(
+            studentData,
+            currentUserData
+          ) && <Description studentData={studentData} userRole={userRole}/>}
         </>
       )}
       <Modal

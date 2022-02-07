@@ -6,10 +6,6 @@ const studentSchema = mongoose.Schema({
         ref: 'User'
     },
     parentName: String,
-    // class: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'ClassName',
-    // },
     studentTypes: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'StudentType',

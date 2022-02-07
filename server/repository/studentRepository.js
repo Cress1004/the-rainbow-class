@@ -113,6 +113,19 @@ const getStudentByClass = async (className) => {
   }
 };
 
+const updateStudentDescription = async (data) => {
+  try {
+    const student = await Student.findOne({ _id: data.id });
+    student.interest = data.interest;
+    student.character = data.character;
+    student.overview = data.overview;
+    return student.save();
+  } catch (error) {
+    console.log("fail to update student description");
+    return null;
+  }
+};
+
 module.exports = {
   storeStudent,
   getListStudents,
@@ -121,4 +134,5 @@ module.exports = {
   deleteStudent,
   getStudentByUserId,
   getStudentByClass,
+  updateStudentDescription,
 };

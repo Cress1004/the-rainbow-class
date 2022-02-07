@@ -10,6 +10,7 @@ const {
   getStudentById,
   updateStudent,
   deleteStudent,
+  updateStudentDescription,
 } = require("../repository/studentRepository");
 const {
   getUserDataById,
@@ -37,10 +38,12 @@ const getStudents = async (req, res) => {
   try {
     const userId = req.body.userId;
     const user = await getUserDataById(userId);
-   const allStudents = await getListStudents();
+    const allStudents = await getListStudents();
     let students;
     if (user.role === STUDENT_ROLE) {
-      students = allStudents.filter(item => compareObjectId(item.user.class._id, user.class))
+      students = allStudents.filter((item) =>
+        compareObjectId(item.user.class._id, user.class)
+      );
     } else {
       const currentVolunteer = await getVolunteerByUserId(userId);
       if (currentVolunteer.role === SUPER_ADMIN) {
@@ -48,7 +51,9 @@ const getStudents = async (req, res) => {
       } else if (currentVolunteer.role === ADMIN) {
         students = allStudents;
       } else {
-        students = allStudents.filter(item => compareObjectId(item.user.class._id, user.class))
+        students = allStudents.filter((item) =>
+          compareObjectId(item.user.class._id, user.class)
+        );
       }
     }
     res.status(200).json({ success: true, students: students });
@@ -90,10 +95,20 @@ const deleteStudentData = async (req, res) => {
   }
 };
 
+const updateStudentOverview = async (req, res) => {
+  try {
+    await updateStudentDescription(req.body.values);
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 module.exports = {
   addNewStudent,
   getStudents,
   getStudentInfo,
   editStudent,
   deleteStudentData,
+  updateStudentOverview
 };

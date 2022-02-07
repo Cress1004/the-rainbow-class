@@ -54,6 +54,12 @@
         height: 200px;
         margin: 20px;
     }
+    &__description-area {
+        margin: 0px 100px;
+        textarea {
+            resize: none;
+        }
+    }
     .ant-row .ant-form-item {
         margin: 0px;
     }

@@ -123,6 +123,10 @@ const resources = {
       class_schedule: "Lịch hoạt động",
       select_class: "Chọn lớp",
       detail: "Chi tiết >>>",
+      interest: "Sở thích",
+      character: "Tính cách",
+      overview: "Tổng quan",
+      undescription: "Chưa có mô tả",
       //noti
       assign_success: "Đăng kí thành công",
       unassign_success: "Hủy đăng kí thành công",

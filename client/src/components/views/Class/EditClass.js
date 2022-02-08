@@ -11,7 +11,6 @@ import { generateKey } from "../../common/function";
 import { WEEKDAY, FORMAT_TIME_SCHEDULE } from "../../common/constant";
 import useFetchRole from "../../../hook/useFetchRole";
 import {
-  checkAdminRole,
   checkCurrentMonitorBelongToCurrentClass,
 } from "../../common/checkRole";
 import PermissionDenied from "../Error/PermissionDenied";

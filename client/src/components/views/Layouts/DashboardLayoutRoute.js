@@ -6,7 +6,6 @@ import "./style.scss";
 import RightMenu from "../NavBar/Sections/RightMenu";
 import { useTranslation } from "react-i18next";
 import {
-  ADMIN,
   CLASS_MONITOR,
   STUDENT,
   SUB_CLASS_MONITOR,
@@ -69,7 +68,7 @@ const DashboardLayout = ({ children, ...rest }) => {
                   </Menu.Item>
                 </Menu>
               )}
-              {userRole.subRole === ADMIN && (
+              {userRole.isAdmin && (
                 <Menu defaultSelectedKeys={["1"]} mode="inline">
                   <Menu.Item key="my_schedule">
                     <Link to="/dashboard">{t("dashboard")}</Link>
@@ -100,7 +99,7 @@ const DashboardLayout = ({ children, ...rest }) => {
                   </Menu.Item>
                 </Menu>
               )}
-              {(userRole.subRole === SUB_CLASS_MONITOR ||
+              {!userRole.isAdmin && (userRole.subRole === SUB_CLASS_MONITOR ||
                 userRole.subRole === CLASS_MONITOR ||
                 userRole.subRole === VOLUNTEER) && (
                 <Menu defaultSelectedKeys={["1"]} mode="inline">

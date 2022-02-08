@@ -8,7 +8,7 @@ const volunteerSchema = mongoose.Schema(
     },
     role: {
       type: Number,
-      default: 1, // 1: volunteer, 2: class_monitor, 3: sub_class_monitor, 4: admin, 5: superadmin
+      default: 1, // 1: volunteer, 2: class_monitor, 3: sub_class_monitor, 4: superadmin
     },
     isAdmin: Boolean,
     // class: {

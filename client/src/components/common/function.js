@@ -1,5 +1,4 @@
 import {
-  ADMIN,
   CALENDAR_COLOR_EVENT,
   CLASS_MONITOR,
   SUB_CLASS_MONITOR,
@@ -26,7 +25,7 @@ export function setColorForClass(classes) {
 export function checkAdminAndMonitorRole(userRole) {
   return (
     userRole &&
-    (userRole.subRole === ADMIN ||
+    (userRole.isAdmin ||
       userRole.subRole === CLASS_MONITOR ||
       userRole.subRole === SUB_CLASS_MONITOR)
   );
@@ -35,6 +34,6 @@ export function checkAdminAndMonitorRole(userRole) {
 export function checkStudentAndCurrentUserSameClass(student, currentUserData) {
   const userRole = currentUserData.userRole;
   if (userRole.subRole === SUPER_ADMIN) return false;
-  else if (userRole.subRole === ADMIN) return true;
+  else if (userRole.isAdmin) return true;
   else return student.classId === currentUserData.userClassId;
 }

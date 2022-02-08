@@ -3,13 +3,11 @@ const { storeUser, updateUserData, deleteUser } = require("./userRepository");
 const {
   VOLUNTEER_ROLE,
   SUPER_ADMIN,
-  ADMIN,
   STUDENT_ROLE,
   CLASS_MONITOR,
   SUB_CLASS_MONITOR,
 } = require("../defaultValues/constant");
 const { User } = require("../models/User");
-const { getStudentByUserId } = require("./studentRepository");
 const { compareObjectId } = require("../function/commonFunction");
 
 const storeVolunteer = async (data) => {
@@ -87,7 +85,7 @@ const getListVolunteers = async (user) => {
     if (user.role === VOLUNTEER_ROLE) {
       const currentVolunteer = await getVolunteerByUserId(user._id);
       if (currentVolunteer.role === SUPER_ADMIN) return null;
-      if (currentVolunteer.role === ADMIN) return allVolunteersData;
+      if (currentVolunteer.isAdmin) return allVolunteersData;
       else {
         return allVolunteersData.filter(
           (item) => item.user.class._id.toString() === user.class.toString()
@@ -125,9 +123,8 @@ const deleteVolunteer = async (user, volunteerId) => {
   try {
     if (user.role === VOLUNTEER_ROLE) {
       const currentVolunteer = await getVolunteerByUserId(user._id);
-      console.log(currentVolunteer);
       if (
-        currentVolunteer.role === ADMIN ||
+        currentVolunteer.isAdmin ||
         currentVolunteer.role === CLASS_MONITOR ||
         currentVolunteer.role === SUB_CLASS_MONITOR
       ) {

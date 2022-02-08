@@ -7,7 +7,6 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import "./volunteer.scss";
 import {
-  ADMIN,
   CLASS_MONITOR,
   phoneRegExp,
   STUDENT,
@@ -113,7 +112,7 @@ function AddVolunteer(props) {
   return (
     <div className="add-volunteer">
       {userRole &&
-        (userRole.subRole === ADMIN ||
+        (userRole.isAdmin ||
           userRole.subRole === CLASS_MONITOR ||
           userRole.subRole === SUB_CLASS_MONITOR) &&
         classes && (

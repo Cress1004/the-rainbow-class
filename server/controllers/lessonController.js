@@ -1,4 +1,4 @@
-const { STUDENT_ROLE, ADMIN } = require("../defaultValues/constant");
+const { STUDENT_ROLE } = require("../defaultValues/constant");
 const { compareObjectId } = require("../function/commonFunction");
 const {
   storeNewLesson,
@@ -98,7 +98,7 @@ const checkCurrentUserBelongToClass = async (currentUser, classId) => {
     return compareObjectId(currentUser.class._id, classId)
   } else {
     const currentVolunteer = await getVolunteerByUserId(currentUser._id);
-    if (currentVolunteer.role === ADMIN) return true;
+    if (currentVolunteer.isAdmin) return true;
     else {
       return compareObjectId(currentUser.class._id, classId)
     }

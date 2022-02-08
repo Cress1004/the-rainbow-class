@@ -4,7 +4,6 @@ const {
   SUPER_ADMIN,
   CLASS_MONITOR,
   SUB_CLASS_MONITOR,
-  ADMIN,
 } = require("../defaultValues/constant");
 const { getStudentByUserId } = require("../repository/studentRepository");
 const { getUserDataById, checkDuplicateMail } = require("../repository/userRepository");
@@ -27,7 +26,7 @@ const addNewVolunteer = async (req, res) => {
     if (user.role === VOLUNTEER_ROLE) {
       const currentVolunteer = await getVolunteerByUserId(userId);
       if (
-        currentVolunteer.role === ADMIN ||
+        currentVolunteer.isAdmin ||
         currentVolunteer.role === CLASS_MONITOR ||
         currentVolunteer.role === SUB_CLASS_MONITOR
       ) {

@@ -1,7 +1,6 @@
 const {
   STUDENT_ROLE,
   SUPER_ADMIN,
-  ADMIN,
 } = require("../defaultValues/constant");
 const { compareObjectId } = require("../function/commonFunction");
 const {
@@ -48,7 +47,7 @@ const getStudents = async (req, res) => {
       const currentVolunteer = await getVolunteerByUserId(userId);
       if (currentVolunteer.role === SUPER_ADMIN) {
         students = null;
-      } else if (currentVolunteer.role === ADMIN) {
+      } else if (currentVolunteer.isAdmin) {
         students = allStudents;
       } else {
         students = allStudents.filter((item) =>

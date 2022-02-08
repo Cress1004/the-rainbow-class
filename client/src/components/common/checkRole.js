@@ -8,7 +8,7 @@ import {
 } from "./constant";
 
 export function checkAdminRole(userRole) {
-  return userRole?.subRole === ADMIN;
+  return userRole?.isAdmin;
 }
 
 export function checkAdminAndVolunteerRole(userRole) {
@@ -20,13 +20,13 @@ export function checkAdminAndVolunteerRole(userRole) {
 }
 
 export function checkCurrentUserBelongToCurrentClass(userData, classId) {
-  if (userData?.userRole.subRole === ADMIN) return true;
+  if (userData?.userRole.isAdmin) return true;
   else return userData.userClassId === classId;
 }
 
 export function checkCurrentMonitorBelongToCurrentClass(userData, classId) {
   const userRole = userData?.userRole;
-  if (userRole.subRole === ADMIN) return true;
+  if (userRole.isAdmin) return true;
   else if (
     userRole.subRole === SUB_CLASS_MONITOR ||
     userRole === CLASS_MONITOR

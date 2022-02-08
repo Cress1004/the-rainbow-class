@@ -16,7 +16,6 @@ import PermissionDenied from "../../Error/PermissionDenied";
 import { checkAdminAndMonitorRole } from "../../../common/function";
 import {
   checkOverTimeToRegister,
-  checkUserCanRegisterAction,
   checkUserCanUnRegisterAction,
 } from "../../../common/checkCondition";
 

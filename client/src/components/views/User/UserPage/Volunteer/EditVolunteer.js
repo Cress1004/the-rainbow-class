@@ -4,7 +4,6 @@ import Axios from "axios";
 import { Button, Form, Input, Select, Radio } from "antd";
 import { useHistory, useParams } from "react-router-dom";
 import {
-  ADMIN,
   CLASS_MONITOR,
   phoneRegExp,
   STUDENT,
@@ -184,7 +183,7 @@ function EditVolunteer(props) {
   return (
     <div className="edit-volunteer">
       {userRole &&
-        (userRole.subRole === ADMIN ||
+        (userRole.isAdmin ||
           userRole.subRole === CLASS_MONITOR ||
           userRole.subRole === SUB_CLASS_MONITOR) && (
           <div>

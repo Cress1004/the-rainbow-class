@@ -1,6 +1,5 @@
 const {
   VOLUNTEER_ROLE,
-  ADMIN,
   CLASS_MONITOR,
   SUB_CLASS_MONITOR,
 } = require("../defaultValues/constant");
@@ -48,7 +47,7 @@ const editClassData = async (req, res) => {
       const currentVolunteer = await getVolunteerByUserId(data.userId);
       const userClass = await getClassByUser(currentUser);
       if (
-        currentVolunteer.role === ADMIN ||
+        currentVolunteer.isAdmin ||
         ((currentVolunteer.role === CLASS_MONITOR ||
           currentVolunteer.role === SUB_CLASS_MONITOR) &&
           userClass._id === data.classData.id)

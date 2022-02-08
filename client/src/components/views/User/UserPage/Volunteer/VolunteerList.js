@@ -33,7 +33,6 @@ function VolunteerList(props) {
       }
     });
   }, [t, userId]);
-  console.log(volunteers)
 
   const columns = [
     {
@@ -75,7 +74,7 @@ function VolunteerList(props) {
     } else return name;
   };
 
-  const data = volunteers.map((item, index) => ({
+  const data = volunteers?.map((item, index) => ({
     key: index,
     id: item._id,
     userName: transformRoleName(item.user.name, item.role),

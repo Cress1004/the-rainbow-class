@@ -58,6 +58,7 @@ const getRole = async (req, res) => {
     if (userRole.role === VOLUNTEER_ROLE) {
       const volunteer = await getVolunteerByUserId(user._id);
       userRole.subRole = volunteer.role;
+      userRole.isAdmin = volunteer.isAdmin;
     }
     res
       .status(200)

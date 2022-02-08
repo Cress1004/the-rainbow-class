@@ -6,7 +6,6 @@ import { Row, Col, Button, Modal, Form } from "antd";
 import { transformAddressData } from "../../../../common/transformData";
 import Axios from "axios";
 import {
-  ADMIN,
   CLASS_MONITOR,
   SUB_CLASS_MONITOR,
   SUPER_ADMIN,
@@ -99,7 +98,7 @@ function VolunteerDetail(props) {
       <div className="volunteer-detail__title">{t("volunteer_detail")}</div>
       <Row>
         <Col span={14} />
-        {(userRole.subRole === ADMIN ||
+        {(userRole.isAdmin ||
           userRole.subRole === CLASS_MONITOR ||
           userRole.subRole === SUB_CLASS_MONITOR) && (
           <Col span={6}>
@@ -108,7 +107,7 @@ function VolunteerDetail(props) {
             </Button>
           </Col>
         )}
-        {(userRole.subRole === ADMIN ||
+        {(userRole.isAdmin ||
           userRole.subRole === CLASS_MONITOR ||
           userRole.subRole === SUB_CLASS_MONITOR) && (
           <Col span={4}>

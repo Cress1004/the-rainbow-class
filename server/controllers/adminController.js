@@ -1,9 +1,8 @@
-const { ADMIN } = require("../defaultValues/constant");
 const { Volunteer } = require("../models/Volunteer");
 
 const getAllAdmin = async (req, res) => {
   try {
-    const admin = await Volunteer.find({ role: ADMIN }).populate({
+    const admin = await Volunteer.find({ isAdmin: true }).populate({
       path: "user",
       select: "name email phoneNumber",
     });

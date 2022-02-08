@@ -1,6 +1,5 @@
 const {
   STUDENT_ROLE,
-  ADMIN,
   CLASS_MONITOR,
   SUB_CLASS_MONITOR,
 } = require("../defaultValues/constant");
@@ -34,7 +33,7 @@ const checkAdminAndMonitorRole = async (req, res, next) => {
     } else {
       const currentVolunteer = await getVolunteerByUserId(user._id);
       if (
-        currentVolunteer.role === ADMIN ||
+        currentVolunteer.isAdmin ||
         currentVolunteer.role === CLASS_MONITOR ||
         currentVolunteer.role === SUB_CLASS_MONITOR
       )

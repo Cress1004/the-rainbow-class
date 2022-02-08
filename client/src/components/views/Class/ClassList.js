@@ -39,8 +39,8 @@ function ClassList(props) {
         name: item.name,
         description: item.description,
         address: transformAddressData(item.address),
-        classMonitor: item.class_monitor
-          ? item.class_monitor
+        classMonitor: item.classMonitor
+          ? item.classMonitor?.user.name
           : `(${t("unset")})`,
         targetStudent: transformStudentTypes(item.studentTypes),
         numberOfStudent: item.students.length,

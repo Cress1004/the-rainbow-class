@@ -12,6 +12,7 @@ const {
   editClass,
   getAllClassesData,
   getClassByUser,
+  setMonitor,
 } = require("../repository/classRepository");
 const { getLessonsByCLass } = require("../repository/lessonRepository");
 const { getUserDataById } = require("../repository/userRepository");
@@ -98,6 +99,16 @@ const getClassSchedule = async (req, res) => {
   }
 };
 
+const setClassMonitor = async (req, res) => {
+  try {
+    const data = req.body.values;
+    await setMonitor(data.classId, data.classMonitor, data.subClassMonitor);
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 module.exports = {
   addClass,
   getClassData,
@@ -105,4 +116,5 @@ module.exports = {
   editClassData,
   getClassSchedule,
   getAllClasses,
+  setClassMonitor,
 };

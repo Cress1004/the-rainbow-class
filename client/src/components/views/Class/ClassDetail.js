@@ -17,26 +17,18 @@ import { checkAdminAndMonitorRole } from "../../common/function";
 import { checkCurrentUserBelongToCurrentClass } from "../../common/checkRole";
 import { SUPER_ADMIN } from "../../common/constant";
 import PermissionDenied from "../Error/PermissionDenied";
+import useFetchClassData from "../../../hook/useFetchClassData";
 
 function ClassDetail(props) {
   const { t } = useTranslation();
   const history = useHistory();
   const { id } = useParams();
-  const [classData, setClassData] = useState({});
   const [confirmDelete, setConfirmDelete] = useState(false);
   const userId = localStorage.getItem("userId");
   const currentUserData = useFetchRole(userId);
   const userRole = currentUserData.userRole;
 
-  useEffect(() => {
-    Axios.post(`/api/classes/${id}`, { classId: id }).then((response) => {
-      if (response.data.success) {
-        setClassData(response.data.classData);
-      } else {
-        alert(t("fail_to_get_api"));
-      }
-    });
-  }, [t, id]);
+  const classData = useFetchClassData(id);
 
   const openDeletePopup = () => {
     setConfirmDelete(true);
@@ -65,7 +57,9 @@ function ClassDetail(props) {
       <Menu.Item key="0">
         <Link to={`/classes/${id}/edit`}>{t("edit_class")}</Link>
       </Menu.Item>
-      <Menu.Item key="1">{t("assign_student_to_class")}</Menu.Item>
+      <Menu.Item key="1">
+        <Link to={`/classes/${id}/set-monitor`}>{t("set_monitor")}</Link>
+      </Menu.Item>
       <Menu.Divider />
       <Menu.Item
         key="3"
@@ -158,10 +152,10 @@ function ClassDetail(props) {
               </Row>
               <Row>
                 <Col span={12}>
-                  {t("class_monitor")}: {classData.classMonitor}
+                  {t("class_monitor")}: {classData.classMonitor?.user.name}
                 </Col>
                 <Col span={12}>
-                  {t("sub_class_monitor")}: {classData.subClassMonitor}
+                  {t("sub_class_monitor")}: {classData.subClassMonitor?.user.name}
                 </Col>
               </Row>
             </>

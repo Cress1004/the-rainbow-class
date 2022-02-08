@@ -1,9 +1,9 @@
-const { VOLUNTEER_ROLE, STUDENT_ROLE } = require("../defaultValues/constant");
+const { VOLUNTEER_ROLE } = require("../defaultValues/constant");
 const { ClassName } = require("../models/ClassName");
 const { storeAddress, updateAddress } = require("./commonRepository");
 const { getLessonsByCLass } = require("./lessonRepository");
 const { getStudentByClass } = require("./studentRepository");
-const { getVolunteerByClass } = require("./volunteerRepository");
+const { getVolunteerByClass, downgradeMonitor, upgradeMonitor } = require("./volunteerRepository");
 
 const findAllClasses = (user) => {
   try {
@@ -84,7 +84,17 @@ const tranformClassData = async (className) => {
   try {
     const classData = await ClassName.findOne({ _id: className._id })
       .populate("studentTypes")
-      .populate("address", "_id address description");
+      .populate("address", "_id address description")
+      .populate({
+        path: "classMonitor",
+        select: "user",
+        populate: { path: "user", select: "name" },
+      })
+      .populate({
+        path: "subClassMonitor",
+        select: "user",
+        populate: { path: "user", select: "name" },
+      });
     classData.students = await getStudentByClass(className);
     classData.volunteers = await getVolunteerByClass(className);
     return classData;
@@ -107,6 +117,20 @@ const getClassByUser = async (user) => {
   }
 };
 
+const setMonitor = async (classId, monitorId, subMonitorId) => {
+  try {
+    const currentClass = await ClassName.findOne({ _id: classId });
+    await downgradeMonitor(currentClass);
+    await upgradeMonitor(monitorId, subMonitorId)
+    currentClass.classMonitor = monitorId;
+    currentClass.subClassMonitor = subMonitorId;
+    return currentClass.save();
+  } catch (error) {
+    console.log("cant set monitor");
+    return null;
+  }
+};
+
 module.exports = {
   findAllClasses,
   tranformClassData,
@@ -117,4 +141,5 @@ module.exports = {
   getClassScheduleByUser,
   getClassByUser,
   getAllClassesData,
+  setMonitor,
 };

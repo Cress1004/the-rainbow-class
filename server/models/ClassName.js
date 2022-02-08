@@ -16,7 +16,11 @@ const classSchema = mongoose.Schema(
     ],
     classMonitor: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Volunteer",
+    },
+    subClassMonitor: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Volunteer",
     },
     studentTypes: [
       {
@@ -27,7 +31,7 @@ const classSchema = mongoose.Schema(
     volunteers: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "Volunteer",
       },
     ],
     schedules: [

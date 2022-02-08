@@ -14,7 +14,7 @@ const checkAdminRole = async (req, res, next) => {
       res.json({ success: false, message: "Permission Denied", error: true });
     } else {
       const currentVolunteer = await getVolunteerByUserId(user._id);
-      if (currentVolunteer.role === ADMIN) next();
+      if (currentVolunteer.isAdmin) next();
       else
         res.status(200).json({
           success: false,

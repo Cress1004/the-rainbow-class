@@ -30,6 +30,7 @@ import LessonDetail from "./views/Class/Lesson/LessonDetail";
 import EditLesson from "./views/Class/Lesson/EditLesson";
 import ClassSchedule from "./views/Schedule/ClassSchedule/ClassSchedule";
 import AdminList from "./views/User/UserPage/Admin/AdminList";
+import SetMonitor from "./views/Class/Session/SetMonitor";
 
 function App(props) {
   return (
@@ -87,6 +88,11 @@ function App(props) {
           path="/classes/:id/edit"
           exact={true}
           component={Auth(EditClass, null)}
+        />
+        <DashboardLayoutRoute
+          path="/classes/:id/set-monitor"
+          exact={true}
+          component={Auth(SetMonitor, null)}
         />
         <DashboardLayoutRoute
           path="/add-class"

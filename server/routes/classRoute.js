@@ -6,6 +6,7 @@ const {
   editClassData,
   getClassSchedule,
   getAllClasses,
+  setClassMonitor,
 } = require("../controllers/classController");
 const {
   addLesson,
@@ -28,6 +29,7 @@ router.post("/get-all-classes", auth, getAllClasses);
 router.post("/my-class-schedules", auth, getMyClasschedule);
 router.post("/get-class-schedules", auth, getClassSchedule);
 router.post("/:id", auth, getClassData);
+router.post("/:id/set-monitor", checkAdminRole, setClassMonitor);
 router.post("/:id/delete", checkAdminRole, deleteClassData);
 router.post("/:id/edit", checkAdminAndMonitorRole, editClassData);
 router.post("/:id/add-lesson", checkAdminAndMonitorRole, addLesson);

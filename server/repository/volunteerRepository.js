@@ -87,14 +87,17 @@ const getListVolunteers = async (user) => {
     if (user.role === VOLUNTEER_ROLE) {
       const currentVolunteer = await getVolunteerByUserId(user._id);
       if (currentVolunteer.role === SUPER_ADMIN) return null;
-      if (currentVolunteer.role === ADMIN)
-        return allVolunteersData;
+      if (currentVolunteer.role === ADMIN) return allVolunteersData;
       else {
-        return allVolunteersData.filter(item => item.user.class._id.toString() === user.class.toString())
+        return allVolunteersData.filter(
+          (item) => item.user.class._id.toString() === user.class.toString()
+        );
       }
     }
     if (user.role === STUDENT_ROLE) {
-      return allVolunteersData.filter(item => compareObjectId(item.user.class._id, user.class))
+      return allVolunteersData.filter((item) =>
+        compareObjectId(item.user.class._id, user.class)
+      );
     }
   } catch (error) {
     console.log("fail to get list volunteers");
@@ -141,18 +144,55 @@ const deleteVolunteer = async (user, volunteerId) => {
 
 const getVolunteerByClass = async (className) => {
   try {
-    const allStudents = await Volunteer.find({}).populate({
+    const allVolunteers = await Volunteer.find({}).populate({
       path: "user",
       select: "name class",
     });
-    return allStudents.filter((item) =>
-      compareObjectId(item.user.class._id, className._id)
-    );
+    const vol = allVolunteers.filter((item) =>
+    compareObjectId(item.user.class._id, className._id)
+  );
+    return vol;
   } catch (error) {
     console.log("fail to get student by class");
     return null;
   }
 };
+
+const downgradeMonitor = async (currentClass) => {
+  try {
+    if(currentClass.classMonitor) {
+      const monitor = await Volunteer.findOne({_id: currentClass.classMonitor});
+      monitor.role = 1;
+      monitor.save();
+    }
+    if(currentClass.subClassMonitor) {
+      const subMonitor = await Volunteer.findOne({_id: currentClass.subClassMonitor});
+      subMonitor.role = 1;
+      subMonitor.save();
+    }
+  } catch (error) {
+    console.log("fail to downgrade monitor");
+    return null;
+  }
+}
+
+const upgradeMonitor = async (monitorId, subMonitorId) => {
+  try {
+    if(monitorId) {
+      const monitor = await Volunteer.findOne({_id: monitorId});
+      monitor.role = 2;
+      monitor.save();
+    }
+    if(subMonitorId) {
+      const subMonitor = await Volunteer.findOne({_id: subMonitorId});
+      subMonitor.role = 3;
+      subMonitor.save();
+    }
+  } catch (error) {
+    console.log("fail to upgrade monitor");
+    return null;
+  }
+}
 
 module.exports = {
   storeVolunteer,
@@ -162,5 +202,7 @@ module.exports = {
   deleteVolunteer,
   getVolunteerByUserId,
   getVolunteerByIdAndClassId,
-  getVolunteerByClass
+  getVolunteerByClass,
+  downgradeMonitor,
+  upgradeMonitor
 };

@@ -5,9 +5,7 @@ import Axios from "axios";
 import "./volunteer.scss";
 import { Link } from "react-router-dom";
 import { checkAdminAndMonitorRole } from "../../../../common/function";
-
-const CLASS_MONITOR = 1;
-const SUB_CLASS_MONITOR = 2;
+import { CLASS_MONITOR, SUB_CLASS_MONITOR } from "../../../../common/constant";
 
 function VolunteerList(props) {
   const { t } = useTranslation();

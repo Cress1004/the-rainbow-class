@@ -59,6 +59,9 @@ const DashboardLayout = ({ children, ...rest }) => {
                       {t("student")}
                       <Link to="/students"></Link>
                     </Menu.Item>
+                    <Menu.Item key="my_Class">
+                      <Link to={`/classes/${userData.userClassId}`}>{t("my_class")}</Link>
+                    </Menu.Item>
                 </Menu>
               )}
               {userRole.subRole === SUPER_ADMIN && (
@@ -78,22 +81,24 @@ const DashboardLayout = ({ children, ...rest }) => {
                   </Menu.Item>
                   <SubMenu key="sub1" title={t("user_manager")}>
                     <Menu.Item key="3"><Link to="/admin">{t("admin")}</Link></Menu.Item>
-                    <Menu.Item key="4">{t("class_monitor")}</Menu.Item>
-                    <Menu.Item key="5">
+                    <Menu.Item key="4">
                       {t("volunteer")}
                       <Link to="/volunteers"></Link>
                     </Menu.Item>
-                    <Menu.Item key="6">
+                    <Menu.Item key="5">
                       {t("student")}
                       <Link to="/students"></Link>
                     </Menu.Item>
                   </SubMenu>
                   <SubMenu key="sub2" title={t("class_manager")}>
-                    <Menu.Item key="class_list">
+                    <Menu.Item key="6">
                       <Link to="/classes">{t("class_list")}</Link>
                     </Menu.Item>
+                    <Menu.Item key="7">
+                      <Link to={`/classes/${userData.userClassId}`}>{t("my_class")}</Link>
+                    </Menu.Item>
                   </SubMenu>
-                  <Menu.Item key="10">
+                  <Menu.Item key="8">
                     {t("master_setting")}
                     <Link to="/master-setting"></Link>
                   </Menu.Item>
@@ -121,12 +126,11 @@ const DashboardLayout = ({ children, ...rest }) => {
                     </Menu.Item>
                   </SubMenu>
                   <SubMenu key="sub2" title={t("class_manager")}>
-                    <Menu.Item key="class_list">
+                    <Menu.Item key="6">
                       <Link to="/classes">{t("class_list")}</Link>
                     </Menu.Item>
-                    <Menu.Item key="10">
-                      {t("class_info")}
-                      <Link to="/master-setting"></Link>
+                    <Menu.Item key="7">
+                      <Link to={`/classes/${userData.userClassId}`}>{t("my_class")}</Link>
                     </Menu.Item>
                   </SubMenu>
                 </Menu>

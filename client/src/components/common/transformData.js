@@ -29,56 +29,62 @@ export function transformSchedule(data) {
         key: data.key,
         dayOfWeek: WEEKDAY.find((item) => item.key === data.dayOfWeek).text,
         endTime: moment(new Date(data.endTime)).format(FORMAT_TIME_SCHEDULE),
-        startTime: moment(new Date(data.startTime)).format(FORMAT_TIME_SCHEDULE),
+        startTime: moment(new Date(data.startTime)).format(
+          FORMAT_TIME_SCHEDULE
+        ),
       }
     : undefined;
 }
 
 export function transformLessonTime(data) {
   return data
-  ? {
-      key: data.key,
-      dayOfWeek: WEEKDAY.find((item) => item.key === data.dayOfWeek).text,
-      endTime: moment(new Date(data.endTime)).format(FORMAT_TIME_SCHEDULE),
-      startTime: moment(new Date(data.startTime)).format(FORMAT_TIME_SCHEDULE),
-      date: moment(new Date(data.date)).format(FORMAT_DATE),
-    }
-  : undefined;
+    ? {
+        key: data.key,
+        dayOfWeek: WEEKDAY.find((item) => item.key === data.dayOfWeek).text,
+        endTime: moment(new Date(data.endTime)).format(FORMAT_TIME_SCHEDULE),
+        startTime: moment(new Date(data.startTime)).format(
+          FORMAT_TIME_SCHEDULE
+        ),
+        date: moment(new Date(data.date)).format(FORMAT_DATE),
+      }
+    : undefined;
 }
 
 export function transformLessonTimeToString(data) {
-  const newData = transformLessonTime(data)
+  const newData = transformLessonTime(data);
   return newData
-  ? `${newData.date} ${newData.startTime} - ${newData.endTime}`
-  : "";
+    ? `${newData.date} ${newData.startTime} - ${newData.endTime}`
+    : "";
 }
 
 export function convertTimeStringToMoment(string) {
-  return string
-  ? moment(string, FORMAT_TIME_SCHEDULE)
-  : undefined;
+  return string ? moment(string, FORMAT_TIME_SCHEDULE) : undefined;
 }
 
 export function convertDateStringToMoment(string) {
-  return string
-  ? moment(string, FORMAT_DATE)
-  : undefined;
+  return string ? moment(string, FORMAT_DATE) : undefined;
 }
 
 export function transformEventOfLesson(data) {
-  const time = data.schedule.time;
-  const date = moment(new Date(time.date)).format(FORMAT_DATE).toString();
-  const start = moment(new Date(time.startTime)).format(FORMAT_TIME_SCHEDULE).toString();
-  const end = moment(new Date(time.endTime)).format(FORMAT_TIME_SCHEDULE).toString();
-  return {
-    title: data.class.name,
-    lessonTitle: data.title,
-    className: data.class.name,
-    classId: data.class._id,
-    lessonId: data._id,
-    personInCharge: data.personInCharge ? data.personInCharge : "unset",
-    time: time,
-    start: new Date(`${date} ${start}`),
-    end: new Date(`${date} ${end}`),
+  const time = data?.schedule?.time;
+  if (time) {
+    const date = moment(new Date(time.date)).format(FORMAT_DATE).toString();
+    const start = moment(new Date(time.startTime))
+      .format(FORMAT_TIME_SCHEDULE)
+      .toString();
+    const end = moment(new Date(time.endTime))
+      .format(FORMAT_TIME_SCHEDULE)
+      .toString();
+    return {
+      title: data.class?.name,
+      lessonTitle: data.title,
+      className: data.class?.name,
+      classId: data.class?._id,
+      lessonId: data._id,
+      personInCharge: data.schedule.personInCharge ? data.schedule.personInCharge.name : "unset",
+      time: time,
+      start: new Date(`${date} ${start}`),
+      end: new Date(`${date} ${end}`),
+    };  
   }
 }

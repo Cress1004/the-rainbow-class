@@ -42,7 +42,7 @@ const getLessonsByCLass = async (classId) => {
       return await Lesson.find({ class: classId })
         .populate({
           path: "schedule",
-          populate: { path: "personInCharge" },
+          populate: { path: "personInCharge", select: "name" },
         })
         .populate("class");
     }
@@ -67,7 +67,14 @@ const getLessonBySchedule = async (scheduleId) => {
     return Lesson.findOne({ schedule: scheduleId }).populate([
       {
         path: "schedule",
-        populate: { path: "address paticipants" },
+        populate: [
+          {
+            path: "personInCharge",
+            select: "name email phoneNumber ",
+          },
+          { path: "address" },
+          { path: "paticipants", select: "name email phoneNumber" },
+        ],
       },
       { path: "class", select: "name" },
     ]);

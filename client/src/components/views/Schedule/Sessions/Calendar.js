@@ -76,7 +76,7 @@ function MyCalendar(props) {
               style: {
                 backgroundColor: classColors.find(
                   (item) => item.classId === classId
-                ).color,
+                )?.color,
               },
             };
           }}

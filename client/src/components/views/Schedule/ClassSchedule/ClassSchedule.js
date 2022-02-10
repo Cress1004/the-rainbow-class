@@ -65,8 +65,10 @@ function ClassSchedule() {
       {userRole.role === STUDENT && <PermissionDenied />}
       {userRole.role === VOLUNTEER && userRole.subRole !== SUPER_ADMIN && (
         <div>
-          <div className="class-schedule__title">{`${t("class_schedule")} - ${classData && classData.name}`}</div>
-          {userRole.subRole !== VOLUNTEER && (
+          <div className="class-schedule__title">{`${t("class_schedule")} - ${
+            classData && classData.name
+          }`}</div>
+          {userRole.isAdmin && (
             <Row className="class-schedule__filter">
               <Col span={16}></Col>
               <Col span={8}>
@@ -95,7 +97,7 @@ function ClassSchedule() {
               </Col>
             </Row>
           )}
-          {schedule && <MyCalendar data={schedule} userId={userId}/>}
+          {schedule && <MyCalendar data={schedule} userId={userId} />}
         </div>
       )}
     </div>

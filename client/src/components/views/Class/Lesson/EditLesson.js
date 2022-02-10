@@ -10,7 +10,7 @@ import {
   TimePicker,
   Col,
 } from "antd";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Axios from "axios";
 import "./lesson.scss";
@@ -37,6 +37,7 @@ const { TextArea } = Input;
 const { Option } = Select;
 
 function EditLesson(props) {
+  const history = useHistory();
   const { t } = useTranslation();
   const { id, lessonId } = useParams();
   const [location, setLocation] = useState([]);
@@ -139,7 +140,7 @@ function EditLesson(props) {
           lessonData: valuesToSend,
         }).then((response) => {
           if (response.data.success) {
-            // history.push(`/classes/${id}`);
+            history.push(`/classes/${id}`);
           } else if (!response.data.success) {
             alert(response.data.message);
           } else {

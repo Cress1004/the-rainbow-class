@@ -34,3 +34,13 @@ export function checkCurrentMonitorBelongToCurrentClass(userData, classId) {
     return userData.userClassId === classId;
   } else return false;
 }
+
+export function checkCurrentVolunteerBelongToCurrentClass(userData, classId) {
+  const userRole = userData?.userRole;
+  if (userRole.isAdmin) return true;
+  else if (
+    userRole.role === VOLUNTEER
+  ) {
+    return userData.userClassId === classId;
+  } else return false;
+}

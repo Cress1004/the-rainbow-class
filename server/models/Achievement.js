@@ -10,7 +10,8 @@ const achievementSchema = mongoose.Schema({
         ref: 'Lesson'
     },
     point: Number,
-    maxPoint: Number
+    maxPoint: Number,
+    comment: String,
 })
 
 const Achievement = mongoose.model('Achievement', achievementSchema);

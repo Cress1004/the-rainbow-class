@@ -3,6 +3,7 @@ const {
   CLASS_MONITOR,
   SUB_CLASS_MONITOR,
 } = require("../defaultValues/constant");
+const { getAchievementByStudentId } = require("../repository/achievementRepository");
 const {
   tranformClassData,
   storeClass,
@@ -13,7 +14,8 @@ const {
   getClassByUser,
   setMonitor,
 } = require("../repository/classRepository");
-const { getLessonsByCLass } = require("../repository/lessonRepository");
+const { getLessonsByCLass, findLesson } = require("../repository/lessonRepository");
+const { getStudentByClass } = require("../repository/studentRepository");
 const { getUserDataById } = require("../repository/userRepository");
 const { getVolunteerByUserId } = require("../repository/volunteerRepository");
 
@@ -108,6 +110,22 @@ const setClassMonitor = async (req, res) => {
   }
 };
 
+const getStudentWithAchievementByClass = async (req, res) => {
+  try {
+    const classId = req.body.classId;
+    const classData = await findClassById(classId);
+    const studentList = await getStudentByClass(classData);
+    Promise.all(studentList.map((item) => getAchievementByStudentId(item))).then(
+      (value) => {
+        res.status(200).json({ success: true, studentData: value });
+      }
+    );
+    // res.status(200).json({ success: true, studentData: studentList });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 module.exports = {
   addClass,
   getClassData,
@@ -116,4 +134,5 @@ module.exports = {
   getClassSchedule,
   getAllClasses,
   setClassMonitor,
+  getStudentWithAchievementByClass,
 };

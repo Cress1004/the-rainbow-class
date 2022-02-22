@@ -31,6 +31,7 @@ import EditLesson from "./views/Class/Lesson/EditLesson";
 import ClassSchedule from "./views/Schedule/ClassSchedule/ClassSchedule";
 import AdminList from "./views/User/UserPage/Admin/AdminList";
 import SetMonitor from "./views/Class/Session/SetMonitor";
+import CommentStudent from "./views/Class/CommentStudent/CommentStudent";
 
 function App(props) {
   return (
@@ -95,13 +96,15 @@ function App(props) {
           component={Auth(SetMonitor, null)}
         />
         <DashboardLayoutRoute
+          path="/classes/:id/comment-student"
+          exact={true}
+          component={Auth(CommentStudent, null)}
+        />
+        <DashboardLayoutRoute
           path="/add-class"
           component={Auth(AddClass, null)}
         />
-        <DashboardLayoutRoute
-          path="/admin"
-          component={Auth(AdminList, null)}
-        />
+        <DashboardLayoutRoute path="/admin" component={Auth(AdminList, null)} />
         <DashboardLayoutRoute
           path="/add-volunteer"
           component={Auth(AddVolunteer, null)}

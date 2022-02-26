@@ -9,6 +9,7 @@ import { getArrayLength } from "../../../common/transformData";
 import EditCommentModal from "./EditComment/EditCommentModal";
 import { checkCurrentVolunteerBelongToCurrentClass } from "../../../common/checkRole";
 import PermissionDenied from "../../Error/PermissionDenied";
+import "./comment-student.scss";
 
 const { Text } = Typography;
 
@@ -66,7 +67,7 @@ function CommentStudent(props) {
     return <PermissionDenied />;
   return (
     <div>
-      <div className="comment-student__title">{t("comment-student")}</div>
+      <div className="comment-student__title">{t("comment_student")}</div>
       <Table
         columns={fixedColumns}
         dataSource={fixedData}

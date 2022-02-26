@@ -37,3 +37,7 @@ export function checkStudentAndCurrentUserSameClass(student, currentUserData) {
   else if (userRole.isAdmin) return true;
   else return student.classId === currentUserData.userClassId;
 }
+
+export function checkStringContentSubString(string1, string2) {
+  return string1?.toLowerCase().includes(string2?.toLowerCase())
+}

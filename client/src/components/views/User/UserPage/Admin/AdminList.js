@@ -1,18 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Table } from "antd";
+import { Icon, Input, Table } from "antd";
 import Axios from "axios";
 import "./admin.scss";
+import { checkStringContentSubString } from "../../../../common/function";
 
 function AdminList(props) {
   const { t } = useTranslation();
   const [admin, setAdmin] = useState([]);
+  const [searchData, setSearchData] = useState([]);
+  const [inputValue, setInputValue] = useState("");
 
   useEffect(() => {
     Axios.post("/api/admin/get-admin", null).then((response) => {
       const result = response.data;
       if (result.success) {
-        setAdmin(result.admin);
+        setAdmin(transformAdminData(result.admin));
+        setSearchData(transformAdminData(result.admin));
       } else if (!result.success) {
         alert(result.message);
       } else {
@@ -20,6 +24,16 @@ function AdminList(props) {
       }
     });
   }, [t]);
+
+  const transformAdminData = (adminData) => {
+    return adminData?.map((item, index) => ({
+      key: index,
+      id: item._id,
+      userName: item.user.name,
+      phoneNumber: item.user.phoneNumber,
+      email: item.user.email,
+    }));
+  };
 
   const columns = [
     {
@@ -45,14 +59,6 @@ function AdminList(props) {
     },
   ];
 
-  const data = admin.map((item, index) => ({
-    key: index,
-    id: item._id,
-    userName: item.user.name,
-    phoneNumber: item.user.phoneNumber,
-    email: item.user.email,
-  }));
-
   const renderData = (text) => (
     <span className="text-in-table-row">{text}</span>
   );
@@ -63,7 +69,24 @@ function AdminList(props) {
         <div className="admin-list__title">
           {t("admin")} ({`${admin?.length}`})
         </div>
-        <Table columns={columns} dataSource={data} />
+        <Input
+          className="admin-list__search"
+          prefix={<Icon type="search" />}
+          placeholder={t("search_by_name_phone_email")}
+          value={inputValue}
+          onChange={(e) => {
+            const currValue = e.target.value;
+            setInputValue(currValue);
+            const filteredData = admin.filter(
+              (entry) =>
+                checkStringContentSubString(entry.userName, currValue) ||
+                checkStringContentSubString(entry.phoneNumber, currValue) || 
+                checkStringContentSubString(entry.email, currValue)
+            );
+            setSearchData(filteredData);
+          }}
+        />
+        <Table columns={columns} dataSource={searchData} />
       </div>
     </div>
   );

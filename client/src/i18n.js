@@ -127,6 +127,13 @@ const resources = {
       character: "Tính cách",
       overview: "Tổng quan",
       undescription: "Chưa có mô tả",
+      comment_student: "Nhập nhận xét",
+      student_name: "Tên học sinh",
+      my_class: "Lớp của tôi",
+      all_option: "Tất cả",
+      search_by_name_phone_email: "Tìm kiếm theo tên/email/số điện thoại",
+      search_by_name_phone: "Tìm kiếm theo tên/số điện thoại",
+      search_by_class_name: "Tìm kiếm theo tên lớp",
       //noti
       assign_success: "Đăng kí thành công",
       unassign_success: "Hủy đăng kí thành công",

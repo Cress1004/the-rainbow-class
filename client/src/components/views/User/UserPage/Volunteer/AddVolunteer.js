@@ -69,16 +69,14 @@ function AddVolunteer(props) {
   });
 
   useEffect(() => {
-    Axios.post("/api/classes/get-all-classes", null).then(
-      (response) => {
-        if (response.data.success) {
-          const data = response.data.classes;
-          data ? setClasses(response.data.classes) : setClasses(null);
-        } else {
-          alert(t("fail_to_get_api"));
-        }
+    Axios.post("/api/classes/get-all-classes", null).then((response) => {
+      if (response.data.success) {
+        const data = response.data.classes;
+        data ? setClasses(response.data.classes) : setClasses(null);
+      } else {
+        alert(t("fail_to_get_api"));
       }
-    );
+    });
     Axios.post(`/api/users/get-role`, { userId: userId }).then((response) => {
       if (response.data.success) {
         const data = response.data.userRole;
@@ -104,7 +102,7 @@ function AddVolunteer(props) {
   if (
     userRole &&
     (userRole.role === STUDENT ||
-      userRole.subRole === VOLUNTEER ||
+      !userRole.isAdmin ||
       userRole.subRole === SUPER_ADMIN)
   )
     return <PermissionDenied />;

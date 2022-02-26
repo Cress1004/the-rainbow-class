@@ -6,10 +6,15 @@
     color: $primary-color;
   }
   .add-class-button {
+    margin-top: 5px;
     float: right;
   }
   .ant-table-wrapper {
-    padding-top: 60px;
+    padding-top: 20px;
+  }
+  &__search {
+    width: 30%;
+    float: right;
   }
 }
 
@@ -42,7 +47,7 @@
     font-size: 25px;
     text-align: center;
     font-weight: $title-font-weight;
-    .ant-dropdown-link{
+    .ant-dropdown-link {
       color: #fff;
     }
   }

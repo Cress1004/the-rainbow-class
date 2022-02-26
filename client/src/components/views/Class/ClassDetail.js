@@ -14,7 +14,11 @@ import {
 import LessonList from "./Lesson/LessonList";
 import useFetchRole from "../../../hook/useFetchRole";
 import { checkAdminAndMonitorRole } from "../../common/function";
-import { checkCurrentUserBelongToCurrentClass } from "../../common/checkRole";
+import {
+  checkCurrentMonitorBelongToCurrentClass,
+  checkCurrentUserBelongToCurrentClass,
+  checkCurrentVolunteerBelongToCurrentClass,
+} from "../../common/checkRole";
 import { SUPER_ADMIN } from "../../common/constant";
 import PermissionDenied from "../Error/PermissionDenied";
 import useFetchClassData from "../../../hook/useFetchClassData";
@@ -54,20 +58,44 @@ function ClassDetail(props) {
 
   const menu = (
     <Menu>
-      <Menu.Item key="0">
-        <Link to={`/classes/${id}/edit`}>{t("edit_class")}</Link>
-      </Menu.Item>
-      <Menu.Item key="1">
-        <Link to={`/classes/${id}/set-monitor`}>{t("set_monitor")}</Link>
-      </Menu.Item>
-      <Menu.Divider />
-      <Menu.Item
-        key="3"
-        className="class-detail__delete-class"
-        onClick={openDeletePopup}
-      >
-        {t("delete_class")}
-      </Menu.Item>
+      {checkCurrentMonitorBelongToCurrentClass(
+        currentUserData,
+        id && (
+          <Menu.Item key="0">
+            <Link to={`/classes/${id}/edit`}>{t("edit_class")}</Link>
+          </Menu.Item>
+        )
+      )}
+      {checkCurrentMonitorBelongToCurrentClass(
+        currentUserData,
+        id && (
+          <Menu.Item key="1">
+            <Link to={`/classes/${id}/set-monitor`}>{t("set_monitor")}</Link>
+          </Menu.Item>
+        )
+      )}{" "}
+      {checkCurrentVolunteerBelongToCurrentClass(currentUserData, id) && (
+        <Menu.Item key="comment-student">
+          <Link to={`/classes/${id}/comment-student`}>
+            {t("comment_student")}
+          </Link>
+        </Menu.Item>
+      )}
+      {checkCurrentMonitorBelongToCurrentClass(
+        currentUserData,
+        id && (
+          <div>
+            <Menu.Divider />
+            <Menu.Item
+              key="3"
+              className="class-detail__delete-class"
+              onClick={openDeletePopup}
+            >
+              {t("delete_class")}
+            </Menu.Item>
+          </div>
+        )
+      )}{" "}
     </Menu>
   );
 
@@ -155,7 +183,8 @@ function ClassDetail(props) {
                   {t("class_monitor")}: {classData.classMonitor?.user.name}
                 </Col>
                 <Col span={12}>
-                  {t("sub_class_monitor")}: {classData.subClassMonitor?.user.name}
+                  {t("sub_class_monitor")}:{" "}
+                  {classData.subClassMonitor?.user.name}
                 </Col>
               </Row>
             </>

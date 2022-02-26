@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Route } from "react-router-dom";
-import { Layout, Menu, Typography } from "antd";
+import { Layout, Menu, Typography, Icon } from "antd";
 import { Link } from "react-router-dom";
 import "./style.scss";
 import RightMenu from "../NavBar/Sections/RightMenu";
@@ -49,92 +49,158 @@ const DashboardLayout = ({ children, ...rest }) => {
               {userRole.role === STUDENT && (
                 <Menu defaultSelectedKeys={["1"]} mode="inline">
                   <Menu.Item key="my_schedule">
-                    <Link to="/dashboard">{t("dashboard")}</Link>
+                    <Link to="/dashboard">
+                      <Icon type="home" />
+                      <span>{t("dashboard")}</span>
+                    </Link>
                   </Menu.Item>
                   <Menu.Item key="volunteers">
-                      {t("volunteer")}
-                      <Link to="/volunteers"></Link>
-                    </Menu.Item>
-                    <Menu.Item key="students">
-                      {t("student")}
-                      <Link to="/students"></Link>
-                    </Menu.Item>
-                    <Menu.Item key="my_Class">
-                      <Link to={`/classes/${userData.userClassId}`}>{t("my_class")}</Link>
-                    </Menu.Item>
+                    <Icon type="user" />
+                    <span>{t("volunteer")}</span>
+                    <Link to="/volunteers"></Link>
+                  </Menu.Item>
+                  <Menu.Item key="students">
+                    <Icon type="solution" />
+                    <span> {t("student")}</span>
+                    <Link to="/students"></Link>
+                  </Menu.Item>
+                  <Menu.Item key="my_Class">
+                    <Link to={`/classes/${userData.userClassId}`}>
+                      <Icon type="book" />
+                      <span> {t("my_class")}</span>
+                    </Link>
+                  </Menu.Item>
                 </Menu>
               )}
               {userRole.subRole === SUPER_ADMIN && (
                 <Menu defaultSelectedKeys={["1"]} mode="inline">
                   <Menu.Item key="list_admin">
-                    <Link to="/admin">{t("admin")}</Link>
+                    <Link to="/admin">
+                      <Icon type="user" />
+                      <span>{t("admin")}</span>
+                    </Link>
                   </Menu.Item>
                 </Menu>
               )}
               {userRole.isAdmin && (
                 <Menu defaultSelectedKeys={["1"]} mode="inline">
                   <Menu.Item key="my_schedule">
-                    <Link to="/dashboard">{t("dashboard")}</Link>
+                    <Link to="/dashboard">
+                      <Icon type="home" />
+                      <span>{t("dashboard")}</span>
+                    </Link>
                   </Menu.Item>
-                  <Menu.Item key="2">
-                    <Link to="/schedules">{t("schedule_manager")}</Link>
+                  <Menu.Item key="schedule">
+                    <Link to="/schedules">
+                      <Icon type="calendar" />
+                      <span>{t("schedule_manager")}</span>
+                    </Link>
                   </Menu.Item>
-                  <SubMenu key="sub1" title={t("user_manager")}>
-                    <Menu.Item key="3"><Link to="/admin">{t("admin")}</Link></Menu.Item>
-                    <Menu.Item key="4">
+                  <SubMenu
+                    key="user_manager"
+                    title={
+                      <span>
+                        <Icon type="user" />
+                        <span>{t("user_manager")}</span>
+                      </span>
+                    }
+                  >
+                    <Menu.Item key="admin">
+                      <Link to="/admin">{t("admin")}</Link>
+                    </Menu.Item>
+                    <Menu.Item key="volunteer">
                       {t("volunteer")}
                       <Link to="/volunteers"></Link>
                     </Menu.Item>
-                    <Menu.Item key="5">
+                    <Menu.Item key="student">
                       {t("student")}
                       <Link to="/students"></Link>
                     </Menu.Item>
                   </SubMenu>
-                  <SubMenu key="sub2" title={t("class_manager")}>
-                    <Menu.Item key="6">
+                  <SubMenu
+                    key="class_manager"
+                    title={
+                      <span>
+                        <Icon type="book" />
+                        <span>{t("class_manager")}</span>
+                      </span>
+                    }
+                  >
+                    <Menu.Item key="class_manager">
                       <Link to="/classes">{t("class_list")}</Link>
                     </Menu.Item>
-                    <Menu.Item key="7">
-                      <Link to={`/classes/${userData.userClassId}`}>{t("my_class")}</Link>
+                    <Menu.Item key="my_class">
+                      <Link to={`/classes/${userData.userClassId}`}>
+                        {t("my_class")}
+                      </Link>
                     </Menu.Item>
                   </SubMenu>
-                  <Menu.Item key="8">
-                    {t("master_setting")}
-                    <Link to="/master-setting"></Link>
+                  <Menu.Item key="master_setting">
+                    <Link to="/master-setting">
+                      <Icon type="setting" />
+                      <span>{t("master_setting")}</span>
+                    </Link>
                   </Menu.Item>
                 </Menu>
               )}
-              {!userRole.isAdmin && (userRole.subRole === SUB_CLASS_MONITOR ||
-                userRole.subRole === CLASS_MONITOR ||
-                userRole.subRole === VOLUNTEER) && (
-                <Menu defaultSelectedKeys={["1"]} mode="inline">
-                  <Menu.Item key="my_schedule">
-                    <Link to="/dashboard">{t("dashboard")}</Link>
-                  </Menu.Item>
-                  <Menu.Item key="2">
-                    <Link to="/schedules">{t("schedule_manager")}</Link>
-                  </Menu.Item>
-                  <SubMenu key="sub1" title={t("user_manager")}>
-                    <Menu.Item key="3"><Link to="/admin">{t("admin")}</Link></Menu.Item>
-                    <Menu.Item key="4">
-                      {t("volunteer")}
-                      <Link to="/volunteers"></Link>
+              {!userRole.isAdmin &&
+                (userRole.subRole === SUB_CLASS_MONITOR ||
+                  userRole.subRole === CLASS_MONITOR ||
+                  userRole.subRole === VOLUNTEER) && (
+                  <Menu defaultSelectedKeys={["1"]} mode="inline">
+                    <Menu.Item key="my_schedule">
+                      <Link to="/dashboard">
+                        <Icon type="home" />
+                        <span>{t("dashboard")}</span>
+                      </Link>
                     </Menu.Item>
-                    <Menu.Item key="5">
-                      {t("student")}
-                      <Link to="/students"></Link>
+                    <Menu.Item key="schedule">
+                      <Link to="/schedules">
+                        <Icon type="calendar" />
+                        <span>{t("schedule_manager")}</span>
+                      </Link>
                     </Menu.Item>
-                  </SubMenu>
-                  <SubMenu key="sub2" title={t("class_manager")}>
-                    <Menu.Item key="6">
-                      <Link to="/classes">{t("class_list")}</Link>
-                    </Menu.Item>
-                    <Menu.Item key="7">
-                      <Link to={`/classes/${userData.userClassId}`}>{t("my_class")}</Link>
-                    </Menu.Item>
-                  </SubMenu>
-                </Menu>
-              )}
+                    <SubMenu
+                      key="user_manager"
+                      title={
+                        <span>
+                          <Icon type="user" />
+                          <span>{t("user_manager")}</span>
+                        </span>
+                      }
+                    >
+                      <Menu.Item key="admin">
+                        <Link to="/admin">{t("admin")}</Link>
+                      </Menu.Item>
+                      <Menu.Item key="volunteer">
+                        {t("volunteer")}
+                        <Link to="/volunteers"></Link>
+                      </Menu.Item>
+                      <Menu.Item key="student">
+                        {t("student")}
+                        <Link to="/students"></Link>
+                      </Menu.Item>
+                    </SubMenu>
+                    <SubMenu
+                      key="class_manager"
+                      title={
+                        <span>
+                          <Icon type="book" />
+                          <span>{t("class_manager")}</span>
+                        </span>
+                      }
+                    >
+                      <Menu.Item key="classes">
+                        <Link to="/classes">{t("class_list")}</Link>
+                      </Menu.Item>
+                      <Menu.Item key="my_class">
+                        <Link to={`/classes/${userData.userClassId}`}>
+                          {t("my_class")}
+                        </Link>
+                      </Menu.Item>
+                    </SubMenu>
+                  </Menu>
+                )}
             </Sider>
             <Layout className="site-layout">
               <Content>

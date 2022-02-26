@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Table } from "antd";
+import { Button, Table, Row, Input, Icon } from "antd";
 import "./class-list.scss";
 import { Link } from "react-router-dom";
 import Axios from "axios";
@@ -14,17 +14,22 @@ import {
   checkAdminRole,
 } from "../../common/checkRole";
 import PermissionDenied from "../Error/PermissionDenied";
+import { checkStringContentSubString } from "../../common/function";
 
 function ClassList(props) {
   const { t } = useTranslation();
   const [classes, setClasses] = useState();
+  const [searchData, setSearchData] = useState([]);
+  const [inputValue, setInputValue] = useState("");
   const userId = localStorage.getItem("userId");
   const currentUserData = useFetchRole(userId);
   const userRole = currentUserData.userRole;
   useEffect(() => {
     Axios.post("/api/classes/get-all-classes", null).then((response) => {
       if (response.data.success) {
-        setClasses(response.data.classes);
+        const data = response.data.classes;
+        setClasses(transformClassData(data));
+        setSearchData(transformClassData(data));
       } else if (!response.data.success) {
         alert(response.data.message);
       } else {
@@ -32,20 +37,21 @@ function ClassList(props) {
       }
     });
   }, [t]);
-  const data = classes
-    ? classes.map((item, index) => ({
-        key: index,
-        id: item._id,
-        name: item.name,
-        description: item.description,
-        address: transformAddressData(item.address),
-        classMonitor: item.classMonitor
-          ? item.classMonitor?.user.name
-          : `(${t("unset")})`,
-        targetStudent: transformStudentTypes(item.studentTypes),
-        numberOfStudent: item.students.length,
-      }))
-    : [];
+
+  const transformClassData = (classes) => {
+    return classes?.map((item, index) => ({
+      key: index,
+      id: item._id,
+      name: item.name,
+      description: item.description,
+      address: transformAddressData(item.address),
+      classMonitor: item.classMonitor
+        ? item.classMonitor?.user.name
+        : `(${t("unset")})`,
+      targetStudent: transformStudentTypes(item.studentTypes),
+      numberOfStudent: item.students.length,
+    }));
+  };
 
   const columns = [
     {
@@ -96,14 +102,32 @@ function ClassList(props) {
   return (
     <div className="class-list">
       <div className="class-list__title">
-        {t("class_list")} ({`${data.length} ${t("class")}`})
+        {t("class_list")} ({`${classes?.length} ${t("class")}`})
       </div>
+      <Row>
+        <Input
+          className="class-list__search"
+          prefix={<Icon type="search" />}
+          placeholder={t("search_by_class_name")}
+          value={inputValue}
+          onChange={(e) => {
+            const currValue = e.target.value;
+            setInputValue(currValue);
+            const filteredData = classes.filter((entry) =>
+              checkStringContentSubString(entry.name, currValue)
+            );
+            setSearchData(filteredData);
+          }}
+        />
+      </Row>
       {checkAdminRole(userRole) && (
-        <Button type="primary" className="add-class-button">
-          <Link to="/add-class">{t("add_class")}</Link>
-        </Button>
+        <Row>
+          <Button type="primary" className="add-class-button">
+            <Link to="/add-class">{t("add_class")}</Link>
+          </Button>
+        </Row>
       )}
-      <Table columns={columns} dataSource={data} />
+      <Table columns={columns} dataSource={searchData} />
     </div>
   );
 }

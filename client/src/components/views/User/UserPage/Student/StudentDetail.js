@@ -52,9 +52,7 @@ function StudentDetail(props) {
           interest: data.interest,
           character: data.character,
         });
-      } else {
-        alert(t("fail_to_get_api"));
-      }
+      } 
     });
   }, [t, id]);
 

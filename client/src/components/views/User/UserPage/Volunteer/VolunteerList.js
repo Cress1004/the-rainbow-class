@@ -34,9 +34,7 @@ function VolunteerList(props) {
       if (response.data.success) {
         const data = response.data.userRole;
         setUserRole(data);
-      } else {
-        alert(t("fail_to_get_api"));
-      }
+      } 
     });
   }, [t, userId]);
 

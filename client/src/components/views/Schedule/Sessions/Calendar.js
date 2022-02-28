@@ -24,9 +24,7 @@ function MyCalendar(props) {
         const data = response.data.classes;
         const colors = setColorForClass(data);
         setClassColors(colors);
-      } else {
-        alert(t("fail_to_get_api"));
-      }
+      } 
     });
   }, [t, userId]);
 

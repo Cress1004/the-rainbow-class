@@ -86,16 +86,12 @@ function EditStudent(props) {
     Axios.post("/api/common-data/student-types", null).then((response) => {
       if (response.data.success) {
         setStudentTypes(response.data.studentTypes);
-      } else {
-        alert(t("fail_to_get_api"));
-      }
+      } 
     });
     Axios.post("/api/common-data/location", null).then((response) => {
       if (response.data.success) {
         setLocation(response.data.location);
-      } else {
-        alert(t("fail_to_get_api"));
-      }
+      } 
     });
     Axios.post(`/api/students/${id}`, { studentId: id }).then((response) => {
       if (response.data.success) {
@@ -118,9 +114,7 @@ function EditStudent(props) {
           setDistrict(data.user.address.address.district);
           setWard(data.user.address.address.ward);
         }
-      } else {
-        alert(t("fail_to_get_api"));
-      }
+      } 
     });
   }, [t, id]);
 

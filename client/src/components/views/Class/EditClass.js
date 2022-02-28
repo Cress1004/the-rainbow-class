@@ -114,9 +114,7 @@ function EditClass(props) {
           setWard(data.address.address.ward);
         }
         setDefaultSchedule(data.defaultSchedule);
-      } else {
-        alert(t("fail_to_get_api"));
-      }
+      } 
     });
   }, [t, id]);
 

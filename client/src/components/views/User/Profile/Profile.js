@@ -25,9 +25,7 @@ function Profile() {
       if (response.data.success) {
         const data = response.data.userData;
         setUserData(data);
-      } else {
-        alert(t("fail_to_get_api"));
-      }
+      } 
     });
   }, [t, userId]);
 

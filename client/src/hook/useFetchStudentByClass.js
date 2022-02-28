@@ -18,9 +18,7 @@ export default function useFetchStudentByClass(classId) {
         });
       } else if (!res.success) {
         alert(res.message);
-      } else {
-        alert(t("fail_to_get_api"));
-      }
+      } 
     });
   }, [t, classId]);
   return studentData;

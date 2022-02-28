@@ -1,0 +1,30 @@
+@import "../style/app.scss";
+
+.upload-cv {
+  &__form {
+    width: 50%;
+    margin: auto;
+    justify-content: center;
+  }
+  &__submit-button {
+    float: right;
+    &--disable {
+      background-color: $disable-color;
+      border-color: $disable-color;
+    }
+  }
+  &__file-upload {
+    margin: auto;
+  }
+  &__file-error {
+    color: $danger-color;
+    padding: 5px;
+    margin: auto;
+  }
+}
+
+.thanks-page {
+    padding: 100px 0;
+    text-align: center;
+    font-size: $title-font-size;
+}

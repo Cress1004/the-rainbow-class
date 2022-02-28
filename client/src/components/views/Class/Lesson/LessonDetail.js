@@ -56,9 +56,7 @@ function LessonDetail(props) {
           : setAssign(false);
       } else if (!response.data.success) {
         alert(response.data.message);
-      } else {
-        alert(t("fail_to_get_api"));
-      }
+      } 
     });
   }, [t, id, lessonId, userId]);
 

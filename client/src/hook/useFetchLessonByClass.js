@@ -18,9 +18,7 @@ export default function useFetchLessonByClass(classId) {
         });
       } else if (!res.success) {
         alert(res.message);
-      } else {
-        alert(t("fail_to_get_api"));
-      }
+      } 
     });
   }, [t, classId]);
   return lessonData;

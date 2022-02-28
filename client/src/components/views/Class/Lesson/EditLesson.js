@@ -67,16 +67,12 @@ function EditLesson(props) {
       if (response.data.success) {
         const data = response.data.classData;
         setClassData(data);
-      } else {
-        alert(t("fail_to_get_api"));
-      }
+      } 
     });
     Axios.post("/api/common-data/location", null).then((response) => {
       if (response.data.success) {
         setLocation(response.data.location);
-      } else {
-        alert(t("fail_to_get_api"));
-      }
+      } 
     });
     Axios.post(`/api/classes/${id}/lessons/${lessonId}`, {
       userId: userId,
@@ -103,9 +99,7 @@ function EditLesson(props) {
           setDistrict(data.schedule.address.address.district);
           setWard(data.schedule.address.address.ward);
         }
-      } else {
-        alert(t("fail_to_get_api"));
-      }
+      } 
     });
   }, [t, id, lessonId]);
 

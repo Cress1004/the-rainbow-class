@@ -21,9 +21,7 @@ function ClassSchedule() {
       if (response.data.success) {
         const data = response.data.userRole;
         setUserRole(data);
-      } else {
-        alert(t("fail_to_get_api"));
-      }
+      } 
     });
     Axios.post(`/api/classes/my-class-schedules`, { userId: userId }).then(
       (response) => {
@@ -39,9 +37,7 @@ function ClassSchedule() {
     Axios.post(`/api/classes/get-all-classes`, null).then((response) => {
       if (response.data.success) {
         setClasses(response.data.classes);
-      } else {
-        alert(t("fail_to_get_api"));
-      }
+      } 
     });
   }, [t, userId]);
 

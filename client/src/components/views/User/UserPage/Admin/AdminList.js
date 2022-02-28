@@ -19,9 +19,7 @@ function AdminList(props) {
         setSearchData(transformAdminData(result.admin));
       } else if (!result.success) {
         alert(result.message);
-      } else {
-        alert(t("fail_to_get_api"));
-      }
+      } 
     });
   }, [t]);
 

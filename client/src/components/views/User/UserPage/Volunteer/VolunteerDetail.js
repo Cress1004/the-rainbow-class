@@ -32,9 +32,7 @@ function VolunteerDetail(props) {
       if (response.data.success) {
         const data = response.data.userRole;
         setUserRole(data);
-      } else {
-        alert(t("fail_to_get_api"));
-      }
+      } 
     });
     Axios.post(`/api/volunteers/${id}`, { id: id, userId: userId }).then(
       (response) => {

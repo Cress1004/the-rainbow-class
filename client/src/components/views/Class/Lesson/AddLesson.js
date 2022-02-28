@@ -115,16 +115,12 @@ function AddLesson(props) {
           setDistrict(data.address.address.district);
           setWard(data.address.address.ward);
         }
-      } else {
-        alert(t("fail_to_get_api"));
-      }
+      } 
     });
     Axios.post("/api/common-data/location", null).then((response) => {
       if (response.data.success) {
         setLocation(response.data.location);
-      } else {
-        alert(t("fail_to_get_api"));
-      }
+      } 
     });
   }, [t, id]);
 

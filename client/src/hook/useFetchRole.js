@@ -18,9 +18,7 @@ export default function useFetchRole(userId) {
         setUserClassId((classId) => {
           return classId;
         });
-      } else {
-        alert(t("fail_to_get_api"));
-      }
+      } 
     });
   }, [t, userId]);
   return {userRole, userClassId};

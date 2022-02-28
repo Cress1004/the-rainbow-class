@@ -18,9 +18,7 @@ function LessonList(props) {
     }).then((response) => {
       if (response.data.success) {
         setLessons(response.data.lessons);
-      } else {
-        alert(t("fail_to_get_api"));
-      }
+      } 
     });
   }, [t, id]);
 

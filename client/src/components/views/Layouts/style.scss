@@ -77,4 +77,13 @@
 .content .site-layout-background {
   padding: 25px 40px;
   margin-bottom: 15px;
+  min-height: 570px;
+}
+
+.content {
+  height: 100%;
+}
+
+.ant-layout {
+  height: 100%;
 }

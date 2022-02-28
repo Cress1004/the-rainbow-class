@@ -131,6 +131,15 @@ const setMonitor = async (classId, monitorId, subMonitorId) => {
   }
 };
 
+const listClassWithName = async () => {
+  try {
+    return await ClassName.find({}).select('_id, name');
+  } catch (error) {
+    console.log("cant get all classes data");
+    return null;
+  }
+}
+
 module.exports = {
   findAllClasses,
   tranformClassData,
@@ -142,4 +151,5 @@ module.exports = {
   getClassByUser,
   getAllClassesData,
   setMonitor,
+  listClassWithName
 };

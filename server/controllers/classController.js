@@ -13,8 +13,9 @@ const {
   getAllClassesData,
   getClassByUser,
   setMonitor,
+  listClassWithName,
 } = require("../repository/classRepository");
-const { getLessonsByCLass, findLesson } = require("../repository/lessonRepository");
+const { getLessonsByCLass } = require("../repository/lessonRepository");
 const { getStudentByClass } = require("../repository/studentRepository");
 const { getUserDataById } = require("../repository/userRepository");
 const { getVolunteerByUserId } = require("../repository/volunteerRepository");
@@ -126,6 +127,15 @@ const getStudentWithAchievementByClass = async (req, res) => {
   }
 };
 
+const getListClassWithName = async (req, res) => {
+  try {
+    const classes = await listClassWithName();
+    res.status(200).json({ success: true, classes: classes });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 module.exports = {
   addClass,
   getClassData,
@@ -135,4 +145,5 @@ module.exports = {
   getAllClasses,
   setClassMonitor,
   getStudentWithAchievementByClass,
+  getListClassWithName
 };

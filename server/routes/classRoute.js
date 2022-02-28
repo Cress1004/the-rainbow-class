@@ -9,6 +9,7 @@ const {
   getAllClasses,
   setClassMonitor,
   getStudentWithAchievementByClass,
+  getListClassWithName,
 } = require("../controllers/classController");
 const {
   addLesson,
@@ -28,6 +29,7 @@ const router = express.Router();
 
 router.post("/add-class", checkAdminRole, addClass);
 router.post("/get-all-classes", auth, getAllClasses);
+router.post("/get-list-class-with-name", getListClassWithName);
 router.post("/comment-student", checkAdminAndMonitorRole, updateCommentStudent);
 router.post("/my-class-schedules", auth, getMyClasschedule);
 router.post("/get-class-schedules", auth, getClassSchedule);

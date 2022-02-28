@@ -13,6 +13,7 @@ import {
   VOLUNTEER,
 } from "../../common/constant";
 import useFetchRole from "../../../hook/useFetchRole";
+import Footer from "../Footer/Footer";
 
 const { Title } = Typography;
 const { SubMenu } = Menu;
@@ -205,6 +206,7 @@ const DashboardLayout = ({ children, ...rest }) => {
             <Layout className="site-layout">
               <Content>
                 <div className="site-layout-background">{children}</div>
+                <Footer />
               </Content>
             </Layout>
           </Layout>

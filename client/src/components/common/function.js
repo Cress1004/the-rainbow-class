@@ -41,3 +41,7 @@ export function checkStudentAndCurrentUserSameClass(student, currentUserData) {
 export function checkStringContentSubString(string1, string2) {
   return string1?.toLowerCase().includes(string2?.toLowerCase())
 }
+
+export function calcFileSize(size) {
+  return size*1024*1024;
+}

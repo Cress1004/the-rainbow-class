@@ -1,22 +1,30 @@
 require("dotenv").config();
 const multer = require("multer");
-const path = require('path');
-const { DEFAULT_AVATAR_PATH } = require("../defaultValues/constant");
+const path = require("path");
+const {
+  DEFAULT_AVATAR_PATH,
+  DEFAULT_CV_PATH,
+} = require("../defaultValues/constant");
+const { storeCV } = require("../repository/cvRepository");
 
-const storage = multer.diskStorage({
+const randomUnixSuffix = () => {
+  return Date.now() + "-" + Math.round(Math.random() * 1e9);
+};
+
+const storageImage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "server/uploads/avatars" )
   },
   filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname)
+    const uniqueSuffix = randomUnixSuffix() + path.extname(file.originalname)
     cb(null, file.fieldname + '-' + uniqueSuffix)
   }
 })
 
-const upload = multer({ storage: storage })
+const uploadImage = multer({ storage: storageImage })
 
 const uploadAvatar = async (req, res) => {
-  upload.single("avatar")(req, res, (err) => {
+  uploadImage.single("avatar")(req, res, (err) => {
     if (err instanceof multer.MulterError) {
       console.log("fail to upload avatar");
     }
@@ -29,6 +37,43 @@ const uploadAvatar = async (req, res) => {
   });
 };
 
+const storageCVFile = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "server/uploads/cv");
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = randomUnixSuffix() + path.extname(file.originalname);
+    cb(null, file.fieldname + "-" + uniqueSuffix);
+  },
+});
+
+const uploadCVFile = multer({ storage: storageCVFile });
+
+const uploadCV = async (req, res) => {
+  uploadCVFile.single("cvFile")(req, res, (err) => {
+    let message;
+    const userData = req.body;
+    if (err instanceof multer.MulterError) {
+      message = "fail to upload cv file!";
+      res.status(200).json({ success: false, message: message });
+    }
+    try {
+      const link = `${DEFAULT_CV_PATH}${req.file.filename}`;
+      storeCV({
+        userName: userData.userName,
+        email: userData.email,
+        phoneNumber: userData.phoneNumber,
+        cvFileLink: link,
+        class: userData.selectedClass,
+      });
+      res.status(200).json({ success: true });
+    } catch (error) {
+      console.log("fail to upload CV");
+    }
+  });
+};
+
 module.exports = {
   uploadAvatar,
+  uploadCV,
 };

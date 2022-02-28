@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
-import { Menu, Dropdown, Avatar } from "antd";
+import { Menu, Dropdown, Avatar, Icon } from "antd";
 // import {DownOutlined} from '@ant-design/icons';
 import axios from "axios";
 import { USER_SERVER } from "../../../Config";
@@ -38,7 +38,7 @@ function RightMenu(props) {
   if (user && !user.isAuth) {
     return (
       <Menu mode={props.mode}>
-        <Menu.Item key="mail">
+        <Menu.Item key="login">
           <a href="/login">{t("login")}</a>
         </Menu.Item>
       </Menu>
@@ -47,15 +47,15 @@ function RightMenu(props) {
     return (
       <Dropdown overlay={menu}>
         <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-          {user &&
-            (
-              <Avatar className="avatar"
-                src={user.image ? user.image : "/image/default-image.jpg"}
-                style={{ width: "40px", height: "40px" }}
-              />
-            )}
-          {" "}{user && user.name}
-          {/* <DownOutlined /> */}
+          {user && (
+            <Avatar
+              className="avatar"
+              src={user.image ? user.image : "/image/default-image.jpg"}
+              style={{ width: "40px", height: "40px" }}
+            />
+          )}{" "}
+          {user && user.name}
+          <Icon type="down" />
         </a>
       </Dropdown>
     );

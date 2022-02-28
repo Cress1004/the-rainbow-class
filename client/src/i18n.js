@@ -134,6 +134,11 @@ const resources = {
       search_by_name_phone_email: "Tìm kiếm theo tên/email/số điện thoại",
       search_by_name_phone: "Tìm kiếm theo tên/số điện thoại",
       search_by_class_name: "Tìm kiếm theo tên lớp",
+      uploads_your_cv: "Tải CV lên (Định dạng PDF)",
+      register_class: "Lớp học đăng kí",
+      input_select_class: "Chọn lớp học",
+      thanks_for_applying: "Cảm ơn bạn đã gửi CV!",
+      remind_user_check_mail: "Hãy thường xuyên check mail để nhận lịch phỏng vấn.",
       //noti
       assign_success: "Đăng kí thành công",
       unassign_success: "Hủy đăng kí thành công",
@@ -150,9 +155,15 @@ const resources = {
       modal_confirm_delete_lesson_title: "Xác nhận xóa bài học",
       modal_confirm_delete_lesson_content: "Xác nhận xóa bài học này",
       //validation:
+      required_name_message: "Hãy nhập vào tên của bạn",
+      required_phone_number_message: "Hãy nhập vào số điện thoại liên lạc của bạn",
+      invalid_phone_number: "Số điện thoại chưa đúng định dạng",
       invalid_email_message: "Địa chỉ email chưa đúng định dạng",
       required_email_message: "Hãy nhập vào địa chỉ email",
       required_password_message: "Hãy nhập vào mật khẩu",
+      required_file_message: "Hãy tải lên file",
+      only_pdf_accept: "Hãy tải lên file với định dạng pdf.",
+      file_size_must_be_less_than: "File phải có kích thước nhỏ hơn", 
       required_min_length_of_password_message:
         "Độ dài của mật khẩu cần lớn hơn 8 kí tự",
       required_confirm_password_message: "Hãy nhập lại mật khẩu để xác nhận",

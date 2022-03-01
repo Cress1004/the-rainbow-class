@@ -2,7 +2,7 @@ import Axios from "axios";
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
-export default function useFetchClassData(classId) {
+export default function useFetchClassData() {
   const [classes, setClasses] = useState({});
 
   const { t } = useTranslation();

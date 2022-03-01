@@ -1,6 +1,7 @@
 import {
   CALENDAR_COLOR_EVENT,
   CLASS_MONITOR,
+  CV_STATUS,
   SUB_CLASS_MONITOR,
   SUPER_ADMIN,
 } from "./constant";
@@ -39,9 +40,13 @@ export function checkStudentAndCurrentUserSameClass(student, currentUserData) {
 }
 
 export function checkStringContentSubString(string1, string2) {
-  return string1?.toLowerCase().includes(string2?.toLowerCase())
+  return string1?.toLowerCase().includes(string2?.toLowerCase());
 }
 
 export function calcFileSize(size) {
-  return size*1024*1024;
+  return size * 1024 * 1024;
+}
+
+export function getCVStatus(status) {
+  return CV_STATUS.find((item) => item.key === status);
 }

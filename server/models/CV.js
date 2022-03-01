@@ -12,7 +12,7 @@ const CVSchema = mongoose.Schema(
     },
     status: {
       type: Number,
-      default: 0, //0: pending, 1: passed, 2: not passed
+      default: 0, //0: pending, 1: waitting for interview, 2: passed, 3: fail
     },
   },
   {

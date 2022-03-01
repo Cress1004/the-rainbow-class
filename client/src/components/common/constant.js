@@ -59,3 +59,10 @@ export const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|(
 export const urlRegExp = /((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/;
 
 export const LIMIT_PDF_FILE_SIZE = 1; //MB
+
+export const CV_STATUS = [
+  { key: 0, value: "pending", text: "Chưa được duyệt", color: "#e2a534" },
+  { key: 1, value: "waiting", text: "Đang chờ phỏng vấn", color: "#4f9fd4" },
+  { key: 2, value: "pass", text: "Đỗ phỏng vấn", color: "219e6e" },
+  { key: 3, value: "fail", text: "Trượt", color: "#858383" },
+];

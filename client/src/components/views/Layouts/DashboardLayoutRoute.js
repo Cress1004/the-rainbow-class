@@ -136,6 +136,12 @@ const DashboardLayout = ({ children, ...rest }) => {
                       </Link>
                     </Menu.Item>
                   </SubMenu>
+                  <Menu.Item key="cv_manager">
+                    <Link to="/cv">
+                      <Icon type="idcard" />
+                      <span>{t("cv_manager")}</span>
+                    </Link>
+                  </Menu.Item>
                   <Menu.Item key="master_setting">
                     <Link to="/master-setting">
                       <Icon type="setting" />

@@ -139,6 +139,9 @@ const resources = {
       input_select_class: "Chọn lớp học",
       thanks_for_applying: "Cảm ơn bạn đã gửi CV!",
       remind_user_check_mail: "Hãy thường xuyên check mail để nhận lịch phỏng vấn.",
+      cv_manager: "Quản lý CV",
+      status: "Trạng thái",
+      list_cv: "Danh sách CV",
       //noti
       assign_success: "Đăng kí thành công",
       unassign_success: "Hủy đăng kí thành công",

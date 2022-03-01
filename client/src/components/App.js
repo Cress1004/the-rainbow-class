@@ -34,6 +34,7 @@ import SetMonitor from "./views/Class/Session/SetMonitor";
 import CommentStudent from "./views/Class/CommentStudent/CommentStudent";
 import HomePageLayoutRoute from "./views/Layouts/HomePageLayoutRoute";
 import UploadCV from "./views/HomePage/UploadCV";
+import CVList from "./views/CV/CVList";
 
 function App(props) {
   return (
@@ -148,6 +149,10 @@ function App(props) {
           path="/students/:id/edit"
           exact={true}
           component={Auth(EditStudent, true)}
+        />
+        <DashboardLayoutRoute
+          path="/cv"
+          component={Auth(CVList, true)}
         />
         <LoginLayoutRoute
           exact

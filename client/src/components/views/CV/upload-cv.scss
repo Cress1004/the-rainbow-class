@@ -1,5 +1,29 @@
 @import "../style/app.scss";
 
+.cv-list {
+  &__title {
+    font-size: $title-font-size;
+    font-weight: $title-font-weight;
+    color: $primary-color;
+    padding-bottom: $title-padding-bottom;
+  }
+  .ant-table-wrapper {
+    padding-top: 60px;
+  }
+  &__search {
+    width: 30%;
+    float: right;
+  }
+  &__status {
+    height: 30px;
+    width: 160px;
+    padding: 3px;
+    border-radius: 25px;
+    font-weight: bolder;
+    text-align: center;
+  }
+}
+
 .upload-cv {
   &__form {
     width: 50%;
@@ -24,7 +48,19 @@
 }
 
 .thanks-page {
-    padding: 100px 0;
-    text-align: center;
-    font-size: $title-font-size;
+  padding: 100px 0;
+  text-align: center;
+  font-size: $title-font-size;
 }
+.ant-table-thead > tr > th {
+  .anticon-filter, .ant-table-thead > tr > th .ant-table-filter-icon {
+    right: auto;
+  }
+  .ant-table-header-column {
+    display: block;
+    div {
+     margin-left: 30px; 
+    }
+  }
+}
+

@@ -1,3 +1,4 @@
+const { request } = require("express");
 const {
   STUDENT_ROLE,
   CLASS_MONITOR,
@@ -36,8 +37,11 @@ const checkAdminAndMonitorRole = async (req, res, next) => {
         currentVolunteer.isAdmin ||
         currentVolunteer.role === CLASS_MONITOR ||
         currentVolunteer.role === SUB_CLASS_MONITOR
-      )
+      ) {
+        req.currentUser = user;
+        req.currentVolunteer = currentVolunteer;
         next();
+      }
       else
         res.status(200).json({
           success: false,

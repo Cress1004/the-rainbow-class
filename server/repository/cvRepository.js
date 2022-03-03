@@ -19,7 +19,7 @@ const getAllCV = async (currentUser, currentVolunteer) => {
           path: "class",
           select: "name",
         })
-        .sort({ status : 0, created_at: -1 });
+        .sort({ status: 0, created_at: -1 });
     } else {
       return CV.find({ class: currentUser.class })
         .select("userName email phoneNumber status class")
@@ -35,7 +35,27 @@ const getAllCV = async (currentUser, currentVolunteer) => {
   }
 };
 
+const getCVById = (cvId, currentUser, currentVolunteer) => {
+  try {
+    if (currentVolunteer.isAdmin) {
+      return CV.findOne({ _id: cvId }).populate({
+        path: "class",
+        select: "name",
+      });
+    } else {
+      return CV.findOne({ _id: cvId, class: currentUser.class }).populate({
+        path: "class",
+        select: "name",
+      });
+    }
+  } catch (error) {
+    console.log(`Fail to get CV ${cvId}`);
+    return null;
+  }
+};
+
 module.exports = {
   storeCV,
   getAllCV,
+  getCVById,
 };

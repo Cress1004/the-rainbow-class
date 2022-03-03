@@ -10,6 +10,7 @@ dev.js
 .env
 request.http
 .DS_Store
+client/yarn.lock
 
 npm-debug.log*
 yarn-debug.kog*

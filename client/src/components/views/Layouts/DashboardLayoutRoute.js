@@ -206,6 +206,14 @@ const DashboardLayout = ({ children, ...rest }) => {
                         </Link>
                       </Menu.Item>
                     </SubMenu>
+                    {userRole.subRole !== VOLUNTEER && (
+                      <Menu.Item key="cv_manager">
+                        <Link to="/cv">
+                          <Icon type="idcard" />
+                          <span>{t("cv_manager")}</span>
+                        </Link>
+                      </Menu.Item>
+                    )}
                   </Menu>
                 )}
             </Sider>

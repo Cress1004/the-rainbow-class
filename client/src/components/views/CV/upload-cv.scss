@@ -24,6 +24,21 @@
   }
 }
 
+.cv-detail {
+  &__title {
+    font-size: $title-font-size;
+    font-weight: $title-font-weight;
+    color: $primary-color;
+    padding-bottom: $title-padding-bottom;
+  }
+  &__scale-button {
+    button {
+      border: none;
+      background-color: none;
+    }
+  }
+}
+
 .upload-cv {
   &__form {
     width: 50%;
@@ -53,14 +68,15 @@
   font-size: $title-font-size;
 }
 .ant-table-thead > tr > th {
-  .anticon-filter, .ant-table-thead > tr > th .ant-table-filter-icon {
+  .anticon-filter,
+  .ant-table-thead > tr > th .ant-table-filter-icon {
     right: auto;
-  }
-  .ant-table-header-column {
-    display: block;
-    div {
-     margin-left: 30px; 
-    }
   }
 }
 
+.all-page-container {
+  border: double black;
+  height: 100%;
+  max-height: 550px;
+  overflow: auto;
+}

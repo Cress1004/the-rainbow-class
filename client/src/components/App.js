@@ -35,6 +35,7 @@ import CommentStudent from "./views/Class/CommentStudent/CommentStudent";
 import HomePageLayoutRoute from "./views/Layouts/HomePageLayoutRoute";
 import UploadCV from "./views/HomePage/UploadCV";
 import CVList from "./views/CV/CVList";
+import CVDetail from "./views/CV/CVDetail";
 
 function App(props) {
   return (
@@ -152,7 +153,13 @@ function App(props) {
         />
         <DashboardLayoutRoute
           path="/cv"
+          exact={true}
           component={Auth(CVList, true)}
+        />
+         <DashboardLayoutRoute
+          path="/cv/:id"
+          exact={true}
+          component={Auth(CVDetail, true)}
         />
         <LoginLayoutRoute
           exact

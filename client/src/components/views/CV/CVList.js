@@ -2,7 +2,7 @@ import { Icon, Input, Table } from "antd";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import useFetchCVList from "../../../hook/useFetchCVList";
+import useFetchCVList from "../../../hook/CV/useFetchCVList";
 import useFetchClassNameList from "../../../hook/useFetchClassNameList";
 import { CV_STATUS } from "../../common/constant";
 import {
@@ -11,7 +11,7 @@ import {
 } from "../../common/function";
 import { getArrayLength } from "../../common/transformData";
 import "./upload-cv.scss";
-import useFetchCurrentUserData from "../../../hook/useFetchCurrentUserData";
+import useFetchCurrentUserData from "../../../hook/User/useFetchCurrentUserData";
 import PermissionDenied from "../Error/PermissionDenied";
 
 function CVList(props) {

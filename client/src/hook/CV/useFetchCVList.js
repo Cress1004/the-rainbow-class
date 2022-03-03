@@ -1,11 +1,9 @@
 import Axios from "axios";
 import { useState, useEffect } from "react";
-import { useTranslation } from "react-i18next";
-import { getCVStatus } from "../components/common/function";
+import { getCVStatus } from "../../components/common/function";
 
 export default function useFetchCVList() {
   const [cvList, setCVList] = useState({});
-  const { t } = useTranslation();
   
   const transformCVData = (cvList) => {
     return cvList?.map((item, index) => ({
@@ -30,6 +28,6 @@ export default function useFetchCVList() {
         });
       }
     });
-  }, [t]);
+  }, []);
   return cvList;
 }

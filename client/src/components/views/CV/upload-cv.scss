@@ -32,16 +32,34 @@
     padding-bottom: $title-padding-bottom;
   }
   &__scale-button {
-    button {
+    button,
+    button:hover,
+    button:disabled,
+    button[disabled],
+    button[disabled]:hover {
       border: none;
-      background-color: none;
+      background-color: white;
     }
+  }
+  &__scale {
+    margin: auto;
+    display: inline-block;
+    width: 40px;
+    text-align: center;
   }
 }
 
 .upload-cv {
+  &__title {
+    font-size: $title-font-size;
+    font-weight: $title-font-weight;
+    color: $primary-color;
+    padding-bottom: $title-padding-bottom;
+    text-align: center;
+  }
   &__form {
-    width: 50%;
+    width: 70%;
+    height: 480px;
     margin: auto;
     justify-content: center;
   }
@@ -59,6 +77,20 @@
     color: $danger-color;
     padding: 5px;
     margin: auto;
+  }
+  &__button-next {
+    float: right;
+  }
+  &__button-prev {
+    float: left;
+  }
+  &__free-time-table {
+    .ant-table-tbody > tr > th, .ant-table-tbody > tr > td {
+      text-align: center;
+    }
+  }
+  &__note-text {
+      resize: none;
   }
 }
 

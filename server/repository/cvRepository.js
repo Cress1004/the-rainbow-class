@@ -1,11 +1,31 @@
 const { CV } = require("../models/CV");
+const { storeFreeTime } = require("./freeTimeRepository");
 
-const storeCV = async (data) => {
+const storeCV = async (userData, link) => {
   try {
-    const newCV = await new CV(data);
-    return newCV.save();
+    const cvData = {
+      userName: userData.userName,
+      email: userData.email,
+      phoneNumber: userData.phoneNumber,
+      cvFileLink: link,
+      class: userData.selectedClass,
+      note: userData.note,
+    };
+    const cv = await new CV(cvData);
+    const freeTimeList = userData.freeTime.split(",");
+
+    for (const item of freeTimeList) {
+      var data = item.split("-");
+      await storeFreeTime({
+        cv: cv._id,
+        weekDay: Number(data[0]),
+        noon: Number(data[1]),
+      });
+    }
+
+    return cv.save();
   } catch (error) {
-    console.log("Fail to store CV");
+    console.log(error);
     return null;
   }
 };

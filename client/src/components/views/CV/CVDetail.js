@@ -7,7 +7,7 @@ import { Document, Page, pdfjs } from "react-pdf";
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 const { Item } = Form;
-const MAX_SCALE = 2.6;
+const MAX_SCALE = 2.1;
 const MIN_SCALE = 0.5;
 const SCALE_STEP = 0.1;
 
@@ -59,7 +59,7 @@ function CVDetail(props) {
             <Button onClick={zoomOut} disabled={checkOverMinScale()}>
               <Icon type="minus-circle" />
             </Button>
-            <span>{Math.floor(currentScale * 100)}%</span>
+            <div className="cv-detail__scale">{Math.floor(currentScale * 100)}%</div>
             <Button onClick={zoomIn} disabled={checkOverMaxScale()}>
               <Icon type="plus-circle" />
             </Button>

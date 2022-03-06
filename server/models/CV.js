@@ -14,6 +14,7 @@ const CVSchema = mongoose.Schema(
       type: Number,
       default: 0, //0: pending, 1: waitting for interview, 2: passed, 3: fail
     },
+    note: String,
   },
   {
     timestamps: {
@@ -24,6 +25,6 @@ const CVSchema = mongoose.Schema(
   }
 );
 
-const CV = mongoose.model("CV", CVSchema, "CV");
+const CV = mongoose.model("CV", CVSchema, "cv");
 
 module.exports = { CV };

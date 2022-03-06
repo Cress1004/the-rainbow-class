@@ -33,7 +33,7 @@ import AdminList from "./views/User/UserPage/Admin/AdminList";
 import SetMonitor from "./views/Class/Session/SetMonitor";
 import CommentStudent from "./views/Class/CommentStudent/CommentStudent";
 import HomePageLayoutRoute from "./views/Layouts/HomePageLayoutRoute";
-import UploadCV from "./views/HomePage/UploadCV";
+import UploadCV from "./views/CV/UploadCV";
 import CVList from "./views/CV/CVList";
 import CVDetail from "./views/CV/CVDetail";
 

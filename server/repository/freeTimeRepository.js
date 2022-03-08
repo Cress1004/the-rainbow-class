@@ -10,6 +10,16 @@ const storeFreeTime = async (data) => {
   }
 };
 
+const getFreeTimeByCVId = async (cvId) => {
+  try {
+    return await FreeTime.find({ cv: cvId }).select("weekDay noon");
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
 module.exports = {
   storeFreeTime,
+  getFreeTimeByCVId,
 };

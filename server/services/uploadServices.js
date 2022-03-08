@@ -10,7 +10,7 @@ const storageCVFile = (folderPath) =>
     },
     filename: function (req, file, cb) {
       const uniqueSuffix = randomUnixSuffix() + path.extname(file.originalname);
-      cb(null, file.fieldname + "-" + uniqueSuffix);
+      cb(null, file.originalname.split(".")[0] + "-" + uniqueSuffix);
     },
   });
 

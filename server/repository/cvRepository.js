@@ -1,5 +1,10 @@
+const { compareObjectId } = require("../function/commonFunction");
 const { CV } = require("../models/CV");
-const { storeFreeTime } = require("./freeTimeRepository");
+const {
+  storeFreeTime,
+  getFreeTimeByCV,
+  getFreeTimeByCVId,
+} = require("./freeTimeRepository");
 
 const storeCV = async (userData, link) => {
   try {
@@ -55,21 +60,42 @@ const getAllCV = async (currentUser, currentVolunteer) => {
   }
 };
 
-const getCVById = (cvId, currentUser, currentVolunteer) => {
+const getCVById = async (cvId, currentUser, currentVolunteer) => {
   try {
-    if (currentVolunteer.isAdmin) {
-      return CV.findOne({ _id: cvId }).populate({
-        path: "class",
-        select: "name",
-      });
+    let cvData = await CV.findOne({ _id: cvId }).populate({
+      path: "class",
+      select: "name",
+    });
+    if (currentVolunteer.isAdmin || compareObjectId(currentUser.class, cvData.class._id)) {
+      cvData = cvData.toJSON();
+      cvData.freeTimeList = await getFreeTimeByCVId(cvId);
+      return cvData;
     } else {
-      return CV.findOne({ _id: cvId, class: currentUser.class }).populate({
-        path: "class",
-        select: "name",
-      });
+      return null;
     }
   } catch (error) {
-    console.log(`Fail to get CV ${cvId}`);
+    console.log(error);
+    return null;
+  }
+};
+
+const updateCV = async (cvData, currentUser, currentVolunteer) => {
+  try {
+    const cv = await CV.findOne({ _id: cvData.cvId });
+    if (currentVolunteer.isAdmin || cv.class === currentUser.class) {
+      cv.status = cvData.status;
+      if (cvData.date && cvData.endTime && cvData.startTime)
+        cv.interview = {
+          date: cvData.date,
+          startTime: cvData.startTime,
+          endTime: cvData.endTime,
+        };
+      return cv.save();
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.log(error);
     return null;
   }
 };
@@ -78,4 +104,5 @@ module.exports = {
   storeCV,
   getAllCV,
   getCVById,
+  updateCV,
 };

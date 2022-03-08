@@ -88,7 +88,14 @@ export const LIMIT_PDF_FILE_SIZE = 1; //MB
 
 export const CV_STATUS = [
   { key: 0, value: "pending", text: "Chưa được duyệt", color: "#e2a534" },
-  { key: 1, value: "waiting", text: "Đang chờ phỏng vấn", color: "#4f9fd4" },
-  { key: 2, value: "pass", text: "Đỗ phỏng vấn", color: "219e6e" },
+  { key: 1, value: "waiting", text: "Chờ phỏng vấn", color: "#4f9fd4" },
+  { key: 2, value: "pass", text: "Đỗ phỏng vấn", color: "#219e6e" },
   { key: 3, value: "fail", text: "Trượt", color: "#858383" },
 ];
+
+export const CV_STATUS_NAME = {
+  PENDING: 0,
+  WAITING: 1,
+  PASS: 2,
+  FAIL: 3,
+};

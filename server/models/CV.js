@@ -15,6 +15,11 @@ const CVSchema = mongoose.Schema(
       default: 0, //0: pending, 1: waitting for interview, 2: passed, 3: fail
     },
     note: String,
+    interview: {
+      date: String,
+      startTime: String, 
+      endTime: String,
+    }
   },
   {
     timestamps: {

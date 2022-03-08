@@ -1,4 +1,4 @@
-import { Button, Checkbox, Form, Input, Radio, Select, Table } from "antd";
+import { Button, Checkbox, Form, Input, Select, Table } from "antd";
 import { useFormik } from "formik";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";

@@ -20,7 +20,7 @@ function LessonList(props) {
         setLessons(response.data.lessons);
       } 
     });
-  }, [t, id]);
+  }, [t, id, userId]);
 
   const data = lessons
     ? lessons.map((item, index) => ({

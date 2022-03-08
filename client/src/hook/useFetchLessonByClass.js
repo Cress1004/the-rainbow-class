@@ -20,6 +20,6 @@ export default function useFetchLessonByClass(classId) {
         alert(res.message);
       } 
     });
-  }, [t, classId]);
+  }, [t, classId, userId]);
   return lessonData;
 }

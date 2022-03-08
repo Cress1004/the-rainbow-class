@@ -363,7 +363,7 @@ function EditLesson(props) {
               <DatePicker
                 value={convertDateStringToMoment(time.date)}
                 onChange={onChangeDate}
-                placeholder="date_placeholder"
+                placeholder={t("date_placeholder")}
               />
             </Col>
             <Col span={2}>{t("from")}</Col>
@@ -371,7 +371,7 @@ function EditLesson(props) {
               <TimePicker
                 format={FORMAT_TIME_SCHEDULE}
                 value={convertTimeStringToMoment(time.startTime)}
-                placeholder="time_placeholder"
+                placeholder={t("time_placeholder")}
                 onChange={(e) =>
                   setTime({ ...time, startTime: e._d ? e._d : undefined })
                 }
@@ -382,7 +382,7 @@ function EditLesson(props) {
               <TimePicker
                 format={FORMAT_TIME_SCHEDULE}
                 value={convertTimeStringToMoment(time.endTime)}
-                placeholder="time_placeholder"
+                placeholder={t("time_placeholder")}
                 onChange={(e) =>
                   setTime({ ...time, endTime: e._d ? e._d : undefined })
                 }

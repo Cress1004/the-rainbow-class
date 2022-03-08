@@ -337,7 +337,7 @@ function AddLesson(props) {
           <Col span={8}>
             <DatePicker
               onChange={onChangeDate}
-              placeholder="date_placeholder"
+              placeholder={t("date_placeholder")}
             />
           </Col>
           <Col span={2}>{t("from")}</Col>
@@ -345,7 +345,7 @@ function AddLesson(props) {
             <TimePicker
               format={FORMAT_TIME_SCHEDULE}
               value={time ? transformScheduleTime(time.startTime) : undefined}
-              placeholder="time_placeholder"
+              placeholder={t("time_placeholder")}
               onChange={(e) =>
                 setTime({ ...time, startTime: e._d ? e._d : undefined })
               }
@@ -356,7 +356,7 @@ function AddLesson(props) {
             <TimePicker
               format={FORMAT_TIME_SCHEDULE}
               value={time ? transformScheduleTime(time.endTime) : undefined}
-              placeholder="time_placeholder"
+              placeholder={t("time_placeholder")}
               onChange={(e) =>
                 setTime({ ...time, endTime: e._d ? e._d : undefined })
               }

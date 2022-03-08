@@ -8,7 +8,7 @@ import {
   transformAddressData,
   transformLessonTimeToString,
 } from "../../../common/transformData";
-import { OFFLINE_OPTION, STUDENT, VOLUNTEER } from "../../../common/constant";
+import { OFFLINE_OPTION, STUDENT } from "../../../common/constant";
 import PaticipantList from "./Paticipant/PaticipantList";
 import useFetchRole from "../../../../hook/useFetchRole";
 import { checkCurrentUserBelongToCurrentClass } from "../../../common/checkRole";

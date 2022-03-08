@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { Table, Typography } from "antd";
+import { Table } from "antd";
 import useFetchStudentByClass from "../../../../hook/useFetchStudentByClass";
 import useFetchLessonByClass from "../../../../hook/useFetchLessonByClass";
 import useFetchRole from "../../../../hook/useFetchRole";
@@ -10,8 +10,6 @@ import EditCommentModal from "./EditComment/EditCommentModal";
 import { checkCurrentVolunteerBelongToCurrentClass } from "../../../common/checkRole";
 import PermissionDenied from "../../Error/PermissionDenied";
 import "./comment-student.scss";
-
-const { Text } = Typography;
 
 function CommentStudent(props) {
   const { t } = useTranslation();

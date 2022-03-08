@@ -1,7 +1,7 @@
 import { Input, Modal, Table } from "antd";
 import Axios from "axios";
 import { useFormik } from "formik";
-import React, { useState } from "react";
+import React from "react";
 import { getArrayLength } from "../../../../common/transformData";
 import "../comment-student.scss";
 

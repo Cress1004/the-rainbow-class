@@ -1,15 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { Route } from "react-router-dom";
-import { Layout, Menu, Typography, Icon } from "antd";
-import { Link } from "react-router-dom";
+import { Layout, Typography } from "antd";
 import "./style.scss";
 import RightMenu from "../NavBar/Sections/RightMenu";
 import { useTranslation } from "react-i18next";
-import useFetchRole from "../../../hook/useFetchRole";
 import Footer from "../Footer/Footer";
 
 const { Title } = Typography;
-const { Header, Content, Sider } = Layout;
+const { Header, Content } = Layout;
 
 const HomePageLayout = ({ children, ...rest }) => {
   const { t } = useTranslation();

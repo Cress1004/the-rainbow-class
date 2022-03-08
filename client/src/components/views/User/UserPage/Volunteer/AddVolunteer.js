@@ -12,7 +12,6 @@ import {
   STUDENT,
   SUB_CLASS_MONITOR,
   SUPER_ADMIN,
-  VOLUNTEER,
 } from "../../../../common/constant";
 import PermissionDenied from "../../../Error/PermissionDenied";
 

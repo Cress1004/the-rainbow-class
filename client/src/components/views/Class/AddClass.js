@@ -45,7 +45,6 @@ function AddClass(props) {
   const [district, setDistrict] = useState("");
   const [wards, setWards] = useState([]);
   const [ward, setWard] = useState("");
-  const [classData, setClassData] = useState([]);
   const [address, setAddress] = useState({});
   const [defaultSchedule, setDefaultSchedule] = useState([
     {
@@ -214,7 +213,7 @@ function AddClass(props) {
           <Col span={5}>
             <TimePicker
               format={FORMAT_TIME_SCHEDULE}
-              placeholder="time_placeholder"
+              placeholder={t("time_placeholder")}
               onChange={(e) =>
                 setDefaultSchedule(
                   [...defaultSchedule].map((object) => {
@@ -233,7 +232,7 @@ function AddClass(props) {
           <Col span={5}>
             <TimePicker
               format={FORMAT_TIME_SCHEDULE}
-              placeholder="time_placeholder"
+              placeholder={t("time_placeholder")}
               onChange={(e) =>
                 setDefaultSchedule(
                   [...defaultSchedule].map((object) => {

@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 export default function useFetchStudentByClass(classId) {
   const [studentData, setStudentData] = useState({});
   const { t } = useTranslation();
-  const userId = localStorage.getItem("userId");
   useEffect(() => {
     Axios.post(`/api/classes/${classId}/get-students`, {
       classId: classId

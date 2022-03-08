@@ -42,7 +42,6 @@ function EditClass(props) {
   const [address, setAddress] = useState({});
   const userId = localStorage.getItem("userId");
   const currentUser = useFetchRole(userId);
-  const userRole = currentUser.userRole;
 
   const formik = useFormik({
     initialValues: classData ? classData : {},
@@ -227,7 +226,7 @@ function EditClass(props) {
               <TimePicker
                 format={FORMAT_TIME_SCHEDULE}
                 value={transformScheduleTime(item.startTime)}
-                placeholder="time_placeholder"
+                placeholder={t("time_placeholder")}
                 onChange={(e) =>
                   setDefaultSchedule(
                     [...defaultSchedule].map((object) => {
@@ -247,7 +246,7 @@ function EditClass(props) {
               <TimePicker
                 format={FORMAT_TIME_SCHEDULE}
                 value={transformScheduleTime(item.endTime)}
-                placeholder="time_placeholder"
+                placeholder={t("time_placeholder")}
                 onChange={(e) =>
                   setDefaultSchedule(
                     [...defaultSchedule].map((object) => {

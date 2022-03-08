@@ -2,7 +2,7 @@ import { Table } from "antd";
 import React from "react";
 
 function FreeTimeTable(props) {
-  const { t, fixedData, columns } = props;
+  const { fixedData, columns } = props;
   return (
     <div>
       <Table

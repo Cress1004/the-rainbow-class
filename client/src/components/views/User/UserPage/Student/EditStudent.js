@@ -116,7 +116,7 @@ function EditStudent(props) {
         }
       } 
     });
-  }, [t, id]);
+  }, [t, id, userId]);
 
   const handleChangeProvice = (value) => {
     const currentProvince = location.find((item) => value === item.id);

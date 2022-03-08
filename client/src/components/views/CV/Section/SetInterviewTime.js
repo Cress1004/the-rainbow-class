@@ -70,7 +70,7 @@ function SetInterviewTime(props) {
           <Col span={8}>
             <DatePicker
               onChange={onChangeDate}
-              placeholder="date_placeholder"
+              placeholder={t("date_placeholder")}
               defaultValue={interviewData ? moment(interviewData.date) : undefined}
             />
           </Col>
@@ -78,7 +78,7 @@ function SetInterviewTime(props) {
           <Col span={5}>
             <TimePicker
               format={FORMAT_TIME_SCHEDULE}
-              placeholder="time_placeholder"
+              placeholder={t("time_placeholder")}
               onChange={onChangeStartTime}
               defaultValue={interviewData ? moment(interviewData.startTime, FORMAT_TIME_SCHEDULE) : undefined}
             />
@@ -87,7 +87,7 @@ function SetInterviewTime(props) {
           <Col span={5}>
             <TimePicker
               format={FORMAT_TIME_SCHEDULE}
-              placeholder="time_placeholder"
+              placeholder={t("time_placeholder")}
               onChange={onChangeEndTime}
               defaultValue={interviewData ? moment(interviewData.endTime, FORMAT_TIME_SCHEDULE) : undefined}
             />

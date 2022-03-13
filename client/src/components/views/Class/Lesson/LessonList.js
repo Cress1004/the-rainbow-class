@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Table, Row } from "antd";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { transformLessonTimeToString } from "../../../common/transformData";
+import { transformScheduleTimeData } from "../../../common/transformData";
 import { OFFLINE_OPTION } from "../../../common/constant";
 import Axios from "axios";
 
@@ -30,7 +30,7 @@ function LessonList(props) {
         description: item.description,
         // address: transformAddressData(item.schedule.address),
         teachOption: item.schedule.teachOption,
-        time: transformLessonTimeToString(item.schedule.time),
+        time: transformScheduleTimeData(item.schedule.time),
         // classMonitor: item.class_monitor
         //   ? item.class_monitor
         //   : `(${t("unset")})`,

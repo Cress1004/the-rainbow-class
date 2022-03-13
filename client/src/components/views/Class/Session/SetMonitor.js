@@ -58,7 +58,7 @@ function SetMonitor(props) {
 
   return (
     <div className="set-monitor">
-      <div className="set-monitor__title">{t("set-monitor")}</div>
+      <div className="set-monitor__title">{t("set_monitor")}</div>
       {getArrayLength(volunteers) && (
         <Form {...layout} name="control-hooks" onSubmit={formik.handleSubmit}>
           <Form.Item label={t("class_monitor")} required>

@@ -30,7 +30,7 @@ function LessonDetail(props) {
   const currentUser = useFetchRole(userId);
   const userRole = currentUser.userRole;
 
-  useEffect(() => {
+  const fetchLessonData = (lessonId, userId) => {
     Axios.post(`/api/classes/${id}/lessons/${lessonId}`, {
       lessonId: lessonId,
       userId: userId,
@@ -58,6 +58,10 @@ function LessonDetail(props) {
         alert(response.data.message);
       } 
     });
+  }
+ 
+  useEffect(() => {
+    fetchLessonData(lessonId, userId);
   }, [t, id, lessonId, userId]);
 
   const openDeletePopup = () => {
@@ -90,7 +94,7 @@ function LessonDetail(props) {
       if (response.data.success) {
         alert(t("assign_success"));
         setAssign(true);
-        window.location.reload();
+        fetchLessonData(lessonId, userId);
       } else {
         alert(t("fail_to_delete_lesson"));
       }
@@ -105,7 +109,7 @@ function LessonDetail(props) {
       if (response.data.success) {
         alert(t("unassign_success"));
         setAssign(false);
-        window.location.reload();
+        fetchLessonData(lessonId, userId);
       } else {
         alert(t("fail_to_delete_lesson"));
       }
@@ -139,7 +143,6 @@ function LessonDetail(props) {
     lessonData.personInCharge?._id,
     lessonData.date
   );
-  console.log(disableUnRegisterButton);
 
   return (
     <div className="lesson-detail">
@@ -233,6 +236,9 @@ function LessonDetail(props) {
                 checkAdminAndMonitorRole={checkAdminAndMonitorRole(userRole)}
                 personInCharge={lessonData.personInCharge}
                 scheduleId={lessonData.scheduleId}
+                fetchLessonData={fetchLessonData}
+                lessonId={lessonId}
+                userId={userId}
               />
             ) : null}
           </>

@@ -6,7 +6,7 @@ import Axios from "axios";
 const { Option } = Select;
 
 function SetPersonInCharge(props) {
-  const { t, participants, personInCharge, scheduleId } = props;
+  const { t, participants, personInCharge, scheduleId, fetchLessonData, lessonId, userId } = props;
   const [isEdit, setEdit] = useState(false);
   const layout = {
     labelCol: { span: 3 },
@@ -29,7 +29,7 @@ function SetPersonInCharge(props) {
         }).then((response) => {
           if (response.data.success) {
             setEdit(false);
-            window.location.reload();
+            fetchLessonData(lessonId, userId)
           } else if (!response.data.success) {
             alert(response.data.message);
           } else {

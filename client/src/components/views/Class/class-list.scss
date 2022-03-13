@@ -18,6 +18,14 @@
   }
 }
 
+.set-monitor {
+  &__title {
+    font-size: $title-font-size;
+    font-weight: $title-font-weight;
+    color: $primary-color;
+  }
+}
+
 .add-class {
   &__title {
     font-size: $title-font-size;

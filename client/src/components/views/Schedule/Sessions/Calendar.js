@@ -7,8 +7,7 @@ import Axios from "axios";
 import { Popover } from "antd";
 import { Link } from "react-router-dom";
 import {
-  transformEventOfLesson,
-  transformLessonTimeToString,
+  transformEventOfLesson, transformScheduleTimeData,
 } from "../../../common/transformData";
 
 const localizer = momentLocalizer(moment);
@@ -34,7 +33,7 @@ function MyCalendar(props) {
         {t("lesson_name")}: {event.lessonTitle}
       </p>
       <p>
-        {t("time")}: {transformLessonTimeToString(event.time)}
+        {t("time")}: {transformScheduleTimeData(event.time)}
       </p>
       <p>
         {t("person_in_charge")}: {event.personInCharge}

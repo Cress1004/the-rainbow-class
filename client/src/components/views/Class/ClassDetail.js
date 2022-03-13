@@ -58,44 +58,32 @@ function ClassDetail(props) {
 
   const menu = (
     <Menu>
-      {checkCurrentMonitorBelongToCurrentClass(
-        currentUserData,
-        id && (
-          <Menu.Item key="0">
-            <Link to={`/classes/${id}/edit`}>{t("edit_class")}</Link>
-          </Menu.Item>
-        )
-      )}
-      {checkCurrentMonitorBelongToCurrentClass(
-        currentUserData,
-        id && (
-          <Menu.Item key="1">
-            <Link to={`/classes/${id}/set-monitor`}>{t("set_monitor")}</Link>
-          </Menu.Item>
-        )
-      )}{" "}
-      {checkCurrentVolunteerBelongToCurrentClass(currentUserData, id) && (
+      {checkCurrentMonitorBelongToCurrentClass(currentUserData, id) ? (
+        <Menu.Item key="edit-class">
+          <Link to={`/classes/${id}/edit`}>{t("edit_class")}</Link>
+        </Menu.Item>
+      ) : null}
+      {checkCurrentMonitorBelongToCurrentClass(currentUserData, id) ? (
+        <Menu.Item key="set-monitor">
+          <Link to={`/classes/${id}/set-monitor`}>{t("set_monitor")}</Link>
+        </Menu.Item>
+      ) : null}
+      {checkCurrentVolunteerBelongToCurrentClass(currentUserData, id) ? (
         <Menu.Item key="comment-student">
           <Link to={`/classes/${id}/comment-student`}>
             {t("comment_student")}
           </Link>
         </Menu.Item>
-      )}
-      {checkCurrentMonitorBelongToCurrentClass(
-        currentUserData,
-        id && (
-          <div>
-            <Menu.Divider />
-            <Menu.Item
-              key="3"
-              className="class-detail__delete-class"
-              onClick={openDeletePopup}
-            >
-              {t("delete_class")}
-            </Menu.Item>
-          </div>
-        )
-      )}{" "}
+      ) : null}
+      {checkCurrentMonitorBelongToCurrentClass(currentUserData, id) ? (
+          <Menu.Item 
+            key="delete-class"
+            className="class-detail__delete-class"
+            onClick={openDeletePopup}
+          >
+            {t("delete_class")}
+          </Menu.Item>
+      ) : null}
     </Menu>
   );
 

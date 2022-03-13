@@ -23,11 +23,11 @@ import {
   ONLINE_OPTION,
   urlRegExp,
 } from "../../../common/constant";
-import { transformScheduleTime } from "../../../common/transformData";
 import { generateKey } from "../../../common/function";
 import PermissionDenied from "../../Error/PermissionDenied";
 import { checkCurrentMonitorBelongToCurrentClass } from "../../../common/checkRole";
 import useFetchRole from "../../../../hook/useFetchRole";
+import moment from "moment";
 
 const { Item } = Form;
 const { TextArea } = Input;
@@ -47,7 +47,7 @@ function AddLesson(props) {
   const [defaultSchedule, setDefaultSchedule] = useState({});
   const [classData, setClassData] = useState({});
   const [lessonData, setLessonData] = useState({});
-  const [time, setTime] = useState({});
+  const [time, setTime] = useState(null);
   const [teachOption, setTeachOption] = useState(OFFLINE_OPTION);
   const userId = localStorage.getItem("userId");
   const currentUser = useFetchRole(userId);
@@ -181,7 +181,7 @@ function AddLesson(props) {
     });
   };
 
-  const onChangeDate = (e) => {
+  const onChangeDate = (e, dateString) => {
     const dayOfWeek = e._d.toString().split(" ")[0];
     const key = WEEKDAY.find((item) => item.value === dayOfWeek).key;
     const time = classData.defaultSchedule.find(
@@ -191,7 +191,7 @@ function AddLesson(props) {
     time
       ? setTime({
           key: time.key,
-          date: e._d,
+          date: dateString,
           startTime: time.startTime,
           endTime: time.endTime,
           dayOfWeek: time.dayOfWeek,
@@ -200,7 +200,7 @@ function AddLesson(props) {
           ...time,
           key: generateKey(),
           dayOfWeek: key,
-          date: e._d,
+          date: dateString,
           endTime: undefined,
           startTime: undefined,
         });
@@ -344,10 +344,10 @@ function AddLesson(props) {
           <Col span={5}>
             <TimePicker
               format={FORMAT_TIME_SCHEDULE}
-              value={time ? transformScheduleTime(time.startTime) : undefined}
+              value={time && time.startTime ? moment(time.startTime, FORMAT_TIME_SCHEDULE) : undefined}
               placeholder={t("time_placeholder")}
-              onChange={(e) =>
-                setTime({ ...time, startTime: e._d ? e._d : undefined })
+              onChange={(e, timeString) =>
+                setTime({ ...time, startTime: timeString })
               }
             />
           </Col>
@@ -355,10 +355,10 @@ function AddLesson(props) {
           <Col span={5}>
             <TimePicker
               format={FORMAT_TIME_SCHEDULE}
-              value={time ? transformScheduleTime(time.endTime) : undefined}
+              value={time && time.endTime ? moment(time.endTime, FORMAT_TIME_SCHEDULE) : undefined}
               placeholder={t("time_placeholder")}
-              onChange={(e) =>
-                setTime({ ...time, endTime: e._d ? e._d : undefined })
+              onChange={(e, timeString) =>
+                setTime({ ...time, endTime: timeString })
               }
             />
           </Col>

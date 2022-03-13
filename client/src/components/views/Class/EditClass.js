@@ -6,7 +6,6 @@ import { useParams } from "react-router";
 import { Form, Input, Select, Button, Row, Col, TimePicker, Icon } from "antd";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { transformScheduleTime } from "../../common/transformData";
 import { generateKey } from "../../common/function";
 import { WEEKDAY, FORMAT_TIME_SCHEDULE } from "../../common/constant";
 import useFetchRole from "../../../hook/useFetchRole";
@@ -14,6 +13,7 @@ import {
   checkCurrentMonitorBelongToCurrentClass,
 } from "../../common/checkRole";
 import PermissionDenied from "../Error/PermissionDenied";
+import moment from "moment";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -225,15 +225,15 @@ function EditClass(props) {
             <Col span={5}>
               <TimePicker
                 format={FORMAT_TIME_SCHEDULE}
-                value={transformScheduleTime(item.startTime)}
+                defaultValue={moment(item.startTime, FORMAT_TIME_SCHEDULE)}
                 placeholder={t("time_placeholder")}
-                onChange={(e) =>
+                onChange={(e, timeString) =>
                   setDefaultSchedule(
                     [...defaultSchedule].map((object) => {
                       if (object.key === item.key) {
                         return {
                           ...object,
-                          startTime: e._d ? e._d : undefined,
+                          startTime: timeString,
                         };
                       } else return object;
                     })
@@ -245,15 +245,15 @@ function EditClass(props) {
             <Col span={5}>
               <TimePicker
                 format={FORMAT_TIME_SCHEDULE}
-                value={transformScheduleTime(item.endTime)}
+                defaultValue={moment(item.endTime, FORMAT_TIME_SCHEDULE)}
                 placeholder={t("time_placeholder")}
-                onChange={(e) =>
+                onChange={(e, timeString) =>
                   setDefaultSchedule(
                     [...defaultSchedule].map((object) => {
                       if (object.key === item.key) {
                         return {
                           ...object,
-                          endTime: e._d ? e._d : undefined,
+                          endTime: timeString,
                         };
                       } else return object;
                     })

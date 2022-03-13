@@ -214,13 +214,13 @@ function AddClass(props) {
             <TimePicker
               format={FORMAT_TIME_SCHEDULE}
               placeholder={t("time_placeholder")}
-              onChange={(e) =>
+              onChange={(e, timeString) =>
                 setDefaultSchedule(
                   [...defaultSchedule].map((object) => {
                     if (object.key === item.key) {
                       return {
                         ...object,
-                        startTime: e._d ? e._d : undefined,
+                        startTime: timeString,
                       };
                     } else return object;
                   })
@@ -233,13 +233,13 @@ function AddClass(props) {
             <TimePicker
               format={FORMAT_TIME_SCHEDULE}
               placeholder={t("time_placeholder")}
-              onChange={(e) =>
+              onChange={(e, timeString) =>
                 setDefaultSchedule(
                   [...defaultSchedule].map((object) => {
                     if (object.key === item.key) {
                       return {
                         ...object,
-                        endTime: e._d ? e._d : undefined,
+                        endTime: timeString,
                       };
                     } else return object;
                   })

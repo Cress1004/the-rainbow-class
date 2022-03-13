@@ -22,7 +22,6 @@ import {
   urlRegExp,
 } from "../../../common/constant";
 import {
-  convertTimeStringToMoment,
   convertDateStringToMoment,
 } from "../../../common/transformData";
 import { generateKey } from "../../../common/function";
@@ -31,6 +30,7 @@ import * as Yup from "yup";
 import useFetchRole from "../../../../hook/useFetchRole";
 import PermissionDenied from "../../Error/PermissionDenied";
 import { checkCurrentMonitorBelongToCurrentClass } from "../../../common/checkRole";
+import moment from "moment";
 
 const { Item } = Form;
 const { TextArea } = Input;
@@ -370,10 +370,10 @@ function EditLesson(props) {
             <Col span={5}>
               <TimePicker
                 format={FORMAT_TIME_SCHEDULE}
-                value={convertTimeStringToMoment(time.startTime)}
+                value={time && time.endTime ? moment(time.startTime, FORMAT_TIME_SCHEDULE) : undefined}
                 placeholder={t("time_placeholder")}
-                onChange={(e) =>
-                  setTime({ ...time, startTime: e._d ? e._d : undefined })
+                onChange={(e, timeString) =>
+                  setTime({ ...time, startTime: timeString })
                 }
               />
             </Col>
@@ -381,10 +381,10 @@ function EditLesson(props) {
             <Col span={5}>
               <TimePicker
                 format={FORMAT_TIME_SCHEDULE}
-                value={convertTimeStringToMoment(time.endTime)}
+                value={time && time.endTime ? moment(time.endTime, FORMAT_TIME_SCHEDULE) : undefined}
                 placeholder={t("time_placeholder")}
-                onChange={(e) =>
-                  setTime({ ...time, endTime: e._d ? e._d : undefined })
+                onChange={(e, timeString) =>
+                  setTime({ ...time, endTime: timeString })
                 }
               />
             </Col>

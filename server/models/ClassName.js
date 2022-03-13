@@ -43,8 +43,8 @@ const classSchema = mongoose.Schema(
     defaultSchedule: [
       {
         key: Number,
-        startTime: Date,
-        endTime: Date,
+        startTime: String,
+        endTime: String,
         dayOfWeek: Number, // 0: All, 1: Sun, 2: Mon, ... , 7: Sat
       },
     ],

@@ -28,10 +28,8 @@ export function transformSchedule(data) {
     ? {
         key: data.key,
         dayOfWeek: WEEKDAY.find((item) => item.key === data.dayOfWeek).text,
-        endTime: moment(new Date(data.endTime)).format(FORMAT_TIME_SCHEDULE),
-        startTime: moment(new Date(data.startTime)).format(
-          FORMAT_TIME_SCHEDULE
-        ),
+        endTime: data.endTime,
+        startTime: data.startTime,
       }
     : undefined;
 }
@@ -68,27 +66,22 @@ export function convertDateStringToMoment(string) {
 export function transformEventOfLesson(data) {
   const time = data?.schedule?.time;
   if (time) {
-    const date = moment(new Date(time.date)).format(FORMAT_DATE).toString();
-    const start = moment(new Date(time.startTime))
-      .format(FORMAT_TIME_SCHEDULE)
-      .toString();
-    const end = moment(new Date(time.endTime))
-      .format(FORMAT_TIME_SCHEDULE)
-      .toString();
     return {
       title: data.class?.name,
       lessonTitle: data.title,
       className: data.class?.name,
       classId: data.class?._id,
       lessonId: data._id,
-      personInCharge: data.schedule.personInCharge ? data.schedule.personInCharge.name : "unset",
+      personInCharge: data.schedule.personInCharge
+        ? data.schedule.personInCharge.name
+        : "unset",
       time: time,
-      start: new Date(`${date} ${start}`),
-      end: new Date(`${date} ${end}`),
+      start: new Date(`${time.date} ${time.startTime}`),
+      end: new Date(`${time.date} ${time.endTime}`),
     };  
   }
 }
 
-export function transformScheduleTimeData (time) {
+export function transformScheduleTimeData(time) {
   return `${time.date} ${time.startTime} - ${time.endTime}`;
 }

@@ -160,6 +160,9 @@ const resources = {
       from: "Từ",
       to: "Đến",
       delete: "Xóa",
+      set_monitor: "Quản lý cán sự",
+      input_weekday: "Chọn thứ trong tuần",
+      unset: "Chưa xếp",
       //noti
       assign_success: "Đăng kí thành công",
       unassign_success: "Hủy đăng kí thành công",

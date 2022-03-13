@@ -5,7 +5,7 @@ import SetPersonInCharge from "./SetPersonInCharge";
 
 function PaticipantList(props) {
   const { t } = useTranslation();
-  const { participants, checkAdminAndMonitorRole, personInCharge, scheduleId } =
+  const { participants, checkAdminAndMonitorRole, personInCharge, scheduleId, fetchLessonData, lessonId, userId } =
     props;
   const data = participants
     ? participants.map((item, index) => ({
@@ -41,6 +41,9 @@ function PaticipantList(props) {
           participants={data}
           personInCharge={personInCharge}
           scheduleId={scheduleId}
+          fetchLessonData={fetchLessonData}
+          lessonId={lessonId}
+          userId={userId}
         />
       )}
       <Table columns={columns} dataSource={data} />

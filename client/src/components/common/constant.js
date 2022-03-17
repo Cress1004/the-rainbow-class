@@ -99,3 +99,6 @@ export const CV_STATUS_NAME = {
   PASS: 2,
   FAIL: 3,
 };
+
+export const LESSON_SCHEDULE = 0;
+export const INTERVIEW_SCHEDULE = 2;

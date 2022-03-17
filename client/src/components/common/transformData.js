@@ -1,5 +1,11 @@
 import moment from "moment";
-import { WEEKDAY, FORMAT_TIME_SCHEDULE, FORMAT_DATE } from "./constant";
+import {
+  WEEKDAY,
+  FORMAT_TIME_SCHEDULE,
+  FORMAT_DATE,
+  LESSON_SCHEDULE,
+  INTERVIEW_SCHEDULE,
+} from "./constant";
 
 export function transformAddressData(data) {
   return data && data.address && data.description
@@ -65,20 +71,38 @@ export function convertDateStringToMoment(string) {
 
 export function transformEventOfLesson(data) {
   const time = data?.schedule?.time;
+  const scheduleType = data?.schedule?.scheduleType;
   if (time) {
-    return {
-      title: data.class?.name,
-      lessonTitle: data.title,
-      className: data.class?.name,
-      classId: data.class?._id,
-      lessonId: data._id,
-      personInCharge: data.schedule.personInCharge
-        ? data.schedule.personInCharge.name
-        : "unset",
-      time: time,
-      start: new Date(`${time.date} ${time.startTime}`),
-      end: new Date(`${time.date} ${time.endTime}`),
-    };  
+    if (scheduleType === LESSON_SCHEDULE)
+      return {
+        scheduleType: scheduleType,
+        title: data.class?.name,
+        lessonTitle: data.title,
+        className: data.class?.name,
+        classId: data.class?._id,
+        lessonId: data._id,
+        personInCharge: data.schedule.personInCharge
+          ? data.schedule.personInCharge.name
+          : "unset",
+        time: time,
+        start: new Date(`${time.date} ${time.startTime}`),
+        end: new Date(`${time.date} ${time.endTime}`),
+      };
+    if (scheduleType === INTERVIEW_SCHEDULE)
+      return {
+        scheduleType: scheduleType,
+        title: `Phỏng vấn - ${data.class?.name}`,
+        interviewerName: data.userName,
+        email: data.email,
+        phoneNumber: data.phoneNumber,
+        cvId: data._id,
+        personInCharge: data.schedule.personInCharge
+          ? data.schedule.personInCharge.name
+          : "unset",
+        time: time,
+        start: new Date(`${time.date} ${time.startTime}`),
+        end: new Date(`${time.date} ${time.endTime}`),
+      };
   }
 }
 

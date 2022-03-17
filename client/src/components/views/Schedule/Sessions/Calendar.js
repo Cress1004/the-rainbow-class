@@ -7,8 +7,10 @@ import Axios from "axios";
 import { Popover } from "antd";
 import { Link } from "react-router-dom";
 import {
-  transformEventOfLesson, transformScheduleTimeData,
+  transformEventOfLesson,
+  transformScheduleTimeData,
 } from "../../../common/transformData";
+import { INTERVIEW_SCHEDULE, LESSON_SCHEDULE } from "../../../common/constant";
 
 const localizer = momentLocalizer(moment);
 function MyCalendar(props) {
@@ -18,34 +20,62 @@ function MyCalendar(props) {
   const [classColors, setClassColors] = useState([]);
 
   useEffect(() => {
-    Axios.post(`/api/classes/get-all-classes`, {userId: userId}).then((response) => {
-      if (response.data.success) {
-        const data = response.data.classes;
-        const colors = setColorForClass(data);
-        setClassColors(colors);
-      } 
-    });
+    Axios.post(`/api/classes/get-all-classes`, { userId: userId }).then(
+      (response) => {
+        if (response.data.success) {
+          const data = response.data.classes;
+          const colors = setColorForClass(data);
+          setClassColors(colors);
+        }
+      }
+    );
   }, [t, userId]);
 
-  const content = (event) => (
-    <>
-      <p>
-        {t("lesson_name")}: {event.lessonTitle}
-      </p>
-      <p>
-        {t("time")}: {transformScheduleTimeData(event.time)}
-      </p>
-      <p>
-        {t("person_in_charge")}: {event.personInCharge}
-      </p>
-      <Link
-        to={`/classes/${event.classId}/lessons/${event.lessonId}`}
-        className="show-lesson-detail"
-      >
-        {t("detail")}
-      </Link>
-    </>
-  );
+  const content = (event) => {
+    if (event.scheduleType === INTERVIEW_SCHEDULE)
+      return (
+        <>
+          <p>
+            {t("interviewer_name")}: {event.interviewerName}
+          </p>
+          <p>
+            {t("email")}: {event.email}
+          </p>
+          <p>
+            {t("phone_number")}: {event.phoneNumber}
+          </p>
+          <p>
+            {t("time")}: {transformScheduleTimeData(event.time)}
+          </p>
+          <p>
+            {t("person_in_charge")}: {event.personInCharge}
+          </p>
+          <Link to={`/cv/${event.cvId}`} className="show-lesson-detail">
+            {t("detail")}
+          </Link>
+        </>
+      );
+    if (event.scheduleType === LESSON_SCHEDULE)
+      return (
+        <>
+          <p>
+            {t("lesson_name")}: {event.lessonTitle}
+          </p>
+          <p>
+            {t("time")}: {transformScheduleTimeData(event.time)}
+          </p>
+          <p>
+            {t("person_in_charge")}: {event.personInCharge}
+          </p>
+          <Link
+            to={`/classes/${event.classId}/lessons/${event.lessonId}`}
+            className="show-lesson-detail"
+          >
+            {t("detail")}
+          </Link>
+        </>
+      );
+  };
 
   const EventComponent = ({ event }) => (
     <Popover

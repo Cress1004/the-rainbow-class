@@ -15,6 +15,7 @@ const {
   setMonitor,
   listClassWithName,
 } = require("../repository/classRepository");
+const { getInterviewSchedule } = require("../repository/cvRepository");
 const { getLessonsByCLass } = require("../repository/lessonRepository");
 const { getStudentByClass } = require("../repository/studentRepository");
 const { getUserDataById } = require("../repository/userRepository");
@@ -91,11 +92,12 @@ const deleteClassData = async (req, res) => {
 const getClassSchedule = async (req, res) => {
   try {
     const classId = req.body.classId;
-    const schedule = await getLessonsByCLass(classId);
+    const scheduleLesson = await getLessonsByCLass(classId);
+    const scheduleInterview = await getInterviewSchedule(classId);
     const classData = await findClassById(classId);
     res
       .status(200)
-      .json({ success: true, schedule: schedule, classData: classData });
+      .json({ success: true, schedule: [...scheduleLesson, ...scheduleInterview], classData: classData });
   } catch (error) {
     res.status(400).send(error);
   }

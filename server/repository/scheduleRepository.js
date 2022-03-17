@@ -1,6 +1,26 @@
 const { Schedule } = require("../models/Schedule");
 const { storeAddress, updateAddress } = require("./commonRepository");
 
+const storeInterviewSchedule = async (data) => {
+  try{
+    const newSchedule = new Schedule(data);
+    return newSchedule.save()
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+const updateInterviewSchedule = async (cv, interviewTime) => {
+  try {
+    const schedule = Schedule.findOne({_id: cv.schedule});
+    schedule.time = interviewTime;
+    schedule.save();
+  } catch (error) {
+    
+  }
+}
+
 const storeNewSchedule = async (data) => {
   try {
     const address = storeAddress(data.address);
@@ -96,4 +116,6 @@ module.exports = {
   removePaticipant,
   getAllSchedulesByVolunteer,
   updatePersonInCharge,
+  storeInterviewSchedule,
+  updateInterviewSchedule
 };

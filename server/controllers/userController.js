@@ -3,6 +3,7 @@ const {
   getClassByUser,
   getClassScheduleByUser,
 } = require("../repository/classRepository");
+const { getInterviewSchedule } = require("../repository/cvRepository");
 const {
   getLessonBySchedule,
   getLessonsByCLass,
@@ -39,11 +40,12 @@ const getMyClasschedule = async (req, res) => {
   try {
     const userId = req.body.userId;
     const user = await getUserDataById(userId);
-    const schedule = await getClassScheduleByUser(user);
+    const scheduleLesson = await getClassScheduleByUser(user);
+    const scheduleInterview = await getInterviewSchedule(user.class);
     const classData = await getClassByUser(user);
     res
       .status(200)
-      .json({ success: true, schedule: schedule, classData: classData });
+      .json({ success: true, schedule: [...scheduleLesson, ...scheduleInterview], classData: classData });
   } catch (error) {
     res.status(400).send(error);
   }

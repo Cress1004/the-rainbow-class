@@ -52,9 +52,9 @@ function CVDetail(props) {
     initialValues: {
       cvId: id,
       status: cvData.status,
-      date: cvData.interview?.date,
-      startTime: cvData.interview?.startTime,
-      endTime: cvData.interview?.endTime,
+      date: cvData.schedule?.time.date,
+      startTime: cvData.schedule?.time.startTime,
+      endTime: cvData.schedule?.time.endTime,
     },
     enableReinitialize: true,
     onSubmit: (values, { setSubmitting }) => {
@@ -241,7 +241,7 @@ function CVDetail(props) {
                 {cvData.status === CV_STATUS_NAME.WAITING ? (
                   <>
                     <Item label={t("interview_time")}>
-                      {transformScheduleTimeData(cvData.interview)}{" "}
+                      {transformScheduleTimeData(cvData.schedule.time)}{" "}
                       <Icon
                         type="edit"
                         onClick={() => setConfirmInterview(true)}
@@ -288,7 +288,7 @@ function CVDetail(props) {
         t={t}
         confirmInterview={confirmInterview}
         setConfirmInterview={setConfirmInterview}
-        interviewData={cvData.interview}
+        interviewData={cvData.schedule?.time}
         formik={formik}
         columns={columns}
         fixedData={fixedData}

@@ -3,6 +3,7 @@ const {
   CLASS_MONITOR,
   SUB_CLASS_MONITOR,
 } = require("../defaultValues/constant");
+const { checkCurrentUserBelongToCurrentClass } = require("../function/commonFunction");
 const { getAchievementByStudentId } = require("../repository/achievementRepository");
 const {
   tranformClassData,
@@ -19,7 +20,7 @@ const { getInterviewSchedule } = require("../repository/cvRepository");
 const { getLessonsByCLass } = require("../repository/lessonRepository");
 const { getStudentByClass } = require("../repository/studentRepository");
 const { getUserDataById } = require("../repository/userRepository");
-const { getVolunteerByUserId } = require("../repository/volunteerRepository");
+const { getVolunteerByUserId, getCurrentClassMonitorAndAdmin } = require("../repository/volunteerRepository");
 
 const getAllClasses = async (req, res) => {
   try {
@@ -138,6 +139,22 @@ const getListClassWithName = async (req, res) => {
   }
 };
 
+const getAdminAndCurrentMonitor = async (req, res) => {
+  try {
+    const classId = req.body.classId;
+    const currentUser = req.currentUser;
+    const currentClass = await findClassById(classId);
+    if(checkCurrentUserBelongToCurrentClass(currentUser, currentClass)) {
+      const data = await getCurrentClassMonitorAndAdmin(classId);
+      res.status(200).json({ success: true, data: data });
+    } else {
+      res.status(200).json({ success: fasle, message: "Permission denied!" });
+    }
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 module.exports = {
   addClass,
   getClassData,
@@ -147,5 +164,6 @@ module.exports = {
   getAllClasses,
   setClassMonitor,
   getStudentWithAchievementByClass,
-  getListClassWithName
+  getListClassWithName,
+  getAdminAndCurrentMonitor
 };

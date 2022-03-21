@@ -3,13 +3,17 @@ import { DatePicker } from "antd";
 import { TimePicker } from "antd";
 import { Modal } from "antd";
 import { Button } from "antd";
+import { Select } from "antd";
 import { Form } from "antd";
+import Axios from "axios";
 import moment from "moment";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FORMAT_TIME_SCHEDULE } from "../../../common/constant";
 import FreeTimeTable from "./FreeTimeTable";
+import "../upload-cv.scss";
 
 const { Item } = Form;
+const { Option } = Select;
 
 function SetInterviewTime(props) {
   const {
@@ -19,8 +23,31 @@ function SetInterviewTime(props) {
     formik,
     columns,
     fixedData,
-    interviewData
+    interviewData,
+    classData,
   } = props;
+
+  const [adminAndCurrentMonitor, setAdminAndCurrentMonitor] = useState([]);
+  const classId = classData?._id;
+
+  const fetchAdminAndCurrentMonitor = (classId) => {
+    if (classId) {
+      Axios.post(`/api/classes/${classId}/get-admin-monitor`, {
+        classId: classId,
+      }).then((response) => {
+        const res = response.data;
+        if (res.success) {
+          setAdminAndCurrentMonitor(res.data);
+        } else if (!res.success) {
+          alert(res.message);
+        }
+      });
+    }
+  };
+
+  useEffect(() => {
+    fetchAdminAndCurrentMonitor(classId);
+  }, [classId]);
 
   const cancelModal = () => {
     setConfirmInterview(false);
@@ -28,7 +55,7 @@ function SetInterviewTime(props) {
 
   const checkFillAllData = () => {
     return (
-      formik.values.date && formik.values.endTime && formik.values.startTime
+      formik.values.date && formik.values.endTime && formik.values.startTime && formik.values.participants
     );
   };
 
@@ -43,6 +70,14 @@ function SetInterviewTime(props) {
   const onChangeEndTime = (time, timeString) => {
     formik.setFieldValue("endTime", timeString);
   };
+
+  const onChangeParticipants = (value) => {
+    formik.setFieldValue("participants", value)
+  }
+
+  const participantsList = adminAndCurrentMonitor?.map((item) => (
+    <Option key={item._id}>{item.user.name}</Option>
+  ));
 
   return (
     <Modal
@@ -65,13 +100,15 @@ function SetInterviewTime(props) {
         </Button>,
       ]}
     >
-      <Form>
+      <Form className="set-interview-form">
         <Item label={t("input_interview_time")}>
           <Col span={8}>
             <DatePicker
               onChange={onChangeDate}
               placeholder={t("date_placeholder")}
-              defaultValue={interviewData ? moment(interviewData.date) : undefined}
+              defaultValue={
+                interviewData ? moment(interviewData.time.date) : undefined
+              }
             />
           </Col>
           <Col span={2}>{t("from")}</Col>
@@ -80,7 +117,11 @@ function SetInterviewTime(props) {
               format={FORMAT_TIME_SCHEDULE}
               placeholder={t("time_placeholder")}
               onChange={onChangeStartTime}
-              defaultValue={interviewData ? moment(interviewData.startTime, FORMAT_TIME_SCHEDULE) : undefined}
+              defaultValue={
+                interviewData
+                  ? moment(interviewData.time.startTime, FORMAT_TIME_SCHEDULE)
+                  : undefined
+              }
             />
           </Col>
           <Col span={2}>{t("to")}</Col>
@@ -89,13 +130,31 @@ function SetInterviewTime(props) {
               format={FORMAT_TIME_SCHEDULE}
               placeholder={t("time_placeholder")}
               onChange={onChangeEndTime}
-              defaultValue={interviewData ? moment(interviewData.endTime, FORMAT_TIME_SCHEDULE) : undefined}
+              defaultValue={
+                interviewData
+                  ? moment(interviewData.time.endTime, FORMAT_TIME_SCHEDULE)
+                  : undefined
+              }
             />
           </Col>
         </Item>
+        <Item label={t("person_in_charge")}>
+          <Select
+            mode="multiple"
+            allowClear
+            style={{ width: "100%" }}
+            placeholder="Please select"
+            defaultValue={interviewData?.paticipants ? interviewData.paticipants : undefined}
+            onChange={onChangeParticipants}
+          >
+            {console.log(interviewData)}
+            {participantsList}
+          </Select>
+        </Item>
+        <Item label={t("applier_free_time")}>
+          <FreeTimeTable t={t} columns={columns} fixedData={fixedData} />
+        </Item>
       </Form>
-      {t("applier_free_time")}
-      <FreeTimeTable t={t} columns={columns} fixedData={fixedData} />
     </Modal>
   );
 }

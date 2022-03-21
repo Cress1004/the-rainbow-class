@@ -4,7 +4,6 @@ const { storeFreeTime, getFreeTimeByCVId } = require("./freeTimeRepository");
 const { createCVNotification } = require("./notificationRepository");
 const {
   storeInterviewSchedule,
-  updateSchedule,
   updateInterviewSchedule,
 } = require("./scheduleRepository");
 
@@ -100,11 +99,12 @@ const updateCV = async (cvData, currentUser, currentVolunteer) => {
           endTime: cvData.endTime,
         };
       if (cv.schedule) {
-        await updateInterviewSchedule(cv, interviewTime);
+        await updateInterviewSchedule(cv, interviewTime, cvData.participants);
       } else {
         var schedule = await storeInterviewSchedule({
           scheduleType: 2,
           time: interviewTime,
+          paticipants: cvData.participants
         });
         cv.schedule = schedule._id;
       }

@@ -10,6 +10,7 @@ const {
   setClassMonitor,
   getStudentWithAchievementByClass,
   getListClassWithName,
+  getAdminAndCurrentMonitor,
 } = require("../controllers/classController");
 const {
   addLesson,
@@ -34,6 +35,7 @@ router.post("/comment-student", checkAdminAndMonitorRole, updateCommentStudent);
 router.post("/my-class-schedules", auth, getMyClasschedule);
 router.post("/get-class-schedules", auth, getClassSchedule);
 router.post("/:id", auth, getClassData);
+router.post("/:id/get-admin-monitor", checkAdminAndMonitorRole, getAdminAndCurrentMonitor);
 router.post("/:id/set-monitor", checkAdminRole, setClassMonitor);
 router.post("/:id/delete", checkAdminRole, deleteClassData);
 router.post("/:id/edit", checkAdminAndMonitorRole, editClassData);

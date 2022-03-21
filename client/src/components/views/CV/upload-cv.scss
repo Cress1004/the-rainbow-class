@@ -180,3 +180,9 @@
   background-color: white;
   border-color: black !important;
 }
+
+.set-interview-form {
+  > .ant-form-item {
+    margin-bottom: 0px;
+  }
+}

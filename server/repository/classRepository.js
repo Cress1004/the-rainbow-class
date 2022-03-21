@@ -3,7 +3,11 @@ const { ClassName } = require("../models/ClassName");
 const { storeAddress, updateAddress } = require("./commonRepository");
 const { getLessonsByCLass } = require("./lessonRepository");
 const { getStudentByClass } = require("./studentRepository");
-const { getVolunteerByClass, downgradeMonitor, upgradeMonitor } = require("./volunteerRepository");
+const {
+  getVolunteerByClass,
+  downgradeMonitor,
+  upgradeMonitor,
+} = require("./volunteerRepository");
 
 const findAllClasses = (user) => {
   try {
@@ -121,7 +125,7 @@ const setMonitor = async (classId, monitorId, subMonitorId) => {
   try {
     const currentClass = await ClassName.findOne({ _id: classId });
     await downgradeMonitor(currentClass);
-    await upgradeMonitor(monitorId, subMonitorId)
+    await upgradeMonitor(monitorId, subMonitorId);
     currentClass.classMonitor = monitorId;
     currentClass.subClassMonitor = subMonitorId;
     return currentClass.save();
@@ -133,12 +137,12 @@ const setMonitor = async (classId, monitorId, subMonitorId) => {
 
 const listClassWithName = async () => {
   try {
-    return await ClassName.find({}).select('_id, name');
+    return await ClassName.find({}).select("_id, name");
   } catch (error) {
     console.log("cant get all classes data");
     return null;
   }
-}
+};
 
 module.exports = {
   findAllClasses,

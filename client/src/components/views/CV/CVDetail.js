@@ -1,7 +1,6 @@
 import { Col, Row, Form, Button, Icon } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import useFetchCVData from "../../../hook/CV/useFetchCVDetail";
 import { useParams } from "react-router";
 import { Document, Page, pdfjs } from "react-pdf";
 import { Checkbox } from "antd";
@@ -39,7 +38,7 @@ function CVDetail(props) {
     wrapperCol: { span: 16 },
   };
   const { id } = useParams();
-  const cvData = useFetchCVData();
+  const [cvData, setCVData] = useState({});
   const [totalPages, setTotalPages] = useState(null);
   const [currentScale, setCurrentScale] = useState(1);
   const [showCV, setShowCV] = useState(false);
@@ -48,6 +47,19 @@ function CVDetail(props) {
   const [confirmPass, setConfirmPass] = useState(false);
   const cvStatus = CV_STATUS.find((item) => item.key === cvData?.status);
 
+  const fetchCVData = (id) => {
+    Axios.post(`/api/cv/${id}`, { cvId: id }).then((response) => {
+      const res = response.data;
+      if (res.success) {
+        setCVData(res.cvData);
+      }
+    });
+  };
+
+  useEffect(() => {
+    fetchCVData(id);
+  }, [id]);
+
   const formik = useFormik({
     initialValues: {
       cvId: id,
@@ -55,16 +67,17 @@ function CVDetail(props) {
       date: cvData.schedule?.time.date,
       startTime: cvData.schedule?.time.startTime,
       endTime: cvData.schedule?.time.endTime,
+      participants: cvData.schedule?.paticipants,
     },
     enableReinitialize: true,
     onSubmit: (values, { setSubmitting }) => {
       setTimeout(() => {
         Axios.post(`/api/cv/${id}/update-status`, values).then((response) => {
           if (response.data.success) {
+            fetchCVData(id);
             setConfirmReject(false);
             setConfirmInterview(false);
             setConfirmPass(false);
-            window.location.reload();
           } else if (!response.data.success) {
             alert(response.data.message);
           }
@@ -215,11 +228,7 @@ function CVDetail(props) {
             <Item label={t("create_time")}>
               {moment(cvData.created_at).format(FORMAT_DATE)}
             </Item>
-            <Item label={t("cv_file")}>
-              <a onClick={() => downloadFile()} target="_blank">
-                {t("download_here")}
-              </a>
-            </Item>
+            <Item label={t("register_class")}>{cvData.class?.name}</Item>
             {cvStatus ? (
               <div>
                 <Item label={t("status")}>
@@ -251,6 +260,11 @@ function CVDetail(props) {
                 ) : null}
               </div>
             ) : null}
+             <Item label={t("cv_file")}>
+              <a onClick={() => downloadFile()} target="_blank">
+                {t("download_here")}
+              </a>
+            </Item>
           </Form>
         </Col>
         <Col span={14}>
@@ -288,10 +302,11 @@ function CVDetail(props) {
         t={t}
         confirmInterview={confirmInterview}
         setConfirmInterview={setConfirmInterview}
-        interviewData={cvData.schedule?.time}
+        interviewData={cvData.schedule}
         formik={formik}
         columns={columns}
         fixedData={fixedData}
+        classData={cvData.class}
       />
       <ConfirmPassStatus
         t={t}

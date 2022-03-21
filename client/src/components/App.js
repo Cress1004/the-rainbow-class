@@ -1,4 +1,5 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect } from "react";
+import io from "socket.io-client";
 import { Route, Redirect, Switch } from "react-router-dom";
 import Auth from "../hoc/auth";
 import "antd/dist/antd.css";
@@ -36,8 +37,24 @@ import HomePageLayoutRoute from "./views/Layouts/HomePageLayoutRoute";
 import UploadCV from "./views/CV/UploadCV";
 import CVList from "./views/CV/CVList";
 import CVDetail from "./views/CV/CVDetail";
+import { CONNECTION_PORT } from "./common/constant";
 
 function App(props) {
+  let socket = io(CONNECTION_PORT, {});
+  const setupSocket = () => {
+    socket.on("disconnect", () => {
+      socket = null;
+      console.log("Socket Disconnected!");
+    });
+    socket.on("connection", () => {
+      console.log("Socket Connected!");
+    });
+  };
+
+  useEffect(() => {
+    setupSocket();
+  }, []);
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <Switch>
@@ -52,114 +69,145 @@ function App(props) {
           path="/dashboard"
           exact={true}
           component={Auth(Dashboard, true)}
+          socket={socket}
         />
         <DashboardLayoutRoute
           path="/profile"
           exact={true}
           component={Auth(Profile, true)}
+          socket={socket}
         />
         <DashboardLayoutRoute
           path="/profile/edit"
           exact={true}
           component={Auth(EditProfile, true)}
+          socket={socket}
         />
-        <DashboardLayoutRoute path="/users" component={Auth(UserPage, true)} />
+        <DashboardLayoutRoute
+          path="/users"
+          component={Auth(UserPage, true)}
+          socket={socket}
+        />
         <DashboardLayoutRoute
           path="/schedules"
           component={Auth(ClassSchedule, true)}
+          socket={socket}
         />
         <DashboardLayoutRoute
           path="/classes"
           exact={true}
           component={Auth(ClassList, true)}
+          socket={socket}
         />
         <DashboardLayoutRoute
           path="/classes/:id"
           exact={true}
           component={Auth(ClassDetail, true)}
+          socket={socket}
         />
         <DashboardLayoutRoute
           path="/classes/:id/lessons/add"
           exact={true}
           component={Auth(AddLesson, true)}
+          socket={socket}
         />
         <DashboardLayoutRoute
           path="/classes/:id/lessons/:lessonId"
           exact={true}
           component={Auth(LessonDetail, true)}
+          socket={socket}
         />
         <DashboardLayoutRoute
           path="/classes/:id/lessons/:lessonId/edit"
           exact={true}
           component={Auth(EditLesson, true)}
+          socket={socket}
         />
         <DashboardLayoutRoute
           path="/classes/:id/edit"
           exact={true}
           component={Auth(EditClass, true)}
+          socket={socket}
         />
         <DashboardLayoutRoute
           path="/classes/:id/set-monitor"
           exact={true}
           component={Auth(SetMonitor, true)}
+          socket={socket}
         />
         <DashboardLayoutRoute
           path="/classes/:id/comment-student"
           exact={true}
           component={Auth(CommentStudent, true)}
+          socket={socket}
         />
         <DashboardLayoutRoute
           path="/add-class"
           component={Auth(AddClass, true)}
+          socket={socket}
         />
-        <DashboardLayoutRoute path="/admin" component={Auth(AdminList, true)} />
+        <DashboardLayoutRoute
+          path="/admin"
+          component={Auth(AdminList, true)}
+          socket={socket}
+        />
         <DashboardLayoutRoute
           path="/add-volunteer"
           component={Auth(AddVolunteer, true)}
+          socket={socket}
         />
         <DashboardLayoutRoute
           path="/volunteers"
           exact={true}
           component={Auth(VolunteerList, true)}
+          socket={socket}
         />
         <DashboardLayoutRoute
           path="/volunteers/:id"
           exact={true}
           component={Auth(VolunteerDetail, true)}
+          socket={socket}
         />
         <DashboardLayoutRoute
           path="/volunteers/:id/edit"
           exact={true}
           component={Auth(EditVolunteer, true)}
+          socket={socket}
         />
         <DashboardLayoutRoute
           path="/add-student"
           component={Auth(AddStudent, true)}
+          socket={socket}
         />
         <DashboardLayoutRoute
           path="/students"
           exact={true}
           component={Auth(StudentList, true)}
+          socket={socket}
         />
         <DashboardLayoutRoute
           path="/students/:id"
           exact={true}
           component={Auth(StudentDetail, true)}
+          socket={socket}
         />
         <DashboardLayoutRoute
           path="/students/:id/edit"
           exact={true}
           component={Auth(EditStudent, true)}
+          socket={socket}
         />
         <DashboardLayoutRoute
           path="/cv"
           exact={true}
           component={Auth(CVList, true)}
+          socket={socket}
         />
-         <DashboardLayoutRoute
+        <DashboardLayoutRoute
           path="/cv/:id"
           exact={true}
           component={Auth(CVDetail, true)}
+          socket={socket}
         />
         <LoginLayoutRoute
           exact
@@ -174,7 +222,9 @@ function App(props) {
         <DashboardLayoutRoute
           path="/master-setting"
           component={Auth(Mastersetting, true)}
+          socket={socket}
         />
+        {/* <Route path="*" exact component={NotFound} /> */}
       </Switch>
     </Suspense>
   );

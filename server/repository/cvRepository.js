@@ -1,6 +1,7 @@
 const { compareObjectId } = require("../function/commonFunction");
 const { CV } = require("../models/CV");
 const { storeFreeTime, getFreeTimeByCVId } = require("./freeTimeRepository");
+const { createCVNotification } = require("./notificationRepository");
 const {
   storeInterviewSchedule,
   updateSchedule,
@@ -28,8 +29,9 @@ const storeCV = async (userData, link) => {
         noon: Number(data[1]),
       });
     }
-
-    return cv.save();
+    cv.save();
+    await createCVNotification(cv);
+    return cv;
   } catch (error) {
     console.log(error);
     return null;

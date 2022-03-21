@@ -42,6 +42,7 @@
     "react-translate-json": "^2.1.0",
     "saslprep": "^1.0.3",
     "sass": "^1.43.4",
+    "socket.io": "^4.4.1",
     "supports-color": "^7.2.0"
   },
   "devDependencies": {

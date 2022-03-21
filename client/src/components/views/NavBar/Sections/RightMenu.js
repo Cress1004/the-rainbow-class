@@ -33,8 +33,6 @@ function RightMenu(props) {
     </Menu>
   );
 
-  //const user = user.userData;
-
   if (user && !user.isAuth) {
     return (
       <Menu mode={props.mode}>

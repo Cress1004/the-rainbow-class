@@ -146,8 +146,8 @@ const getVolunteerByClass = async (className) => {
       select: "name class",
     });
     const vol = allVolunteers.filter((item) =>
-    compareObjectId(item.user.class._id, className._id)
-  );
+      compareObjectId(item.user.class._id, className._id)
+    );
     return vol;
   } catch (error) {
     console.log("fail to get student by class");
@@ -157,13 +157,17 @@ const getVolunteerByClass = async (className) => {
 
 const downgradeMonitor = async (currentClass) => {
   try {
-    if(currentClass.classMonitor) {
-      const monitor = await Volunteer.findOne({_id: currentClass.classMonitor});
+    if (currentClass.classMonitor) {
+      const monitor = await Volunteer.findOne({
+        _id: currentClass.classMonitor,
+      });
       monitor.role = 1;
       monitor.save();
     }
-    if(currentClass.subClassMonitor) {
-      const subMonitor = await Volunteer.findOne({_id: currentClass.subClassMonitor});
+    if (currentClass.subClassMonitor) {
+      const subMonitor = await Volunteer.findOne({
+        _id: currentClass.subClassMonitor,
+      });
       subMonitor.role = 1;
       subMonitor.save();
     }
@@ -171,17 +175,17 @@ const downgradeMonitor = async (currentClass) => {
     console.log("fail to downgrade monitor");
     return null;
   }
-}
+};
 
 const upgradeMonitor = async (monitorId, subMonitorId) => {
   try {
-    if(monitorId) {
-      const monitor = await Volunteer.findOne({_id: monitorId});
+    if (monitorId) {
+      const monitor = await Volunteer.findOne({ _id: monitorId });
       monitor.role = 2;
       monitor.save();
     }
-    if(subMonitorId) {
-      const subMonitor = await Volunteer.findOne({_id: subMonitorId});
+    if (subMonitorId) {
+      const subMonitor = await Volunteer.findOne({ _id: subMonitorId });
       subMonitor.role = 3;
       subMonitor.save();
     }
@@ -189,7 +193,34 @@ const upgradeMonitor = async (monitorId, subMonitorId) => {
     console.log("fail to upgrade monitor");
     return null;
   }
-}
+};
+
+const getAllMonitorData = async () => {
+  try {
+    return await Volunteer.find({ role: { $in: [SUB_CLASS_MONITOR, CLASS_MONITOR] } }).populate({
+      path: "user",
+    });
+  } catch (error) {}
+};
+
+const getCurrentClassMonitor = async (classId) => {
+  try {
+    const monitors = await getAllMonitorData();
+    return monitors.filter((item) =>
+      compareObjectId(item.user.class._id, classId)
+    );
+  } catch (error) {}
+};
+
+const getCurrentClassMonitorAndAdmin = async (classId) => {
+  try {
+    const admin = await Volunteer.find({ isAdmin: true }).populate({
+      path: "user",
+    });
+    const monitor = await getCurrentClassMonitor(classId)
+    return [...new Set([...admin, ...monitor].map(JSON.stringify))].map(JSON.parse);
+  } catch (error) {}
+};
 
 module.exports = {
   storeVolunteer,
@@ -201,5 +232,7 @@ module.exports = {
   getVolunteerByIdAndClassId,
   getVolunteerByClass,
   downgradeMonitor,
-  upgradeMonitor
+  upgradeMonitor,
+  getCurrentClassMonitor,
+  getCurrentClassMonitorAndAdmin,
 };

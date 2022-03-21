@@ -14,6 +14,7 @@ import {
 } from "../../common/constant";
 import useFetchRole from "../../../hook/useFetchRole";
 import Footer from "../Footer/Footer";
+import Notification from "../Notification/Notification";
 
 const { Title } = Typography;
 const { SubMenu } = Menu;
@@ -36,6 +37,7 @@ const DashboardLayout = ({ children, ...rest }) => {
           <a href="/">{t("Lớp học Cầu Vồng - The Rainbow Class")}</a>
         </Title>
         <div className="login-menu">
+          <Notification socket={rest.socket}/>
           <RightMenu />
         </div>
       </Header>
@@ -236,7 +238,7 @@ const DashboardLayoutRoute = ({ component: Component, ...rest }) => {
       {...rest}
       render={(matchProps) => (
         <Content className="content site-layout-background">
-          <DashboardLayout>
+          <DashboardLayout socket={rest.socket}>
             <Component {...matchProps} />
           </DashboardLayout>
         </Content>

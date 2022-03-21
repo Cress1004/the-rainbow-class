@@ -102,3 +102,9 @@ export const CV_STATUS_NAME = {
 
 export const LESSON_SCHEDULE = 0;
 export const INTERVIEW_SCHEDULE = 2;
+
+export const CONNECTION_PORT = "http://localhost:5000";
+
+export const NOTI_TYPE = [
+  { key: 0, value: "newCV", text: "newCV" }
+];

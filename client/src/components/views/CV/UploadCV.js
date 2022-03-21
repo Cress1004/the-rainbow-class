@@ -14,6 +14,7 @@ import { calcFileSize } from "../../common/function";
 import useFetchClassNameList from "../../../hook/useFetchClassNameList";
 import Axios from "axios";
 import ThanksPage from "./ThanksPage";
+import { getArrayLength } from "../../common/transformData";
 
 const { Item } = Form;
 const { Option } = Select;
@@ -24,6 +25,7 @@ function UploadCV(props) {
   const classList = useFetchClassNameList();
   const [firstPage, setFirstPage] = useState(true);
   const [isSubmmited, setSubmitted] = useState(false);
+  const cvInfo = JSON.parse(localStorage.getItem("cvInfo"));
 
   const columns = [
     {
@@ -44,12 +46,21 @@ function UploadCV(props) {
           <Checkbox
             text={`${item.key}-${record.key}`}
             onChange={(e) => setFreeTime(e)}
-          >
-            {record.active}
-          </Checkbox>
+            defaultChecked={checkFreeTime(item.key, record.key)}
+          />
         ),
       });
   });
+
+  const checkFreeTime = (currWeekday, currNoon) => {
+    if (getArrayLength(cvInfo.freeTime)) {
+      var freeTime = cvInfo.freeTime.find(
+        (item) => item.toString() === `${currWeekday}-${currNoon}`.toString()
+      );
+      return freeTime ? true : false;
+    }
+    return false;
+  };
 
   const setFreeTime = (e) => {
     const freeTimeList = formik.values.freeTime;
@@ -72,13 +83,13 @@ function UploadCV(props) {
 
   const formik = useFormik({
     initialValues: {
-      userName: "",
-      email: "",
-      phoneNumber: "",
-      selectedClass: "",
+      userName: cvInfo?.userName,
+      email: cvInfo?.email,
+      phoneNumber: cvInfo?.phoneNumber,
+      selectedClass: cvInfo?.selectedClass,
       cvFile: "",
-      freeTime: [],
-      note: "",
+      freeTime: cvInfo && cvInfo.freeTime ? cvInfo.freeTime : [],
+      note: cvInfo?.note,
     },
     validationSchema: Yup.object().shape({
       userName: Yup.string().required(t("required_name_message")),
@@ -105,7 +116,7 @@ function UploadCV(props) {
         .of(Yup.string())
         .test({
           message: t("required_free_time"),
-          test: (arr) => arr.length >= 1,
+          test: (arr) => arr?.length >= 1,
         }),
     }),
     onSubmit: (values, { setSubmitting }) => {
@@ -120,6 +131,7 @@ function UploadCV(props) {
           },
         }).then((response) => {
           if (response.data.success) {
+            localStorage.removeItem("cvInfo");
             setSubmitted(true);
           } else if (!response.data.success) {
             alert(response.data.message);
@@ -141,6 +153,11 @@ function UploadCV(props) {
     }
   };
 
+  const changePage = () => {
+    setFirstPage(!firstPage);
+    window.localStorage.setItem("cvInfo", JSON.stringify(formik.values));
+  };
+
   const fieldError = (formik) => {
     return (
       !formik.errors.userName &&
@@ -148,11 +165,7 @@ function UploadCV(props) {
       !formik.errors.phoneNumber &&
       !formik.errors.cvFile &&
       !formik.errors.selectedClass &&
-      !formik.errors.freeTime &&
-      formik.touched.userName &&
-      formik.touched.email &&
-      formik.touched.phoneNumber &&
-      formik.touched.cvFile
+      !formik.errors.freeTime
     );
   };
 
@@ -175,6 +188,7 @@ function UploadCV(props) {
                 placeholder={t("input_name")}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
+                defaultValue={cvInfo ? cvInfo.userName : undefined}
               />
               {formik.errors.userName && formik.touched.userName && (
                 <span className="custom__error-message">
@@ -188,6 +202,7 @@ function UploadCV(props) {
                 placeholder={t("input_email")}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
+                defaultValue={cvInfo ? cvInfo.email : undefined}
               />
               {formik.errors.email && formik.touched.email && (
                 <span className="custom__error-message">
@@ -201,6 +216,7 @@ function UploadCV(props) {
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 placeholder={t("input_phone_number")}
+                defaultValue={cvInfo?.phoneNumber || undefined}
               />
               {formik.errors.phoneNumber && formik.touched.phoneNumber && (
                 <span className="custom__error-message">
@@ -220,6 +236,7 @@ function UploadCV(props) {
                 onChange={(value) =>
                   formik.setFieldValue("selectedClass", value)
                 }
+                defaultValue={cvInfo?.selectedClass || undefined}
               >
                 {classList.length
                   ? classList.map((option) => (
@@ -273,6 +290,7 @@ function UploadCV(props) {
                 rows={5}
                 className="upload-cv__note-text"
                 onChange={formik.handleChange}
+                defaultValue={cvInfo?.note || undefined}
               ></TextArea>
             </Item>
             <Button
@@ -290,7 +308,7 @@ function UploadCV(props) {
           </>
         )}
         <Button
-          onClick={() => setFirstPage(!firstPage)}
+          onClick={changePage}
           className={
             firstPage ? `upload-cv__button-next` : `upload-cv__button-prev`
           }

@@ -143,8 +143,9 @@ const getAdminAndCurrentMonitor = async (req, res) => {
   try {
     const classId = req.body.classId;
     const currentUser = req.currentUser;
+    const currentVolunteer = req.currentVolunteer;
     const currentClass = await findClassById(classId);
-    if(checkCurrentUserBelongToCurrentClass(currentUser, currentClass)) {
+    if(checkCurrentUserBelongToCurrentClass(currentUser, currentVolunteer, currentClass)) {
       const data = await getCurrentClassMonitorAndAdmin(classId);
       res.status(200).json({ success: true, data: data });
     } else {

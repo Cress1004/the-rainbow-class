@@ -163,6 +163,8 @@ const resources = {
       set_monitor: "Quản lý cán sự",
       input_weekday: "Chọn thứ trong tuần",
       unset: "Chưa xếp",
+      interviewer_name: "Tên ứng viên",
+      select_person_in_charge: "Chọn người phụ trách",
       //noti
       assign_success: "Đăng kí thành công",
       unassign_success: "Hủy đăng kí thành công",

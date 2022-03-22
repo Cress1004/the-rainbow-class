@@ -47,9 +47,6 @@ function MyCalendar(props) {
           <p>
             {t("time")}: {transformScheduleTimeData(event.time)}
           </p>
-          <p>
-            {t("person_in_charge")}: {event.personInCharge}
-          </p>
           <Link to={`/cv/${event.cvId}`} className="show-lesson-detail">
             {t("detail")}
           </Link>

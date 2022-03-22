@@ -6,13 +6,17 @@ const randomUnixSuffix = () => {
   return Date.now() + "-" + Math.round(Math.random() * 1e9);
 };
 
-const checkCurrentUserBelongToCurrentClass = (currentUser, currentClass) => {
-  return compareObjectId(currentUser.class, currentClass._id);
+const checkCurrentUserBelongToCurrentClass = (
+  currentUser,
+  currentVolunteer,
+  currentClass
+) => {
+  if (currentVolunteer.isAdmin) return true;
+  else return compareObjectId(currentUser.class, currentClass._id);
 };
-
 
 module.exports = {
   compareObjectId,
   randomUnixSuffix,
-  checkCurrentUserBelongToCurrentClass
+  checkCurrentUserBelongToCurrentClass,
 };

@@ -41,6 +41,8 @@ module.exports = {
       startTime: "19:00",
       endTime: "22:00",
     },
-  ]
+  ],
+  LESSON_SCHEDULE: 0,
+  INTERVIEW_SCHEDULE:2,
 };
 

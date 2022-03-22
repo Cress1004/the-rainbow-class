@@ -76,7 +76,7 @@ function SetInterviewTime(props) {
   }
 
   const participantsList = adminAndCurrentMonitor?.map((item) => (
-    <Option key={item._id}>{item.user.name}</Option>
+    <Option key={item.user._id}>{item.user.name}</Option>
   ));
 
   return (
@@ -143,11 +143,10 @@ function SetInterviewTime(props) {
             mode="multiple"
             allowClear
             style={{ width: "100%" }}
-            placeholder="Please select"
+            placeholder={t("select_person_in_charge")}
             defaultValue={interviewData?.paticipants ? interviewData.paticipants : undefined}
             onChange={onChangeParticipants}
           >
-            {console.log(interviewData)}
             {participantsList}
           </Select>
         </Item>

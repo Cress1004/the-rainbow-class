@@ -104,7 +104,7 @@ const updateCV = async (cvData, currentUser, currentVolunteer) => {
         var schedule = await storeInterviewSchedule({
           scheduleType: 2,
           time: interviewTime,
-          paticipants: cvData.participants
+          paticipants: cvData.participants,
         });
         cv.schedule = schedule._id;
       }
@@ -148,10 +148,33 @@ const getAllInterviewsByClass = async () => {
   }
 };
 
+const getCVBySchedule = async (scheduleId) => {
+  try {
+    return CV.findOne({ schedule: scheduleId }).populate([
+      {
+        path: "schedule",
+        populate: [
+          {
+            path: "personInCharge",
+            select: "name email phoneNumber ",
+          },
+          { path: "address" },
+          { path: "paticipants", select: "name email phoneNumber" },
+        ],
+      },
+      { path: "class", select: "name" },
+    ]);
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
 module.exports = {
   storeCV,
   getAllCV,
   getCVById,
   updateCV,
   getInterviewSchedule,
+  getCVBySchedule,
 };

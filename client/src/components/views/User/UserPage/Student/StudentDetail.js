@@ -32,28 +32,34 @@ function StudentDetail(props) {
   const currentUserData = useFetchRole(userId);
   const userRole = currentUserData?.userRole;
 
+  const fetchStudentData = (studentId) => {
+    Axios.post(`/api/students/${id}`, { studentId: studentId }).then(
+      (response) => {
+        if (response.data.success) {
+          const data = response.data.studentData;
+          setStudentData({
+            id: data._id,
+            name: data.user.name,
+            email: data.user.email,
+            gender: data.user.gender,
+            parentName: data.parentName,
+            studentTypes: transformStudentTypes(data.studentTypes),
+            image: data.user.image,
+            address: transformAddressData(data.user.address),
+            phoneNumber: data.user.phoneNumber,
+            className: data.user.class ? data.user.class.name : t("unset"),
+            classId: data.user.class?._id,
+            overview: data.overview,
+            interest: data.interest,
+            character: data.character,
+          });
+        }
+      }
+    );
+  };
+
   useEffect(() => {
-    Axios.post(`/api/students/${id}`, { studentId: id }).then((response) => {
-      if (response.data.success) {
-        const data = response.data.studentData;
-        setStudentData({
-          id: data._id,
-          name: data.user.name,
-          email: data.user.email,
-          gender: data.user.gender,
-          parentName: data.parentName,
-          studentTypes: transformStudentTypes(data.studentTypes),
-          image: data.user.image,
-          address: transformAddressData(data.user.address),
-          phoneNumber: data.user.phoneNumber,
-          className: data.user.class ? data.user.class.name : t("unset"),
-          classId: data.user.class?._id,
-          overview: data.overview,
-          interest: data.interest,
-          character: data.character,
-        });
-      } 
-    });
+    fetchStudentData(id);
   }, [t, id]);
 
   const openDeletePopup = () => {
@@ -137,7 +143,13 @@ function StudentDetail(props) {
           {checkStudentAndCurrentUserSameClass(
             studentData,
             currentUserData
-          ) && <Description studentData={studentData} userRole={userRole}/>}
+          ) && (
+            <Description
+              studentData={studentData}
+              userRole={userRole}
+              fetchStudentData={fetchStudentData}
+            />
+          )}
         </>
       )}
       <Modal

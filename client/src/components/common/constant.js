@@ -40,6 +40,24 @@ export const OFFLINE_OPTION = 1;
 export const ONLINE_OPTION = 0;
 
 export const CALENDAR_COLOR_EVENT = [
+  "#F9A09B",
+  "#F48BB1",
+  "#CD8FD9",
+  "#B39BDC",
+  "#9EA7DA",
+  "#8DCAF9",
+  "#81D4FA",
+  "#81DDEA",
+  "#81CBC4",
+  "#A5D7A8",
+  "#C4E1A7",
+  "#E6EDA1",
+  "#FFF5A3",
+  "#FFE092",
+  "#FECB8C",
+  "#FEAA92",
+  "#BCAAA4",
+  "#AFBEC4",
   "#145114",
   "#67dfc4",
   "#a1c3c3",
@@ -105,6 +123,4 @@ export const INTERVIEW_SCHEDULE = 2;
 
 export const CONNECTION_PORT = "http://localhost:5000";
 
-export const NOTI_TYPE = [
-  { key: 0, value: "newCV", text: "newCV" }
-];
+export const NOTI_TYPE = [{ key: 0, value: "newCV", text: "newCV" }];

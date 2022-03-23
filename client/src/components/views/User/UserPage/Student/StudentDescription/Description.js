@@ -9,7 +9,7 @@ const { Item } = Form;
 const { TextArea } = Input;
 
 function Description(props) {
-  const { studentData, userRole } = props;
+  const { studentData, userRole, fetchStudentData } = props;
   const { t } = useTranslation();
   const [openForm, setOpenForm] = useState(false);
 
@@ -28,7 +28,7 @@ function Description(props) {
         }).then((response) => {
           if (response.data.success) {
             setOpenForm(false);
-            window.location.reload();
+            fetchStudentData(studentData.id)
           } else if (!response.data.success) {
             alert(response.data.message);
           } else {

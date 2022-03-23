@@ -6,6 +6,17 @@ const findAllLocation = () => {
   return Location.find({});
 };
 
+const getDistrictsByProvinceId = async (provinceId) => {
+  const province = await Location.findOne({ id: provinceId });
+  return province.districts;
+};
+
+const getWardsByDistrictId = async (provinceId, districtId) => {
+  const province = await Location.findOne({ id: provinceId });
+  const district = province.districts.find((item) => item.id === districtId);
+  return district.wards;
+};
+
 const storeAddress = (data) => {
   const newAddress = new Address(data);
   newAddress.save();
@@ -60,5 +71,7 @@ module.exports = {
   storeAddress,
   updateAddress,
   removeStudentType,
-  deleteAddress
+  deleteAddress,
+  getDistrictsByProvinceId,
+  getWardsByDistrictId,
 };

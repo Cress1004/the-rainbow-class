@@ -50,7 +50,10 @@ const getVolunteerByIdAndClassId = async (id, classId) => {
       .populate({
         path: "user",
         select: "name email phoneNumber gender image address",
-        populate: { path: "address", select: "address description" },
+        populate: [
+          { path: "address", select: "address description" },
+          { path: "class", select: "name" },
+        ],
       });
   } catch (error) {
     console.log("fail to get volunteer data by ID and class ID");
@@ -197,7 +200,9 @@ const upgradeMonitor = async (monitorId, subMonitorId) => {
 
 const getAllMonitorData = async () => {
   try {
-    return await Volunteer.find({ role: { $in: [SUB_CLASS_MONITOR, CLASS_MONITOR] } }).populate({
+    return await Volunteer.find({
+      role: { $in: [SUB_CLASS_MONITOR, CLASS_MONITOR] },
+    }).populate({
       path: "user",
     });
   } catch (error) {}
@@ -217,8 +222,10 @@ const getCurrentClassMonitorAndAdmin = async (classId) => {
     const admin = await Volunteer.find({ isAdmin: true }).populate({
       path: "user",
     });
-    const monitor = await getCurrentClassMonitor(classId)
-    return [...new Set([...admin, ...monitor].map(JSON.stringify))].map(JSON.parse);
+    const monitor = await getCurrentClassMonitor(classId);
+    return [...new Set([...admin, ...monitor].map(JSON.stringify))].map(
+      JSON.parse
+    );
   } catch (error) {}
 };
 

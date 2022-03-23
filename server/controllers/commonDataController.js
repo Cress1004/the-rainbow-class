@@ -4,6 +4,8 @@ const {
   getStudentTypeById,
   storeStudentType,
   removeStudentType,
+  getDistrictsByProvinceId,
+  getWardsByDistrictId,
 } = require("../repository/commonRepository");
 
 const getLocation = async (req, res) => {
@@ -12,6 +14,27 @@ const getLocation = async (req, res) => {
     res.status(200).json({ success: true, location: location });
   } catch (error) {
     res.status(400).send(error);
+  }
+};
+
+const getDistricts = async (req, res) => {
+  try {
+    const provinceId = req.body.provinceId;
+    const districts = await getDistrictsByProvinceId(provinceId);
+    res.status(200).json({ success: true, districts: districts });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const getWards = async (req, res) => {
+  try {
+    const provinceId = req.body.provinceId
+    const districtId = req.body.districtId;
+    const wards = await getWardsByDistrictId(provinceId, districtId);
+    res.status(200).json({ success: true, wards: wards });
+  } catch (error) {
+    console.log(error);
   }
 };
 
@@ -57,4 +80,6 @@ module.exports = {
   addStudentType,
   getStudentType,
   deleteStudentType,
+  getDistricts,
+  getWards,
 };

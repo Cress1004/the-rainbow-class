@@ -7,13 +7,10 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import "./volunteer.scss";
 import {
-  CLASS_MONITOR,
   phoneRegExp,
-  STUDENT,
-  SUB_CLASS_MONITOR,
-  SUPER_ADMIN,
 } from "../../../../common/constant";
 import PermissionDenied from "../../../Error/PermissionDenied";
+import { checkAdminAndMonitorRole } from "../../../../common/function";
 
 const { Option } = Select;
 
@@ -72,13 +69,13 @@ function AddVolunteer(props) {
       if (response.data.success) {
         const data = response.data.classes;
         data ? setClasses(response.data.classes) : setClasses(null);
-      } 
+      }
     });
     Axios.post(`/api/users/get-role`, { userId: userId }).then((response) => {
       if (response.data.success) {
         const data = response.data.userRole;
         setUserRole(data);
-      } 
+      }
     });
   }, [t, userId]);
 
@@ -94,107 +91,92 @@ function AddVolunteer(props) {
     );
   };
 
-  if (
-    userRole &&
-    (userRole.role === STUDENT ||
-      !userRole.isAdmin ||
-      userRole.subRole === SUPER_ADMIN)
-  )
-    return <PermissionDenied />;
+  if (!checkAdminAndMonitorRole(userRole)) return <PermissionDenied />;
 
   return (
     <div className="add-volunteer">
-      {userRole &&
-        (userRole.isAdmin ||
-          userRole.subRole === CLASS_MONITOR ||
-          userRole.subRole === SUB_CLASS_MONITOR) &&
-        classes && (
-          <div>
-            {" "}
-            <div className="add-volunteer__title">{t("add_volunteer")}</div>
-            <Form
-              {...layout}
-              name="control-hooks"
-              onSubmit={formik.handleSubmit}
-            >
-              <Form.Item label={t("user_name")} required>
-                <Input
-                  name="name"
-                  placeholder={t("input_name")}
-                  value={formik.values.name}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                />
-                {formik.errors.name && formik.touched.name && (
-                  <span className="custom__error-message">
-                    {formik.errors.name}
-                  </span>
-                )}
-              </Form.Item>
-              <Form.Item label={t("email")} required>
-                <Input
-                  name="email"
-                  placeholder={t("input_email")}
-                  value={formik.values.email}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                />
-                {formik.errors.email && formik.touched.email && (
-                  <span className="custom__error-message">
-                    {formik.errors.email}
-                  </span>
-                )}
-              </Form.Item>
-              <Form.Item label={t("phone_number")} required>
-                <Input
-                  name="phoneNumber"
-                  placeholder={t("input_phone_number")}
-                  value={formik.values.phoneNumber}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                />
-                {formik.errors.phoneNumber && formik.touched.phoneNumber && (
-                  <span className="custom__error-message">
-                    {formik.errors.phoneNumber}
-                  </span>
-                )}
-              </Form.Item>
-              <Form.Item label={t("class")} required>
-                <Select
-                  showSearch
-                  style={{
-                    display: "inline-block",
-                    width: "100%",
-                    marginRight: "10px",
-                  }}
-                  placeholder={t("input_class")}
-                  onChange={(value) => formik.setFieldValue("class", value)}
-                >
-                  {classes.map((option) => (
-                    <Option key={option._id} value={option._id}>
-                      {option.name}
-                    </Option>
-                  ))}
-                </Select>
-                {formik.errors.class && formik.touched.class && (
-                  <span className="custom__error-message">
-                    {formik.errors.class}
-                  </span>
-                )}
-              </Form.Item>
-              <Form.Item {...tailLayout}>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  className={!fieldError(formik) ? "disable-submit-button" : ""}
-                  disabled={!fieldError(formik)}
-                >
-                  {t("register")}
-                </Button>
-              </Form.Item>
-            </Form>
-          </div>
-        )}
+      {classes ? (
+        <div>
+          <div className="add-volunteer__title">{t("add_volunteer")}</div>
+          <Form {...layout} name="control-hooks" onSubmit={formik.handleSubmit}>
+            <Form.Item label={t("user_name")} required>
+              <Input
+                name="name"
+                placeholder={t("input_name")}
+                value={formik.values.name}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              {formik.errors.name && formik.touched.name && (
+                <span className="custom__error-message">
+                  {formik.errors.name}
+                </span>
+              )}
+            </Form.Item>
+            <Form.Item label={t("email")} required>
+              <Input
+                name="email"
+                placeholder={t("input_email")}
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              {formik.errors.email && formik.touched.email && (
+                <span className="custom__error-message">
+                  {formik.errors.email}
+                </span>
+              )}
+            </Form.Item>
+            <Form.Item label={t("phone_number")} required>
+              <Input
+                name="phoneNumber"
+                placeholder={t("input_phone_number")}
+                value={formik.values.phoneNumber}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              {formik.errors.phoneNumber && formik.touched.phoneNumber && (
+                <span className="custom__error-message">
+                  {formik.errors.phoneNumber}
+                </span>
+              )}
+            </Form.Item>
+            <Form.Item label={t("class")} required>
+              <Select
+                showSearch
+                style={{
+                  display: "inline-block",
+                  width: "100%",
+                  marginRight: "10px",
+                }}
+                placeholder={t("input_class")}
+                onChange={(value) => formik.setFieldValue("class", value)}
+              >
+                {classes.map((option) => (
+                  <Option key={option._id} value={option._id}>
+                    {option.name}
+                  </Option>
+                ))}
+              </Select>
+              {formik.errors.class && formik.touched.class && (
+                <span className="custom__error-message">
+                  {formik.errors.class}
+                </span>
+              )}
+            </Form.Item>
+            <Form.Item {...tailLayout}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                className={!fieldError(formik) ? "disable-submit-button" : ""}
+                disabled={!fieldError(formik)}
+              >
+                {t("register")}
+              </Button>
+            </Form.Item>
+          </Form>
+        </div>
+      ) : null}
     </div>
   );
 }

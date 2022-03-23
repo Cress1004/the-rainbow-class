@@ -8,8 +8,8 @@ import {
 } from "./constant";
 
 export function transformAddressData(data) {
-  return data && data.address && data.description
-    ? `${data.description}, ${data.address.ward.name}, ${data.address.district.name}, ${data.address.province.name}`
+  return data && data.address
+    ? `${data.description ? `${data.description},` : ''} ${data.address.ward.name}, ${data.address.district.name}, ${data.address.province.name}`
     : "";
 }
 

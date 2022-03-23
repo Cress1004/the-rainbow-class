@@ -1,17 +1,17 @@
 const mongoose = require('mongoose');
 
 const locationSchema = mongoose.Schema({
-    id: Number,
+    id: String,
     name: String,
     districts: {
         type: mongoose.Schema.Types.Array,
         nested: {
-            id: Number,
+            id: String,
             name: String,
             wards: {
                 type: mongoose.Schema.Types.Array,
                 nested: {
-                    id: Number,
+                    id: String,
                     name: String,
                 }
             }

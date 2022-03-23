@@ -11,6 +11,7 @@ import {
   SUPER_ADMIN,
 } from "../../../../common/constant";
 import PermissionDenied from "../../../Error/PermissionDenied";
+import { checkAdminAndMonitorRole } from "../../../../common/function";
 
 const { Item } = Form;
 const layout = {
@@ -32,7 +33,7 @@ function VolunteerDetail(props) {
       if (response.data.success) {
         const data = response.data.userRole;
         setUserRole(data);
-      } 
+      }
     });
     Axios.post(`/api/volunteers/${id}`, { id: id, userId: userId }).then(
       (response) => {
@@ -90,24 +91,20 @@ function VolunteerDetail(props) {
   if (userRole.subRole === SUPER_ADMIN || !volunteerData) {
     return <PermissionDenied />;
   }
-  console.log(volunteerData.address)
+
   return (
     <div className="volunteer-detail">
       <div className="volunteer-detail__title">{t("volunteer_detail")}</div>
       <Row>
         <Col span={14} />
-        {(userRole.isAdmin ||
-          userRole.subRole === CLASS_MONITOR ||
-          userRole.subRole === SUB_CLASS_MONITOR) && (
+        {checkAdminAndMonitorRole(userRole) ? (
           <Col span={6}>
             <Button type="primary" className="edit-volunteer-button">
               <Link to={`/volunteers/${id}/edit`}>{t("edit_volunteer")}</Link>
             </Button>
           </Col>
-        )}
-        {(userRole.isAdmin ||
-          userRole.subRole === CLASS_MONITOR ||
-          userRole.subRole === SUB_CLASS_MONITOR) && (
+        ) : null}
+        {checkAdminAndMonitorRole(userRole) ? (
           <Col span={4}>
             <Button
               type="danger"
@@ -117,7 +114,7 @@ function VolunteerDetail(props) {
               {t("delete_volunteer")}
             </Button>
           </Col>
-        )}
+        ) : null}
       </Row>
       {volunteerData && (
         <>

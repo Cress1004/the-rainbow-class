@@ -25,7 +25,13 @@ const connect = mongoose
   .then(() => console.log("MongoDB Connected..."))
   .catch((err) => console.log(err));
 
-app.use(cors());
+const corsOptions = {
+  origin: "http://localhost:3000",
+  credentials: true,
+  optionSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 
 //to not get any deprecation warning or error
 //support parsing of application/x-www-form-urlencoded post data
@@ -68,6 +74,6 @@ server = app.listen(port, () => {
   console.log(`Server Listening on ${port}`);
 });
 
-const sockets = require('./socket/socket');
+const sockets = require("./socket/socket");
 
 sockets.init(server);

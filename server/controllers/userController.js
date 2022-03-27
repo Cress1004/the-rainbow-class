@@ -63,9 +63,9 @@ const getMyClasschedule = async (req, res) => {
   }
 };
 
-const getRole = async (req, res) => {
+const getCurrentUser = async (req, res) => {
   try {
-    const user = await getUserDataById(req.body.userId);
+    const user = req.user;
     const classData = await getClassByUser(user);
     var userRole = {};
     userRole.role = user.role;
@@ -85,5 +85,5 @@ const getRole = async (req, res) => {
 module.exports = {
   getMySchedule,
   getMyClasschedule,
-  getRole,
+  getCurrentUser
 };

@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const { CV } = require("../models/CV");
 
 const sockets = {};

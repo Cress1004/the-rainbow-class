@@ -81,9 +81,9 @@ const getUserData = async (id) => {
   }
 };
 
-const updateProfile = async (data) => {
+const updateProfile = async (currentUser, data) => {
   try {
-    const user = await User.findOne({ _id: data._id });
+    const user = await User.findOne({ _id: currentUser._id });
     user.email = data.email;
     user.name = data.name;
     user.phoneNumber = data.phoneNumber;
@@ -99,10 +99,10 @@ const updateProfile = async (data) => {
   }
 };
 
-const changeAvatar = async (data) => {
+const changeAvatar = async (currentUser, newAvtLink) => {
   try {
-    const user = await User.findOne({ _id: data._id });
-    user.image = data.image;
+    const user = await User.findOne({ _id: currentUser._id });
+    user.image = newAvtLink;
     return user.save();
   } catch (error) {
     console.log("can't update user avatar");

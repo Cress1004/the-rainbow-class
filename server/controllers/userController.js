@@ -19,10 +19,9 @@ const { getVolunteerByUserId } = require("../repository/volunteerRepository");
 
 const getMySchedule = async (req, res) => {
   try {
-    const userId = req.body.userId;
-    const user = await getUserDataById(userId);
+    const user = req.user;
     if (user.role === VOLUNTEER_ROLE) {
-      const schedules = await getAllSchedulesByVolunteer(req.body.userId);
+      const schedules = await getAllSchedulesByVolunteer(user._id);
       Promise.all(
         schedules.map((schedule) => {
           if (schedule.scheduleType === LESSON_SCHEDULE)

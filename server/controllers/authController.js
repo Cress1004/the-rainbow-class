@@ -194,7 +194,7 @@ const setNewPassword = async (req, res) => {
 
 const getUserProfile = async (req, res) => {
   try {
-    const userData = await getUserData(req.body.userId);
+    const userData = await getUserData(req.user._id);
     res.status(200).json({ success: true, userData: userData });
   } catch (error) {
     res.status(400).send(error);
@@ -203,7 +203,7 @@ const getUserProfile = async (req, res) => {
 
 const updateUserProfile = async (req, res) => {
   try {
-    await updateProfile(req.body.userData);
+    await updateProfile(req.user, req.body);
     res.status(200).json({ success: true });
   } catch (error) {
     res.status(400).send(error);
@@ -212,7 +212,7 @@ const updateUserProfile = async (req, res) => {
 
 const updateAvatar = async (req, res) => {
   try {
-    await changeAvatar(req.body);
+    await changeAvatar(req.user, req.body.newAvtLink);
     res.status(200).json({ success: true });
   } catch (error) {
     res.status(400).send(error);

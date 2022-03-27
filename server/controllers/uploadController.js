@@ -16,7 +16,7 @@ const uploadAvatar = async (req, res) => {
       const link = `${DEFAULT_AVATAR_PATH}${req.file.filename}`;
       res.status(200).json({ success: true, link: link });
     } catch (error) {
-      console.log("fail to upload avatar");
+      console.log("fail to get link avatar");
     }
   });
 };

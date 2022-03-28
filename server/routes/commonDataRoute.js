@@ -4,11 +4,11 @@ const { auth } = require("../middleware/auth");
 const { checkAdminRole } = require('../middleware/checkRole');
 const router = express.Router();
 
-router.post("/location", auth, getLocation);
+router.get("/location", auth, getLocation);
 router.post("/province/:id/get-districts", auth, getDistricts);
 router.post("/district/:id/get-wards", auth, getWards);
-router.post("/student-types", auth, getStudentTypes);
+router.get("/student-types", auth, getStudentTypes);
 router.post("/add-student-type", checkAdminRole, addStudentType)
-router.post("/student-types/:id", checkAdminRole, deleteStudentType);
+router.post("/student-types/:id/delete", checkAdminRole, deleteStudentType);
 
 module.exports = router;

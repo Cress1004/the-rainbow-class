@@ -4,10 +4,10 @@ const { auth, checkAdminAndMonitorRole } = require("../middleware/auth");
 const { addNewStudent, getStudents, getStudentInfo, editStudent, deleteStudentData, updateStudentOverview } = require("../controllers/studentController");
 
 router.post("/add-student", checkAdminAndMonitorRole, addNewStudent);
-router.post("/get-students", auth, getStudents);
-router.post("/:id", auth, getStudentInfo);
+router.get("/get-students", auth, getStudents);
+router.get("/:id", auth, getStudentInfo);
 router.post("/:id/edit", checkAdminAndMonitorRole, editStudent);
-router.post("/:id/delete", checkAdminAndMonitorRole, deleteStudentData);
+router.get("/:id/delete", checkAdminAndMonitorRole, deleteStudentData);
 router.post("/:id/update-overview", checkAdminAndMonitorRole, updateStudentOverview);
 
 module.exports = router;

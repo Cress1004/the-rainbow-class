@@ -6,7 +6,10 @@ const {
   SUB_CLASS_MONITOR,
 } = require("../defaultValues/constant");
 const { getStudentByUserId } = require("../repository/studentRepository");
-const { getUserDataById, checkDuplicateMail } = require("../repository/userRepository");
+const {
+  getUserDataById,
+  checkDuplicateMail,
+} = require("../repository/userRepository");
 const {
   storeVolunteer,
   getListVolunteers,
@@ -30,15 +33,14 @@ const addNewVolunteer = async (req, res) => {
         currentVolunteer.role === CLASS_MONITOR ||
         currentVolunteer.role === SUB_CLASS_MONITOR
       ) {
-        if(await checkDuplicateMail(volunteerData.email)) {
+        if (await checkDuplicateMail(volunteerData.email)) {
           res.status(200).json({ success: false, message: "Duplicate Email!" });
         } else {
           await storeVolunteer(volunteerData);
           await activeAccount(volunteerData.email);
-          res.status(200).json({ success: true });      
+          res.status(200).json({ success: true });
         }
-      }
-      else {
+      } else {
         res.status(200).json({ success: false, message: "Permission Denied" });
       }
     } else {
@@ -51,7 +53,7 @@ const addNewVolunteer = async (req, res) => {
 
 const getAllVolunteer = async (req, res) => {
   try {
-    const userId = req.body.userId;
+    const userId = req.user._id;
     const currentUser = await getUserDataById(userId);
     const volunteers = await getListVolunteers(currentUser);
     res.status(200).json({ success: true, volunteers: volunteers });
@@ -62,8 +64,8 @@ const getAllVolunteer = async (req, res) => {
 
 const getVolunteerData = async (req, res) => {
   try {
-    const userId = req.body.userId;
-    const volunteerId = req.body.id;
+    const userId = req.user._id;
+    const volunteerId = req.params.id;
     const user = await getUserDataById(userId);
     var volunteer;
     //TODO: check
@@ -102,9 +104,8 @@ const editVolunteer = async (req, res) => {
 
 const deleteVolunteerData = async (req, res) => {
   try {
-    const userId = req.body.userId;
-    const volunteerId = req.body.volunteerId;
-    const user = await getUserDataById(userId);
+    const volunteerId = req.params.id;
+    const user = req.user;
     if (!(await deleteVolunteer(user, volunteerId)))
       res.status(404).json({ success: false, messsage: "Permission Denied" });
     else {

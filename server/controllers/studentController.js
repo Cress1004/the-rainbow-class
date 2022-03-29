@@ -1,7 +1,4 @@
-const {
-  STUDENT_ROLE,
-  SUPER_ADMIN,
-} = require("../defaultValues/constant");
+const { STUDENT_ROLE, SUPER_ADMIN } = require("../defaultValues/constant");
 const { compareObjectId } = require("../function/commonFunction");
 const {
   storeStudent,
@@ -35,8 +32,7 @@ const addNewStudent = async (req, res) => {
 
 const getStudents = async (req, res) => {
   try {
-    const userId = req.body.userId;
-    const user = await getUserDataById(userId);
+    const user = req.user;
     const allStudents = await getListStudents();
     let students;
     if (user.role === STUDENT_ROLE) {
@@ -44,7 +40,7 @@ const getStudents = async (req, res) => {
         compareObjectId(item.user.class._id, user.class)
       );
     } else {
-      const currentVolunteer = await getVolunteerByUserId(userId);
+      const currentVolunteer = await getVolunteerByUserId(user._id);
       if (currentVolunteer.role === SUPER_ADMIN) {
         students = null;
       } else if (currentVolunteer.isAdmin) {
@@ -63,7 +59,7 @@ const getStudents = async (req, res) => {
 
 const getStudentInfo = async (req, res) => {
   try {
-    const studentData = await getStudentById(req.body.studentId);
+    const studentData = await getStudentById(req.params.id);
     res.status(200).json({ success: true, studentData: studentData });
   } catch (error) {
     res.status(400).send(error);
@@ -87,7 +83,7 @@ const editStudent = async (req, res) => {
 
 const deleteStudentData = async (req, res) => {
   try {
-    await deleteStudent(req.body.studentId);
+    await deleteStudent(req.params.id);
     res.status(200).json({ success: true });
   } catch (error) {
     res.status(400).send(error);
@@ -109,5 +105,5 @@ module.exports = {
   getStudentInfo,
   editStudent,
   deleteStudentData,
-  updateStudentOverview
+  updateStudentOverview,
 };

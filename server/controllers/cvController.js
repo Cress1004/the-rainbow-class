@@ -13,7 +13,7 @@ const getListCV = async (req, res) => {
 
 const getCVDataById = async (req, res) => {
   try {
-    const cvId = req.body.cvId;
+    const cvId = req.params.id;
     const currentUser = req.currentUser;
     const currentVolunteer = req.currentVolunteer;
     const cvData = await getCVById(cvId, currentUser, currentVolunteer);

@@ -47,9 +47,9 @@ const addClass = async (req, res) => {
 const editClassData = async (req, res) => {
   try {
     const data = req.body;
-    const currentUser = await getUserDataById(data.userId);
+    const currentUser = req.currentUser;
     if (currentUser.role === VOLUNTEER_ROLE) {
-      const currentVolunteer = await getVolunteerByUserId(data.userId);
+      const currentVolunteer = await getVolunteerByUserId(currentUser._id);
       const userClass = await getClassByUser(currentUser);
       if (
         currentVolunteer.isAdmin ||
@@ -72,7 +72,7 @@ const editClassData = async (req, res) => {
 
 const getClassData = async (req, res) => {
   try {
-    const classData = await findClassById(req.body.classId);
+    const classData = await findClassById(req.params.id);
     res
       .status(200)
       .json({ success: true, classData: await tranformClassData(classData) });
@@ -83,7 +83,7 @@ const getClassData = async (req, res) => {
 
 const deleteClassData = async (req, res) => {
   try {
-    await deleteClass(req.body.classId);
+    await deleteClass(req.params.id);
     res.status(200).json({ success: true });
   } catch (error) {
     res.status(400).send(error);
@@ -106,7 +106,7 @@ const getClassSchedule = async (req, res) => {
 
 const setClassMonitor = async (req, res) => {
   try {
-    const data = req.body.values;
+    const data = req.body.value;
     await setMonitor(data.classId, data.classMonitor, data.subClassMonitor);
     res.status(200).json({ success: true });
   } catch (error) {
@@ -116,7 +116,7 @@ const setClassMonitor = async (req, res) => {
 
 const getStudentWithAchievementByClass = async (req, res) => {
   try {
-    const classId = req.body.classId;
+    const classId = req.params.id;
     const classData = await findClassById(classId);
     const studentList = await getStudentByClass(classData);
     Promise.all(studentList.map((item) => getAchievementByStudentId(item))).then(
@@ -141,7 +141,7 @@ const getListClassWithName = async (req, res) => {
 
 const getAdminAndCurrentMonitor = async (req, res) => {
   try {
-    const classId = req.body.classId;
+    const classId = req.params.id;
     const currentUser = req.currentUser;
     const currentVolunteer = req.currentVolunteer;
     const currentClass = await findClassById(classId);

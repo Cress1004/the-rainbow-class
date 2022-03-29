@@ -25,8 +25,9 @@ const addLesson = async (req, res) => {
 
 const getListLessonByClass = async (req, res) => {
   try {
-    const userId = req.body.userId;
-    const classId = req.body.classId;
+    const userId = req.user._id;
+    const classId = req.params.id;
+    console.log(classId)
     const currentUser = await getUserDataById(userId);
     let flag = await checkCurrentUserBelongToClass(currentUser, classId);
     if(flag) {
@@ -42,8 +43,8 @@ const getListLessonByClass = async (req, res) => {
 
 const getLessonData = async (req, res) => {
   try {
-    const userId = req.body.userId;
-    const lessonId = req.body.lessonId;
+    const userId = req.user._id;
+    const lessonId = req.params.lessonId;
     const currentUser = await getUserDataById(userId);
     const lessonData = await findLesson(lessonId);
     let flag = await checkCurrentUserBelongToClass(currentUser, lessonData.class);
@@ -59,7 +60,7 @@ const getLessonData = async (req, res) => {
 
 const deleteLessonData = async (req, res) => {
   try {
-    await deleteLesson(req.body.lessonId);
+    await deleteLesson(req.params.lessonId);
     res.status(200).json({ success: true });
   } catch (error) {
     res.status(400).send(error);
@@ -77,7 +78,7 @@ const editLessonData = async (req, res) => {
 
 const assignLesson = async (req, res) => {
   try {
-    await addPaticipant(req.body);
+    await addPaticipant(req.body.scheduleId, req.user._id);
     res.status(200).json({ success: true });
   } catch (error) {
     res.status(400).send(error);
@@ -86,7 +87,7 @@ const assignLesson = async (req, res) => {
 
 const unassignLesson = async (req, res) => {
   try {
-    await removePaticipant(req.body);
+    await removePaticipant(req.body.scheduleId, req.user._id);
     res.status(200).json({ success: true });
   } catch (error) {
     res.status(400).send(error);

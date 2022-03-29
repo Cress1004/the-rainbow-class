@@ -1,3 +1,4 @@
+const { compareObjectId } = require("../function/commonFunction");
 const { Schedule } = require("../models/Schedule");
 const { storeAddress, updateAddress } = require("./commonRepository");
 
@@ -65,21 +66,21 @@ const updateSchedule = async (data) => {
   }
 };
 
-const addPaticipant = async (data) => {
+const addPaticipant = async (scheduleId, userId) => {
   try {
-    const schedule = await Schedule.findOne({ _id: data.scheduleId });
-    schedule.paticipants.push(data.userId);
+    const schedule = await Schedule.findOne({ _id: scheduleId });
+    schedule.paticipants.push(userId);
     schedule.save();
   } catch (error) {
     console.log("fail to add paticipant");
   }
 };
 
-const removePaticipant = async (data) => {
+const removePaticipant = async (scheduleId, currentUserId) => {
   try {
-    const schedule = await Schedule.findOne({ _id: data.scheduleId });
+    const schedule = await Schedule.findOne({ _id: scheduleId });
     Promise.all(
-      schedule.paticipants.filter((userId) => userId != data.userId)
+      schedule.paticipants.filter((userId) => !compareObjectId(userId, currentUserId))
     ).then((result) => {
       schedule.paticipants = result;
       schedule.save();

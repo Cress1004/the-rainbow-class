@@ -11,14 +11,7 @@ const storeNewLesson = async (data) => {
     const schedule = await storeNewSchedule({
       scheduleType: 0,
       teachOption: data.teachOption,
-      address: {
-        address: {
-          province: data.address.address.province,
-          district: data.address.address.district,
-          ward: data.address.address.ward,
-        },
-        description: data.address.description,
-      },
+      address: data.address,
       linkOnline: data.linkOnline,
       time: data.time,
     });

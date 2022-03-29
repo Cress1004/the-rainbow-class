@@ -11,6 +11,8 @@ dev.js
 request.http
 .DS_Store
 client/yarn.lock
+http_logger
+logs
 
 npm-debug.log*
 yarn-debug.kog*

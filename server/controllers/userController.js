@@ -45,8 +45,7 @@ const getMySchedule = async (req, res) => {
 
 const getMyClasschedule = async (req, res) => {
   try {
-    const userId = req.body.userId;
-    const user = await getUserDataById(userId);
+    const user = req.user;
     const scheduleLesson = await getClassScheduleByUser(user);
     const scheduleInterview = await getInterviewSchedule(user.class);
     const classData = await getClassByUser(user);

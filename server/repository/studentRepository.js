@@ -55,10 +55,11 @@ const getListStudents = async () => {
     return Student.find({})
       .populate({
         path: "user",
-        select: "name phoneNumber class",
+        select: "name phoneNumber class isActive",
         populate: { path: "class", select: "name" },
       })
-      .populate("studentTypes");
+      .populate("studentTypes")
+      .sort({ created_at: -1 });
   } catch (error) {
     console.log("fail to get list students");
   }

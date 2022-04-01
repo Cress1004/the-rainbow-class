@@ -6,7 +6,6 @@ const {
   getUserData,
   updateProfile,
   changeAvatar,
-  checkChangePassword,
   getUserDataByEmail,
   getUserDataById,
   comparePassword,
@@ -15,15 +14,18 @@ const fs = require("fs");
 const handlebars = require("handlebars");
 const { promisify } = require("util");
 const crypto = require("crypto");
+const { getCurrentUserRole } = require("./userController");
 const readFile = promisify(fs.readFile);
 
-const authentication = (req, res) => {
+const authentication = async (req, res) => {
+  const user = req.user;
+  const currentUserData = await getCurrentUserRole(user);
   res.status(200).json({
-    _id: req.user._id,
+    _id: user._id,
     isAuth: true,
-    email: req.user.email,
-    name: req.user.name,
-    role: req.user.role,
+    email: user.email,
+    name: user.name,
+    role: currentUserData,
     image: req.user.image,
   });
 };

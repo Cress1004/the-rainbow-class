@@ -11,10 +11,6 @@ const volunteerSchema = mongoose.Schema(
       default: 1, // 1: volunteer, 2: class_monitor, 3: sub_class_monitor, 4: superadmin
     },
     isAdmin: Boolean,
-    // class: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: "ClassName",
-    // },
   },
   {
     timestamps: {

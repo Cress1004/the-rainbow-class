@@ -1,5 +1,5 @@
 const { Volunteer } = require("../models/Volunteer");
-const { storeUser, updateUserData, deleteUser } = require("./userRepository");
+const { User } = require("../models/User");
 const {
   VOLUNTEER_ROLE,
   SUPER_ADMIN,
@@ -7,8 +7,8 @@ const {
   CLASS_MONITOR,
   SUB_CLASS_MONITOR,
 } = require("../defaultValues/constant");
-const { User } = require("../models/User");
 const { compareObjectId } = require("../function/commonFunction");
+const { storeUser, updateUserData, deleteUser } = require("./userRepository");
 
 const storeVolunteer = async (data) => {
   try {
@@ -80,11 +80,13 @@ const getVolunteerByUserId = async (userId) => {
 
 const getListVolunteers = async (user) => {
   try {
-    const allVolunteersData = await Volunteer.find({}).populate({
-      path: "user",
-      select: "name email phoneNumber class",
-      populate: { path: "class" },
-    });
+    const allVolunteersData = await Volunteer.find({})
+      .populate({
+        path: "user",
+        select: "name email phoneNumber class isActive",
+        populate: { path: "class" },
+      })
+      .sort({ created_at: -1 });
     if (user.role === VOLUNTEER_ROLE) {
       const currentVolunteer = await getVolunteerByUserId(user._id);
       if (currentVolunteer.role === SUPER_ADMIN) return null;

@@ -14,7 +14,6 @@ const {
 const {
   getAllSchedulesByVolunteer,
 } = require("../repository/scheduleRepository");
-const { getUserDataById } = require("../repository/userRepository");
 const { getVolunteerByUserId } = require("../repository/volunteerRepository");
 
 const getMySchedule = async (req, res) => {
@@ -65,13 +64,7 @@ const getCurrentUser = async (req, res) => {
   try {
     const user = req.user;
     const classData = await getClassByUser(user);
-    var userRole = {};
-    userRole.role = user.role;
-    if (userRole.role === VOLUNTEER_ROLE) {
-      const volunteer = await getVolunteerByUserId(user._id);
-      userRole.subRole = volunteer.role;
-      userRole.isAdmin = volunteer.isAdmin;
-    }
+    const userRole = await getCurrentUserRole(user);
     res
       .status(200)
       .json({ success: true, userRole: userRole, classId: classData._id });
@@ -80,8 +73,20 @@ const getCurrentUser = async (req, res) => {
   }
 };
 
+const getCurrentUserRole = async (user) => {
+  var userRole = {};
+  userRole.role = user.role;
+  if (userRole.role === VOLUNTEER_ROLE) {
+    const volunteer = await getVolunteerByUserId(user._id);
+    userRole.subRole = volunteer.role;
+    userRole.isAdmin = volunteer.isAdmin;
+  }
+  return userRole;
+}
+
 module.exports = {
   getMySchedule,
   getMyClasschedule,
-  getCurrentUser
+  getCurrentUser,
+  getCurrentUserRole
 };

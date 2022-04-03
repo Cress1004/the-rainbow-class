@@ -22,7 +22,7 @@ const findAllClasses = (user) => {
 
 const getAllClassesData = () => {
   try {
-    return ClassName.find({});
+    return ClassName.find({}).sort({ created_at: -1 });
   } catch (error) {
     console.log("cant get all classes data");
     return null;
@@ -155,5 +155,5 @@ module.exports = {
   getClassByUser,
   getAllClassesData,
   setMonitor,
-  listClassWithName
+  listClassWithName,
 };

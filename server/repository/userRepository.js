@@ -156,6 +156,15 @@ const findUserByToken = async (token) => {
   }
 };
 
+const getUserByVolunteer = async (volunteer) => {
+  try {
+    return await User.findOne({ _id: volunteer.user });
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
 module.exports = {
   storeUser,
   updateUserData,
@@ -168,5 +177,6 @@ module.exports = {
   getUserDataByEmail,
   checkDuplicateMail,
   findUserByToken,
-  comparePassword
+  comparePassword,
+  getUserByVolunteer
 };

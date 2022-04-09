@@ -43,9 +43,9 @@ const getVolunteerById = async (id) => {
   }
 };
 
-const getVolunteerByIdAndClassId = async (id, classId) => {
+const getVolunteerByIdAndClassId = async (volunteerData, classId) => {
   try {
-    return await Volunteer.findOne({ _id: id, class: classId })
+    return await Volunteer.findOne({ _id: volunteerData._id, class: classId })
       .populate({ path: "class", select: "name" })
       .populate({
         path: "user",
@@ -67,7 +67,7 @@ const getVolunteerByUserId = async (userId) => {
     if (user.role == VOLUNTEER_ROLE) {
       return await Volunteer.findOne({ user: user.id }).populate({
         path: "user",
-        select: "name email phoneNumber gender image address",
+        select: "name email phoneNumber gender image address role",
         populate: { path: "address", select: "address description" },
         populate: { path: "class", select: "name" },
       });

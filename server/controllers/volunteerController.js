@@ -1,7 +1,6 @@
 const {
   VOLUNTEER_ROLE,
   STUDENT_ROLE,
-  SUPER_ADMIN,
   CLASS_MONITOR,
   SUB_CLASS_MONITOR,
 } = require("../defaultValues/constant");
@@ -9,6 +8,7 @@ const { getStudentByUserId } = require("../repository/studentRepository");
 const {
   getUserDataById,
   checkDuplicateMail,
+  getUserByVolunteer,
 } = require("../repository/userRepository");
 const {
   storeVolunteer,
@@ -20,6 +20,7 @@ const {
   getVolunteerByUserId,
 } = require("../repository/volunteerRepository");
 const { activeAccount } = require("./authController");
+const { getCurrentUserRole } = require("./userController");
 
 const addNewVolunteer = async (req, res) => {
   try {
@@ -64,30 +65,35 @@ const getAllVolunteer = async (req, res) => {
 
 const getVolunteerData = async (req, res) => {
   try {
-    const userId = req.user._id;
     const volunteerId = req.params.id;
-    const user = await getUserDataById(userId);
+    const user = req.user;
+    const watchingVolunteer = await getVolunteerById(volunteerId);
+    const watchingVolunteerUser = await getUserByVolunteer(watchingVolunteer);
+    const volunteerRole = await getCurrentUserRole(watchingVolunteerUser);
     var volunteer;
     //TODO: check
     if (user.role === STUDENT_ROLE) {
-      const student = await getStudentByUserId(userId);
+      const student = await getStudentByUserId(user._id);
       volunteer = await getVolunteerByIdAndClassId(volunteerId, student.class);
     }
     if (user.role === VOLUNTEER_ROLE) {
-      const currentVolunteer = await getVolunteerByUserId(userId);
-      // TODO: check get volunteer in same class
-      if (currentVolunteer.role === VOLUNTEER_ROLE) {
+      const currentVolunteer = await getVolunteerByUserId(user._id);
+      if (currentVolunteer.isAdmin) {
+        volunteer = watchingVolunteer;
+      } else {
         volunteer = await getVolunteerByIdAndClassId(
           volunteerId,
           currentVolunteer.class
         );
-      } else if (currentVolunteer.role === SUPER_ADMIN) {
-        volunteer = null;
-      } else {
-        volunteer = await getVolunteerById(req.body.id);
       }
     }
-    res.status(200).json({ success: true, volunteer: volunteer });
+    res
+      .status(200)
+      .json({
+        success: true,
+        volunteer: volunteer,
+        volunteerRole: volunteerRole,
+      });
   } catch (error) {
     res.status(400).send(error);
   }

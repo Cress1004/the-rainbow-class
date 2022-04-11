@@ -46,6 +46,7 @@ const storeClass = (data) => {
     studentTypes: data.studentTypes,
     address: newAddress._id,
     defaultSchedule: data.defaultSchedule,
+    teachingOption: data.teachingOption,
   };
   const newClass = new ClassName(classData);
   newClass.save();
@@ -86,7 +87,7 @@ const getClassScheduleByUser = async (user) => {
 
 const tranformClassData = async (className) => {
   try {
-    const classData = await ClassName.findOne({ _id: className._id })
+    var classData = await ClassName.findOne({ _id: className._id })
       .populate("studentTypes")
       .populate("address", "_id address description")
       .populate({
@@ -99,11 +100,12 @@ const tranformClassData = async (className) => {
         select: "user",
         populate: { path: "user", select: "name" },
       });
+    classData = JSON.parse(JSON.stringify(classData));
     classData.students = await getStudentByClass(className);
     classData.volunteers = await getVolunteerByClass(className);
     return classData;
   } catch (error) {
-    console.log("transform class data fail");
+    console.log(error);
   }
 };
 

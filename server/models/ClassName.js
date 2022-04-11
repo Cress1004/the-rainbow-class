@@ -8,12 +8,6 @@ const classSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Address",
     },
-    students: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Student",
-      },
-    ],
     classMonitor: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Volunteer",
@@ -28,18 +22,10 @@ const classSchema = mongoose.Schema(
         ref: "StudentType",
       },
     ],
-    volunteers: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Volunteer",
-      },
-    ],
-    schedules: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Schedule",
-      },
-    ],
+    teachingOption: {
+      type: Number,
+      default: 0,  // 0: teach by class, 1: 1-to-1 tutoring
+    },
     defaultSchedule: [
       {
         key: Number,

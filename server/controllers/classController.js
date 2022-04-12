@@ -3,8 +3,12 @@ const {
   CLASS_MONITOR,
   SUB_CLASS_MONITOR,
 } = require("../defaultValues/constant");
-const { checkCurrentUserBelongToCurrentClass } = require("../function/commonFunction");
-const { getAchievementByStudentId } = require("../repository/achievementRepository");
+const {
+  checkCurrentUserBelongToCurrentClass,
+} = require("../function/commonFunction");
+const {
+  getAchievementByStudentId,
+} = require("../repository/achievementRepository");
 const {
   tranformClassData,
   storeClass,
@@ -18,9 +22,15 @@ const {
 } = require("../repository/classRepository");
 const { getInterviewSchedule } = require("../repository/cvRepository");
 const { getLessonsByCLass } = require("../repository/lessonRepository");
+const {
+  getPairTeachingByClass,
+} = require("../repository/pairTeachingRepository");
 const { getStudentByClass } = require("../repository/studentRepository");
 const { getUserDataById } = require("../repository/userRepository");
-const { getVolunteerByUserId, getCurrentClassMonitorAndAdmin } = require("../repository/volunteerRepository");
+const {
+  getVolunteerByUserId,
+  getCurrentClassMonitorAndAdmin,
+} = require("../repository/volunteerRepository");
 
 const getAllClasses = async (req, res) => {
   try {
@@ -96,9 +106,11 @@ const getClassSchedule = async (req, res) => {
     const scheduleLesson = await getLessonsByCLass(classId);
     const scheduleInterview = await getInterviewSchedule(classId);
     const classData = await findClassById(classId);
-    res
-      .status(200)
-      .json({ success: true, schedule: [...scheduleLesson, ...scheduleInterview], classData: classData });
+    res.status(200).json({
+      success: true,
+      schedule: [...scheduleLesson, ...scheduleInterview],
+      classData: classData,
+    });
   } catch (error) {
     res.status(400).send(error);
   }
@@ -119,11 +131,11 @@ const getStudentWithAchievementByClass = async (req, res) => {
     const classId = req.params.id;
     const classData = await findClassById(classId);
     const studentList = await getStudentByClass(classData);
-    Promise.all(studentList.map((item) => getAchievementByStudentId(item))).then(
-      (value) => {
-        res.status(200).json({ success: true, studentData: value });
-      }
-    );
+    Promise.all(
+      studentList.map((item) => getAchievementByStudentId(item))
+    ).then((value) => {
+      res.status(200).json({ success: true, studentData: value });
+    });
     // res.status(200).json({ success: true, studentData: studentList });
   } catch (error) {
     res.status(400).send(error);
@@ -145,7 +157,13 @@ const getAdminAndCurrentMonitor = async (req, res) => {
     const currentUser = req.currentUser;
     const currentVolunteer = req.currentVolunteer;
     const currentClass = await findClassById(classId);
-    if(checkCurrentUserBelongToCurrentClass(currentUser, currentVolunteer, currentClass)) {
+    if (
+      checkCurrentUserBelongToCurrentClass(
+        currentUser,
+        currentVolunteer,
+        currentClass
+      )
+    ) {
       const data = await getCurrentClassMonitorAndAdmin(classId);
       res.status(200).json({ success: true, data: data });
     } else {
@@ -155,6 +173,29 @@ const getAdminAndCurrentMonitor = async (req, res) => {
     res.status(400).send(error);
   }
 };
+
+// const getPairTeaching = async (req, res) => {
+//   try {
+//     const classId = req.params.id;
+//     const currentUser = req.currentUser;
+//     const currentVolunteer = req.currentVolunteer;
+//     const currentClass = await findClassById(classId);
+//     if (
+//       checkCurrentUserBelongToCurrentClass(
+//         currentUser,
+//         currentVolunteer,
+//         currentClass
+//       )
+//     ) {
+//       const data = await getPairTeachingByClass(currentClass);
+//       res.status(200).json({ success: true, pairsData: data });
+//     } else {
+//       res.status(200).json({ success: fasle, message: "Permission denied!" });
+//     }
+//   } catch (error) {
+//     res.status(400).send(error);
+//   }
+// };
 
 module.exports = {
   addClass,
@@ -166,5 +207,6 @@ module.exports = {
   setClassMonitor,
   getStudentWithAchievementByClass,
   getListClassWithName,
-  getAdminAndCurrentMonitor
+  getAdminAndCurrentMonitor,
+  // getPairTeaching,
 };

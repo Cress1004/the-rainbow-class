@@ -1,6 +1,8 @@
 const { STUDENT_ROLE } = require("../defaultValues/constant");
 const { compareObjectId } = require("../function/commonFunction");
+const { PairTeaching } = require("../models/PairTeaching");
 const { Student } = require("../models/Student");
+const { storeNewPairTeachingWithStudent } = require("./pairTeachingRepository");
 const { storeUser, updateUserData, deleteUser } = require("./userRepository");
 
 const storeStudent = async (data) => {
@@ -18,6 +20,7 @@ const storeStudent = async (data) => {
       studentTypes: data.studentTypes,
       user: newUser._id,
     });
+    await storeNewPairTeachingWithStudent(newStudent._id, data.class)
     return newStudent.save();
   } catch (error) {
     console.log("fail to store new student");

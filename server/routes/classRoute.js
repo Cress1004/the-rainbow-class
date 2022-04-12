@@ -11,6 +11,7 @@ const {
   getStudentWithAchievementByClass,
   getListClassWithName,
   getAdminAndCurrentMonitor,
+  getPairTeaching,
 } = require("../controllers/classController");
 const {
   addLesson,
@@ -42,6 +43,7 @@ router.post("/:id/edit", checkAdminAndMonitorRole, editClassData);
 router.post("/:id/add-lesson", checkAdminAndMonitorRole, addLesson);
 router.get("/:id/get-lessons", auth, getListLessonByClass);
 router.get("/:id/get-students", auth, getStudentWithAchievementByClass);
+// router.get("/:id/get-pairs", checkAdminAndMonitorRole, getPairTeaching);
 router.get("/:id/lessons/:lessonId", auth, getLessonData);
 router.get("/:id/lessons/:lessonId/delete", auth, deleteLessonData);
 router.post("/:id/lessons/:lessonId/edit", auth, editLessonData);

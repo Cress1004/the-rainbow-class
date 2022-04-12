@@ -2,6 +2,7 @@ const { VOLUNTEER_ROLE } = require("../defaultValues/constant");
 const { ClassName } = require("../models/ClassName");
 const { storeAddress, updateAddress } = require("./commonRepository");
 const { getLessonsByCLass } = require("./lessonRepository");
+const { getPairTeachingByClass } = require("./pairTeachingRepository");
 const { getStudentByClass } = require("./studentRepository");
 const {
   getVolunteerByClass,
@@ -103,6 +104,7 @@ const tranformClassData = async (className) => {
     classData = JSON.parse(JSON.stringify(classData));
     classData.students = await getStudentByClass(className);
     classData.volunteers = await getVolunteerByClass(className);
+    classData.pairsTeaching = await getPairTeachingByClass(className)
     return classData;
   } catch (error) {
     console.log(error);

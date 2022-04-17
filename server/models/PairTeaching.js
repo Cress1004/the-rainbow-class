@@ -12,7 +12,13 @@ const pairTeachingSchema = mongoose.Schema({
     class: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'ClassName'
-    }
+    },
+    address: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Address'
+    },
+    teachOption: Number,
+    linkOnline: String,
 })
 
 const PairTeaching = mongoose.model('PairTeaching', pairTeachingSchema);

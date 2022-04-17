@@ -17,6 +17,7 @@ const storeUser = async (data) => {
       address: address._id,
       role: data.role,
       class: data.class,
+      linkFacebook: data.linkFacebook,
     });
     return newUser.save();
   } catch (error) {
@@ -52,6 +53,8 @@ const updateUserData = async (data) => {
       user.name = data.name;
       user.gender = data.gender;
       user.phoneNumber = data.phoneNumber;
+      user.linkFacebook = data.linkFacebook;
+      user.class = data.class;
       if (user.address) {
         await updateAddress(user.address, data.address);
       } else {
@@ -87,6 +90,7 @@ const updateProfile = async (currentUser, data) => {
     user.email = data.email;
     user.name = data.name;
     user.phoneNumber = data.phoneNumber;
+    user.linkFacebook = data.linkFacebook;
     if (user.address) {
       await updateAddress(user.address, data.address);
     } else {

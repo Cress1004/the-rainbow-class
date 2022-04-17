@@ -18,6 +18,7 @@ const storeVolunteer = async (data) => {
       phoneNumber: data.phoneNumber,
       role: VOLUNTEER_ROLE,
       class: data.class,
+      linkFacebook: data.linkFacebook,
     });
     const newVolunteer = await new Volunteer({
       user: newUser._id,
@@ -32,10 +33,10 @@ const getVolunteerById = async (id) => {
   try {
     return await Volunteer.findOne({ _id: id }).populate({
       path: "user",
-      select: "name email phoneNumber gender image address class",
+      select: "name email phoneNumber gender image address class linkFacebook",
       populate: [
         { path: "address", select: "address description" },
-        { path: "class", select: "name" },
+        { path: "class" },
       ],
     });
   } catch (error) {
@@ -67,9 +68,9 @@ const getVolunteerByUserId = async (userId) => {
     if (user.role == VOLUNTEER_ROLE) {
       return await Volunteer.findOne({ user: user.id }).populate({
         path: "user",
-        select: "name email phoneNumber gender image address role",
+        select: "name email phoneNumber gender image address role linkFacebook",
         populate: { path: "address", select: "address description" },
-        populate: { path: "class", select: "name" },
+        populate: { path: "class" },
       });
     }
     return null;
@@ -117,10 +118,12 @@ const updateVolunteer = async (data) => {
       gender: data.gender,
       phoneNumber: data.phoneNumber,
       address: data.address,
+      linkFacebook: data.linkFacebook,
+      class: data.className,
     });
     return volunteer.save();
   } catch (error) {
-    console.log("fail to update volunteer");
+    console.log(error);
   }
 };
 

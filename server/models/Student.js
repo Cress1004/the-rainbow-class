@@ -16,6 +16,17 @@ const studentSchema = mongoose.Schema(
     interest: String,
     character: String,
     overview: String,
+    birthday: String,
+    admissionDay: String,
+    retirementDate: String,
+    updatedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    status: {
+      type: Number,
+      default: 0, //0: studing, 1: retired
+    },
   },
   {
     timestamps: {

@@ -7,9 +7,9 @@ const {
   updateStudent,
   deleteStudent,
   updateStudentDescription,
+  updateStudentStatus,
 } = require("../repository/studentRepository");
 const {
-  getUserDataById,
   checkDuplicateMail,
 } = require("../repository/userRepository");
 const { getVolunteerByUserId } = require("../repository/volunteerRepository");
@@ -81,6 +81,18 @@ const editStudent = async (req, res) => {
   }
 };
 
+const changeStudentStatus = async (req, res) => {
+  try {
+    const currentUser = req.currentUser;
+    const updateData = req.body.dataToSend;
+    await updateStudentStatus(currentUser, updateData);
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+
 const deleteStudentData = async (req, res) => {
   try {
     await deleteStudent(req.params.id);
@@ -106,4 +118,5 @@ module.exports = {
   editStudent,
   deleteStudentData,
   updateStudentOverview,
+  changeStudentStatus
 };

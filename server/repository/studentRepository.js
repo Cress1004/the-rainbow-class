@@ -5,6 +5,8 @@ const { Student } = require("../models/Student");
 const { storeNewPairTeachingWithStudent } = require("./pairTeachingRepository");
 const { storeUser, updateUserData, deleteUser } = require("./userRepository");
 
+const RETIRED = 1;
+
 const storeStudent = async (data) => {
   try {
     const newUser = await storeUser({
@@ -18,9 +20,11 @@ const storeStudent = async (data) => {
     const newStudent = await new Student({
       parentName: data.parentName,
       studentTypes: data.studentTypes,
+      birthday: data.birthday,
+      admissionDay: data.admissionDay,
       user: newUser._id,
     });
-    await storeNewPairTeachingWithStudent(newStudent._id, data.class)
+    await storeNewPairTeachingWithStudent(newStudent._id, data.class);
     return newStudent.save();
   } catch (error) {
     console.log("fail to store new student");
@@ -38,6 +42,10 @@ const getStudentById = async (id) => {
           { path: "address", select: "address description" },
           { path: "class", select: "name" },
         ],
+      })
+      .populate({
+        path: "updatedBy",
+        select: "name",
       });
   } catch (error) {
     console.log("fail to get student data");
@@ -96,6 +104,19 @@ const updateStudent = async (data) => {
   }
 };
 
+const updateStudentStatus = async (currentUser, updateData) => {
+  try {
+    const student = await Student.findOne({ _id: updateData.studentId });
+    student.retirementDate = updateData.retirementDate;
+    student.status = RETIRED;
+    student.updatedBy = currentUser._id;
+    return student.save();
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
 const deleteStudent = async (id) => {
   const student = await Student.findOne({ _id: id });
   await deleteUser(student.user._id);
@@ -139,4 +160,5 @@ module.exports = {
   getStudentByUserId,
   getStudentByClass,
   updateStudentDescription,
+  updateStudentStatus,
 };

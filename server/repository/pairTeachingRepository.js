@@ -1,10 +1,18 @@
 const { PairTeaching } = require("../models/PairTeaching");
+const { storeAddress } = require("./commonRepository");
 
-const storeNewPairTeachingWithStudent = async (studentId, classId) => {
+const storeNewPairTeachingWithStudent = async (data) => {
   try {
+    const address = await storeAddress(data.address);
     const newPair = await new PairTeaching({
-      student: studentId,
-      class: classId,
+      student: data.student,
+      address: address._id,
+      class: data.classId,
+      teachOption: data.teachOption,
+      subjects: data.subjects,
+      grade: data.grade,
+      numberOfLessonsPerWeek: data.numberOfLessonsPerWeek,
+      status: 1,
     });
     return newPair.save();
   } catch (error) {
@@ -26,7 +34,7 @@ const getPairTeachingByClass = async (classData) => {
         select: "user",
         populate: { path: "user", select: "name" },
       })
-      .sort({volunteer: null});
+      .sort({ volunteer: null });
     return pairs;
   } catch (err) {
     console.log(err);

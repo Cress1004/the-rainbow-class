@@ -1,5 +1,7 @@
 const express = require("express");
-const { updateCommentStudent } = require("../controllers/achievementController");
+const {
+  updateCommentStudent,
+} = require("../controllers/achievementController");
 const {
   addClass,
   getClassData,
@@ -12,6 +14,7 @@ const {
   getListClassWithName,
   getAdminAndCurrentMonitor,
   getPairTeaching,
+  newPairTeaching,
 } = require("../controllers/classController");
 const {
   addLesson,
@@ -24,9 +27,7 @@ const {
 } = require("../controllers/lessonController");
 const { getMyClasschedule } = require("../controllers/userController");
 const { auth, checkAdminAndMonitorRole } = require("../middleware/auth");
-const {
-  checkAdminRole,
-} = require("../middleware/checkRole");
+const { checkAdminRole } = require("../middleware/checkRole");
 const router = express.Router();
 
 router.post("/add-class", checkAdminRole, addClass);
@@ -36,7 +37,11 @@ router.post("/comment-student", checkAdminAndMonitorRole, updateCommentStudent);
 router.get("/my-class-schedules", auth, getMyClasschedule);
 router.post("/get-class-schedules", auth, getClassSchedule);
 router.get("/:id", auth, getClassData);
-router.get("/:id/get-admin-monitor", checkAdminAndMonitorRole, getAdminAndCurrentMonitor);
+router.get(
+  "/:id/get-admin-monitor",
+  checkAdminAndMonitorRole,
+  getAdminAndCurrentMonitor
+);
 router.post("/:id/set-monitor", checkAdminRole, setClassMonitor);
 router.get("/:id/delete", checkAdminRole, deleteClassData);
 router.post("/:id/edit", checkAdminAndMonitorRole, editClassData);
@@ -44,6 +49,7 @@ router.post("/:id/add-lesson", checkAdminAndMonitorRole, addLesson);
 router.get("/:id/get-lessons", auth, getListLessonByClass);
 router.get("/:id/get-students", auth, getStudentWithAchievementByClass);
 // router.get("/:id/get-pairs", checkAdminAndMonitorRole, getPairTeaching);
+router.post("/:id/pairs/new", checkAdminAndMonitorRole, newPairTeaching);
 router.get("/:id/lessons/:lessonId", auth, getLessonData);
 router.get("/:id/lessons/:lessonId/delete", auth, deleteLessonData);
 router.post("/:id/lessons/:lessonId/edit", auth, editLessonData);

@@ -23,7 +23,7 @@ const {
 const { getInterviewSchedule } = require("../repository/cvRepository");
 const { getLessonsByCLass } = require("../repository/lessonRepository");
 const {
-  getPairTeachingByClass,
+  getPairTeachingByClass, storeNewPairTeachingWithStudent,
 } = require("../repository/pairTeachingRepository");
 const { getStudentByClass } = require("../repository/studentRepository");
 const { getUserDataById } = require("../repository/userRepository");
@@ -197,6 +197,16 @@ const getAdminAndCurrentMonitor = async (req, res) => {
 //   }
 // };
 
+const newPairTeaching = async (req, res) => {
+  try {
+    const data = req.body;
+    await storeNewPairTeachingWithStudent(data);
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 module.exports = {
   addClass,
   getClassData,
@@ -209,4 +219,5 @@ module.exports = {
   getListClassWithName,
   getAdminAndCurrentMonitor,
   // getPairTeaching,
+  newPairTeaching,
 };

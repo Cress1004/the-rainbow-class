@@ -15,6 +15,7 @@ const {
   getAdminAndCurrentMonitor,
   getPairTeaching,
   newPairTeaching,
+  setPairVolunteer,
 } = require("../controllers/classController");
 const {
   addLesson,
@@ -50,6 +51,7 @@ router.get("/:id/get-lessons", auth, getListLessonByClass);
 router.get("/:id/get-students", auth, getStudentWithAchievementByClass);
 // router.get("/:id/get-pairs", checkAdminAndMonitorRole, getPairTeaching);
 router.post("/:id/pairs/new", checkAdminAndMonitorRole, newPairTeaching);
+router.post("/:id/pairs/:pairId/set-volunteer", checkAdminAndMonitorRole, setPairVolunteer);
 router.get("/:id/lessons/:lessonId", auth, getLessonData);
 router.get("/:id/lessons/:lessonId/delete", auth, deleteLessonData);
 router.post("/:id/lessons/:lessonId/edit", auth, editLessonData);

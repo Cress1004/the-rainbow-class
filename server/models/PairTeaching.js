@@ -22,7 +22,7 @@ const pairTeachingSchema = mongoose.Schema({
   subjects: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Subjects",
+      ref: "Subject",
     },
   ],
   grade: {
@@ -32,7 +32,7 @@ const pairTeachingSchema = mongoose.Schema({
   numberOfLessonsPerWeek: Number,
   status: {
     type: Number,
-    default: 0, // 0: unregister, 1: registered
+    default: 0, // 0: unregister, 1: registered & waitting, 2: paired
   },
 });
 

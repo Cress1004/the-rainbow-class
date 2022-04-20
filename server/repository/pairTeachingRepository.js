@@ -34,6 +34,12 @@ const getPairTeachingByClass = async (classData) => {
         select: "user",
         populate: { path: "user", select: "name" },
       })
+      .populate({
+        path: "grade",
+      })
+      .populate({
+        path: "subjects",
+      })
       .sort({ volunteer: null });
     return pairs;
   } catch (err) {
@@ -42,7 +48,20 @@ const getPairTeachingByClass = async (classData) => {
   }
 };
 
+const setVolunteer = async (data) => {
+  try {
+    const pair = await PairTeaching.findOne({ _id: data.pairId });
+    pair.volunteer = data.volunteer;
+    pair.status = 2;
+    return pair.save();
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
 module.exports = {
   storeNewPairTeachingWithStudent,
   getPairTeachingByClass,
+  setVolunteer
 };

@@ -19,6 +19,10 @@ const pairTeachingSchema = mongoose.Schema({
     },
     teachOption: Number,
     linkOnline: String,
+    status: {
+        type: Number,
+        default: 0, // 0: unregister, 1: registered
+      },
 })
 
 const PairTeaching = mongoose.model('PairTeaching', pairTeachingSchema);

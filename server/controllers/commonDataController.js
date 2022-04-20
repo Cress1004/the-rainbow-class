@@ -6,6 +6,16 @@ const {
   removeStudentType,
   getDistrictsByProvinceId,
   getWardsByDistrictId,
+  findAllSubjects,
+  getSubjectById,
+  storeSubject,
+  removeSubject,
+  findGrades,
+  storeGrade,
+  removeGrade,
+  findSemesters,
+  storeSemester,
+  removeSemester,
 } = require("../repository/commonRepository");
 
 const getLocation = async (req, res) => {
@@ -29,7 +39,7 @@ const getDistricts = async (req, res) => {
 
 const getWards = async (req, res) => {
   try {
-    const provinceId = req.body.provinceId
+    const provinceId = req.body.provinceId;
     const districtId = req.body.districtId;
     const wards = await getWardsByDistrictId(provinceId, districtId);
     res.status(200).json({ success: true, wards: wards });
@@ -74,6 +84,87 @@ const deleteStudentType = async (req, res) => {
   }
 };
 
+const getSubjects = async (req, res) => {
+  try {
+    const subjects = await findAllSubjects();
+    res.status(200).json({ success: true, subjects: subjects });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+const addSubject = async (req, res) => {
+  try {
+    await storeSubject(req.body);
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+const deleteSubject = async (req, res) => {
+  try {
+    removeSubject(req.body.id);
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+const getGrades = async (req, res) => {
+  try {
+    const grades = await findGrades();
+    res.status(200).json({ success: true, grades: grades });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+const addGrade = async (req, res) => {
+  try {
+    await storeGrade(req.body);
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+const deleteGrade = async (req, res) => {
+  try {
+    removeGrade(req.body.id);
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+const getSemesters = async (req, res) => {
+  try {
+    const semesters = await findSemesters();
+    res.status(200).json({ success: true, semesters: semesters });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+const addSemester = async (req, res) => {
+  try {
+    await storeSemester(req.body);
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+const deleteSemester = async (req, res) => {
+  try {
+    removeSemester(req.body.id);
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 module.exports = {
   getLocation,
   getStudentTypes,
@@ -82,4 +173,13 @@ module.exports = {
   deleteStudentType,
   getDistricts,
   getWards,
+  getSubjects,
+  addSubject,
+  deleteSubject,
+  getGrades,
+  addGrade,
+  deleteGrade,
+  getSemesters,
+  addSemester,
+  deleteSemester,
 };

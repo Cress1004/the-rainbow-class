@@ -87,13 +87,11 @@ const getVolunteerData = async (req, res) => {
         );
       }
     }
-    res
-      .status(200)
-      .json({
-        success: true,
-        volunteer: volunteer,
-        volunteerRole: volunteerRole,
-      });
+    res.status(200).json({
+      success: true,
+      volunteer: volunteer,
+      volunteerRole: volunteerRole,
+    });
   } catch (error) {
     res.status(400).send(error);
   }
@@ -122,10 +120,21 @@ const deleteVolunteerData = async (req, res) => {
   }
 };
 
+const getCurrentVolunteer = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const currentVolunteerData = await getVolunteerByUserId(userId);
+    res.status(200).json({ success: true, volunteerData: currentVolunteerData});
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 module.exports = {
   addNewVolunteer,
   getAllVolunteer,
   getVolunteerData,
   editVolunteer,
   deleteVolunteerData,
+  getCurrentVolunteer
 };

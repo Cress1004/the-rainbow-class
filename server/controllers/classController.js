@@ -23,10 +23,12 @@ const {
 const { getInterviewSchedule } = require("../repository/cvRepository");
 const { getLessonsByCLass } = require("../repository/lessonRepository");
 const {
-  getPairTeachingByClass, storeNewPairTeachingWithStudent, setVolunteer,
+  setVolunteer,
+  registerPairTeachingWithStudent,
+  getPairByVolunteer,
+  getPairByVolunteerId,
 } = require("../repository/pairTeachingRepository");
 const { getStudentByClass } = require("../repository/studentRepository");
-const { getUserDataById } = require("../repository/userRepository");
 const {
   getVolunteerByUserId,
   getCurrentClassMonitorAndAdmin,
@@ -200,7 +202,7 @@ const getAdminAndCurrentMonitor = async (req, res) => {
 const newPairTeaching = async (req, res) => {
   try {
     const data = req.body;
-    await storeNewPairTeachingWithStudent(data);
+    await registerPairTeachingWithStudent(data);
     res.status(200).json({ success: true });
   } catch (error) {
     res.status(400).send(error);
@@ -210,13 +212,22 @@ const newPairTeaching = async (req, res) => {
 const setPairVolunteer = async (req, res) => {
   try {
     const data = req.body;
-    console.log(data);
     await setVolunteer(data);
     res.status(200).json({ success: true });
   } catch (error) {
     res.status(400).send(error);
   }
-}
+};
+
+const getPairDataByVolunteer = async (req, res) => {
+  try {
+    const volunteerId = req.body.volunteerId;
+    const pairData = await getPairByVolunteerId(volunteerId);
+    res.status(200).json({ success: true, pairData: pairData });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
 
 module.exports = {
   addClass,
@@ -231,5 +242,6 @@ module.exports = {
   getAdminAndCurrentMonitor,
   // getPairTeaching,
   newPairTeaching,
-  setPairVolunteer
+  setPairVolunteer,
+  getPairDataByVolunteer,
 };

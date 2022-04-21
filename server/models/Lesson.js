@@ -23,6 +23,10 @@ const lessonSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "ClassName",
   },
+  pairTeaching: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "PairTeaching"
+  }
 });
 
 const Lesson = mongoose.model("Lesson", lessonSchema);

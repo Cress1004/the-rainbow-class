@@ -1,18 +1,30 @@
 const { PairTeaching } = require("../models/PairTeaching");
 const { storeAddress } = require("./commonRepository");
 
-const storeNewPairTeachingWithStudent = async (data) => {
+const registerPairTeachingWithStudent = async (data) => {
   try {
     const address = await storeAddress(data.address);
+    const pair = await PairTeaching.findOne({ student: data.student });
+
+    pair.address = address._id;
+    pair.teachOption = data.teachOption;
+    pair.subjects = data.subjects;
+    pair.grade = data.grade;
+    pair.numberOfLessonsPerWeek = data.numberOfLessonsPerWeek;
+    pair.status = 1;
+
+    return pair.save();
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+const storeNewPairTeachingWithStudent = async (studentId, classId) => {
+  try {
     const newPair = await new PairTeaching({
-      student: data.student,
-      address: address._id,
-      class: data.classId,
-      teachOption: data.teachOption,
-      subjects: data.subjects,
-      grade: data.grade,
-      numberOfLessonsPerWeek: data.numberOfLessonsPerWeek,
-      status: 1,
+      student: studentId,
+      class: classId,
     });
     return newPair.save();
   } catch (error) {
@@ -60,8 +72,38 @@ const setVolunteer = async (data) => {
   }
 };
 
+const getPairByVolunteerId = async (volunteerId) => {
+  try {
+    const pair = await PairTeaching.findOne({ volunteer: volunteerId })
+      .populate({
+        path: "student",
+        select: "user",
+        populate: { path: "user", select: "name" },
+      })
+      .populate({
+        path: "volunteer",
+        select: "user",
+        populate: { path: "user", select: "name" },
+      })
+      .populate({
+        path: "grade",
+      })
+      .populate({
+        path: "subjects",
+      })
+      .populate({ path: "address" })
+      .sort({ volunteer: null });
+    return pair;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+};
+
 module.exports = {
   storeNewPairTeachingWithStudent,
   getPairTeachingByClass,
-  setVolunteer
+  setVolunteer,
+  registerPairTeachingWithStudent,
+  getPairByVolunteerId,
 };

@@ -1,37 +1,41 @@
 const { compareObjectId } = require("../function/commonFunction");
 const { Schedule } = require("../models/Schedule");
 const { storeAddress, updateAddress } = require("./commonRepository");
+const { getPairById } = require("./pairTeachingRepository");
 
 const storeInterviewSchedule = async (data) => {
-  try{
+  try {
     const newSchedule = new Schedule(data);
-    return newSchedule.save()
+    return newSchedule.save();
   } catch (error) {
     console.log(error);
     return null;
   }
-}
+};
 
 const updateInterviewSchedule = async (cv, interviewTime, participants) => {
   try {
-    const schedule = await Schedule.findOne({_id: cv.schedule});
+    const schedule = await Schedule.findOne({ _id: cv.schedule });
     schedule.time = interviewTime;
     schedule.paticipants = participants;
     schedule.save();
-  } catch (error) {
-    
-  }
-}
+  } catch (error) {}
+};
 
-const storeNewSchedule = async (data) => {
+const storeNewSchedule = async (data, pairId) => {
   try {
-    const address = storeAddress(data.address);
+    const address = await storeAddress(data.address);
+    const pairTeaching = await getPairById(pairId);
     const newSchedule = await new Schedule(data);
+    if (pairId) {
+      newSchedule.personInCharge = pairTeaching.volunteer.user._id;
+      newSchedule.paticipants = [pairTeaching.volunteer.user._id];
+    }
     newSchedule.address = address._id;
     newSchedule.save();
     return newSchedule;
   } catch (error) {
-    console.log("fail to store Schedule");
+    console.log(error);
   }
 };
 
@@ -80,7 +84,9 @@ const removePaticipant = async (scheduleId, currentUserId) => {
   try {
     const schedule = await Schedule.findOne({ _id: scheduleId });
     Promise.all(
-      schedule.paticipants.filter((userId) => !compareObjectId(userId, currentUserId))
+      schedule.paticipants.filter(
+        (userId) => !compareObjectId(userId, currentUserId)
+      )
     ).then((result) => {
       schedule.paticipants = result;
       schedule.save();
@@ -101,7 +107,7 @@ const getAllSchedulesByVolunteer = async (data) => {
 const updatePersonInCharge = async (scheduleId, personInChargeId) => {
   try {
     const schedule = await Schedule.findOne({ _id: scheduleId });
-    console.log(scheduleId)
+    console.log(scheduleId);
     schedule.personInCharge = personInChargeId;
     return schedule.save();
   } catch (error) {
@@ -119,5 +125,5 @@ module.exports = {
   getAllSchedulesByVolunteer,
   updatePersonInCharge,
   storeInterviewSchedule,
-  updateInterviewSchedule
+  updateInterviewSchedule,
 };

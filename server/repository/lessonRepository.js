@@ -8,20 +8,22 @@ const {
 
 const storeNewLesson = async (data) => {
   try {
-    console.log(data.pairId)
-    const schedule = await storeNewSchedule({
-      scheduleType: 0,
-      teachOption: data.teachOption,
-      address: data.address,
-      linkOnline: data.linkOnline,
-      time: data.time,
-    });
+    const schedule = await storeNewSchedule(
+      {
+        scheduleType: 0,
+        teachOption: data.teachOption,
+        address: data.address,
+        linkOnline: data.linkOnline,
+        time: data.time,
+      },
+      data.pairId
+    );
     const newLesson = await new Lesson({
       title: data.name,
       description: data.description,
       schedule: schedule._id,
       class: data.classId,
-      pairTeaching: data.pairId
+      pairTeaching: data.pairId,
     });
     return newLesson.save();
   } catch (error) {

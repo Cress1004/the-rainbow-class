@@ -100,10 +100,39 @@ const getPairByVolunteerId = async (volunteerId) => {
   }
 };
 
+const getPairById = async (pairId) => {
+  try {
+    const pair = await PairTeaching.findOne({ _id: pairId })
+      .populate({
+        path: "student",
+        select: "user",
+        populate: { path: "user", select: "name" },
+      })
+      .populate({
+        path: "volunteer",
+        select: "user",
+        populate: { path: "user", select: "name" },
+      })
+      .populate({
+        path: "grade",
+      })
+      .populate({
+        path: "subjects",
+      })
+      .populate({ path: "address" })
+      .sort({ volunteer: null });
+    return pair;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+};
+
 module.exports = {
   storeNewPairTeachingWithStudent,
   getPairTeachingByClass,
   setVolunteer,
   registerPairTeachingWithStudent,
   getPairByVolunteerId,
+  getPairById,
 };

@@ -27,6 +27,8 @@ const lessonSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "PairTeaching"
   }
+}, {
+  timestamps: {createdAt: 'created_at', updatedAt: 'updated_at', deleteAt: 'delete_at'}
 });
 
 const Lesson = mongoose.model("Lesson", lessonSchema);

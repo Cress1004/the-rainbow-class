@@ -131,7 +131,7 @@ const getLessonsByPairId = async (pairId) => {
       })
       .populate("class");
   } catch (error) {
-    console.log("fail to get user schedule");
+    console.log(error);
   }
 };
 

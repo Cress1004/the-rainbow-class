@@ -10,18 +10,36 @@ const getAchievementByStudentId = async (student) => {
   }
 };
 
+const storeNewAchievement = async (data) => {
+  try {
+    const newAchievement = await new Achievement(data);
+    newAchievement.save();
+    return newAchievement;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
 const updateAchievement = async (data) => {
   try {
     const lessonId = data.lessonId;
     const commentData = data.commentData;
     Promise.all(
       commentData.map(async (item) => {
-        var achievement = await Achievement.findOne({ student: item.studentId, lesson: lessonId });
-        if(achievement) {
+        var achievement = await Achievement.findOne({
+          student: item.studentId,
+          lesson: lessonId,
+        });
+        if (achievement) {
           achievement.comment = item.comment;
           achievement.save();
         } else {
-          var newAchievement = await new Achievement({student: item.studentId, lesson: lessonId, comment: item.comment});
+          var newAchievement = await new Achievement({
+            student: item.studentId,
+            lesson: lessonId,
+            comment: item.comment,
+          });
           newAchievement.save();
         }
       })
@@ -36,4 +54,5 @@ const updateAchievement = async (data) => {
 module.exports = {
   getAchievementByStudentId,
   updateAchievement,
+  storeNewAchievement
 };

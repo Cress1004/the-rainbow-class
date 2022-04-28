@@ -1,4 +1,4 @@
-const { saveNewReport } = require("../repository/reportRepository");
+const { saveNewReport, getReportsByPair } = require("../repository/reportRepository");
 
 const newReport = async (req, res) => {
   try {
@@ -9,6 +9,16 @@ const newReport = async (req, res) => {
   }
 };
 
+const getReportByPairAndMonth = async (req, res) => {
+  try {
+    const reports = await getReportsByPair(req.body.pairId, req.body.month);
+    res.status(200).json({ success: true, reports: reports });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 module.exports = {
   newReport,
+  getReportByPairAndMonth,
 };

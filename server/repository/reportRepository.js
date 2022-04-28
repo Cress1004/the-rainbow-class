@@ -23,6 +23,48 @@ const saveNewReport = async (data) => {
   }
 };
 
+const getReportsByPair = async (pairId, month) => {
+  try {
+    const reports = await Report.find({ pair: pairId })
+      .populate({
+        path: "achievement",
+        populate: [
+          {
+            path: "student",
+            select: "user",
+            populate: { path: "user", select: "name" },
+          },
+          {
+            path: "lesson",
+            select: "title schedule",
+            populate: { path: "schedule", select: "time" },
+          },
+        ],
+      })
+      .populate({
+        path: "subject",
+        select: "title",
+      })
+      .populate({
+        path: "pair",
+        populate: {
+          path: "volunteer",
+          select: "user",
+          populate: { path: "user", select: "name" },
+        },
+      })
+      .sort({ createdAt: -1 });
+    const result = reports.filter((item) => {
+      const monthTime = item.achievement.lesson.schedule.time.date.slice(0, 7);
+      return monthTime == month;
+    });
+    return result;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   saveNewReport,
+  getReportsByPair,
 };

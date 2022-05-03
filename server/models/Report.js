@@ -2,10 +2,7 @@ const mongoose = require("mongoose");
 
 const reportSchema = mongoose.Schema(
   {
-    lessonDescription: {
-      type: String,
-      maxLengh: 5000,
-    },
+    lessonDescription: String,
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Volunteer",

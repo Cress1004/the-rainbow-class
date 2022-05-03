@@ -138,6 +138,21 @@ const getStudentByClass = async (className) => {
   }
 };
 
+const getStudentByClassId = async (classId) => {
+  try {
+    const allStudents = await Student.find({}).populate({
+      path: "user",
+      select: "name class",
+    });
+    return allStudents.filter((item) =>
+      compareObjectId(item.user.class._id, classId)
+    );
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
 const updateStudentDescription = async (data) => {
   try {
     const student = await Student.findOne({ _id: data.id });
@@ -161,4 +176,5 @@ module.exports = {
   getStudentByClass,
   updateStudentDescription,
   updateStudentStatus,
+  getStudentByClassId,
 };

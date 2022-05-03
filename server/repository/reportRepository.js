@@ -1,5 +1,10 @@
+const { compareObjectId } = require("../function/commonFunction");
 const { Report } = require("../models/Report");
 const { storeNewAchievement } = require("./achievementRepository");
+const {
+  getStudentByClass,
+  getStudentByClassId,
+} = require("./studentRepository");
 
 const saveNewReport = async (data) => {
   try {
@@ -64,7 +69,93 @@ const getReportsByPair = async (pairId, month) => {
   }
 };
 
+const saveTeachByClassReports = async (reports) => {
+  try {
+    for (var i = 0; i < reports.length; i++) {
+      await saveNewReport(reports[i]);
+    }
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+const getReportsByVolunteer = async (volunteerId, month) => {
+  try {
+    const reports = await Report.find({ createdBy: volunteerId })
+      .populate({
+        path: "achievement",
+        populate: [
+          {
+            path: "student",
+            select: "user",
+            populate: { path: "user", select: "name" },
+          },
+          {
+            path: "lesson",
+            select: "title schedule",
+            populate: { path: "schedule", select: "time" },
+          },
+        ],
+      })
+      .sort({ createdAt: -1 });
+    const result = reports.filter((item) => {
+      const monthTime = item.achievement.lesson.schedule.time.date.slice(0, 7);
+      return monthTime == month;
+    });
+    return result;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const getReportByStudent = async (reports, student) => {
+  return {
+    student: student,
+    achievement: reports.filter((item) =>
+      compareObjectId(item.achievement.student._id, student._id)
+    ),
+  };
+};
+
+const getReportsByClass = async (classId, month) => {
+  try {
+    const reports = await Report.find({})
+      .populate({
+        path: "achievement",
+        populate: [
+          {
+            path: "student",
+            select: "user",
+            populate: { path: "user", select: "name class" },
+          },
+          {
+            path: "lesson",
+            select: "title schedule",
+            populate: { path: "schedule", select: "time" },
+          },
+        ],
+      })
+      .sort({ createdAt: -1 });
+    const result = reports.filter((item) => {
+      const monthTime = item.achievement.lesson.schedule.time.date.slice(0, 7);
+      return (
+        monthTime == month &&
+        compareObjectId(item.achievement.student.user.class, classId)
+      );
+    });
+    return result;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
 module.exports = {
   saveNewReport,
   getReportsByPair,
+  saveTeachByClassReports,
+  getReportsByVolunteer,
+  getReportsByClass,
+  getReportByStudent,
 };

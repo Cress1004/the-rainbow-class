@@ -6,7 +6,10 @@ const {
   findLesson,
   deleteLesson,
   editLesson,
+  getLessonByClassAndMonth,
+  getReportByLesson,
 } = require("../repository/lessonRepository");
+const { getReportsByClass } = require("../repository/reportRepository");
 const {
   removePaticipant,
   addPaticipant,
@@ -108,6 +111,28 @@ const checkCurrentUserBelongToClass = async (currentUser, classId) => {
   }
 };
 
+const getLessonsAndAchievementByClassAndMonth = async (req, res) => {
+  try {
+    const lessons = await getLessonByClassAndMonth(
+      req.body.classId,
+      req.body.month
+    );
+    const reports = await getReportsByClass(req.body.classId, req.body.month);
+    if (lessons.length) {
+      Promise.all(lessons.map((item) => getReportByLesson(reports, item))).then(
+        (value) => {
+          res.status(200).json({ success: true, lessonsWithReport: value });
+        }
+      );
+      return;
+    }
+    res.status(200).json({ success: true, lessonsWithReport: [] });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send(error);
+  }
+};
+
 module.exports = {
   addLesson,
   getListLessonByClass,
@@ -116,4 +141,5 @@ module.exports = {
   editLessonData,
   assignLesson,
   unassignLesson,
+  getLessonsAndAchievementByClassAndMonth,
 };

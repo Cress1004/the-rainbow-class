@@ -1,3 +1,4 @@
+const { compareObjectId } = require("../function/commonFunction");
 const { Lesson } = require("../models/Lesson");
 const { deleteAddress } = require("./commonRepository");
 const {
@@ -135,6 +136,31 @@ const getLessonsByPairId = async (pairId) => {
   }
 };
 
+const getReportByLesson = async (reports, lesson) => {
+  return {
+    lesson: lesson,
+    report: reports.filter((item) =>
+      compareObjectId(item.achievement.lesson._id, lesson._id)
+    ),
+  };
+};
+
+const getLessonByClassAndMonth = async (classId, month) => {
+  try {
+    const lessons = await Lesson.find({ class: classId })
+      .populate("schedule")
+      .sort({ createdAt: -1 });
+    const result = lessons.filter((lesson) => {
+      const monthTime = lesson.schedule.time.date.slice(0, 7);
+      return monthTime == month;
+    });
+    return result;
+  } catch (error) {
+    console.log(error);
+    return null
+  }
+};
+
 module.exports = {
   storeNewLesson,
   getLessonsByCLass,
@@ -144,4 +170,6 @@ module.exports = {
   getLessonBySchedule,
   getAllLessonsByClass,
   getLessonsByPairId,
+  getLessonByClassAndMonth,
+  getReportByLesson,
 };

@@ -136,6 +136,11 @@ const getReportsByClass = async (classId, month) => {
           },
         ],
       })
+      .populate({
+        path: "createdBy",
+        select: "user",
+        populate: { path: "user", select: "name class" },
+      })
       .sort({ createdAt: -1 });
     const result = reports.filter((item) => {
       const monthTime = item.achievement.lesson.schedule.time.date.slice(0, 7);

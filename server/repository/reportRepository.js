@@ -82,6 +82,7 @@ const saveTeachByClassReports = async (reports) => {
 
 const getReportsByVolunteer = async (volunteerId, month) => {
   try {
+    console.log(volunteerId, month)
     const reports = await Report.find({ createdBy: volunteerId })
       .populate({
         path: "achievement",
@@ -106,6 +107,7 @@ const getReportsByVolunteer = async (volunteerId, month) => {
     return result;
   } catch (error) {
     console.log(error);
+    return null;
   }
 };
 

@@ -125,10 +125,20 @@ const deleteStudent = async (id) => {
 
 const getStudentByClass = async (className) => {
   try {
-    const allStudents = await Student.find({}).populate({
-      path: "user",
-      select: "name class",
-    });
+    const allStudents = await Student.find({})
+      .populate({ path: "studentTypes" })
+      .populate({
+        path: "user",
+        select: "name email phoneNumber gender image address class",
+        populate: [
+          { path: "address", select: "address description" },
+          { path: "class", select: "name" },
+        ],
+      })
+      .populate({
+        path: "updatedBy",
+        select: "name",
+      });
     return allStudents.filter((item) =>
       compareObjectId(item.user.class._id, className._id)
     );

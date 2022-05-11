@@ -94,17 +94,17 @@ const getListVolunteers = async (user) => {
       if (currentVolunteer.isAdmin) return allVolunteersData;
       else {
         return allVolunteersData.filter(
-          (item) => item.user.class._id.toString() === user.class.toString()
+          (item) => item.user.class?._id.toString() === user.class.toString()
         );
       }
     }
     if (user.role === STUDENT_ROLE) {
       return allVolunteersData.filter((item) =>
-        compareObjectId(item.user.class._id, user.class)
+        compareObjectId(item.user.class?._id, user.class)
       );
     }
   } catch (error) {
-    console.log("fail to get list volunteers");
+    console.log(error);
   }
 };
 
@@ -151,14 +151,19 @@ const getVolunteerByClass = async (className) => {
   try {
     const allVolunteers = await Volunteer.find({}).populate({
       path: "user",
-      select: "name class",
+      select:
+        "name email phoneNumber gender image address role linkFacebook class",
+      populate: [
+        { path: "address", select: "address description" },
+        { path: "class", select: "_id name" },
+      ],
     });
     const vol = allVolunteers.filter((item) =>
-      compareObjectId(item.user.class._id, className._id)
+      compareObjectId(item.user.class?._id, className._id)
     );
     return vol;
   } catch (error) {
-    console.log("fail to get student by class");
+    console.log(error);
     return null;
   }
 };

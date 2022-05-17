@@ -140,7 +140,7 @@ const getReportByLesson = async (reports, lesson) => {
   return {
     lesson: lesson,
     report: reports.filter((item) =>
-      compareObjectId(item.achievement.lesson._id, lesson._id)
+      compareObjectId(item.achievement?.lesson._id, lesson?._id)
     ),
   };
 };

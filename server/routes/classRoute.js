@@ -26,6 +26,7 @@ const {
   assignLesson,
   unassignLesson,
   getLessonsAndAchievementByClassAndMonth,
+  getLessonsAndAchievementByClassAndSemester,
 } = require("../controllers/lessonController");
 const { getMyClasschedule } = require("../controllers/userController");
 const { auth, checkAdminAndMonitorRole } = require("../middleware/auth");
@@ -50,6 +51,7 @@ router.post("/:id/edit", checkAdminAndMonitorRole, editClassData);
 router.post("/:id/add-lesson", auth, addLesson);
 router.get("/:id/get-lessons", auth, getListLessonByClass);
 router.post("/:id/get-lessons-achievement-by-class-and-month", auth, getLessonsAndAchievementByClassAndMonth);
+router.post("/:id/get-lessons-by-class-and-semester", auth, getLessonsAndAchievementByClassAndSemester);
 router.get("/:id/get-students", auth, getStudentWithAchievementByClass);
 // router.get("/:id/get-pairs", checkAdminAndMonitorRole, getPairTeaching);
 router.post("/:id/pairs/new", checkAdminAndMonitorRole, newPairTeaching);

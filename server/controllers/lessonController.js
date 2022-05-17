@@ -9,11 +9,15 @@ const {
   getLessonByClassAndMonth,
   getReportByLesson,
 } = require("../repository/lessonRepository");
-const { getReportsByClass } = require("../repository/reportRepository");
+const {
+  getReportsByClass,
+  getReportByStudent,
+} = require("../repository/reportRepository");
 const {
   removePaticipant,
   addPaticipant,
 } = require("../repository/scheduleRepository");
+const { getStudentByClassId } = require("../repository/studentRepository");
 const { getUserDataById } = require("../repository/userRepository");
 const { getVolunteerByUserId } = require("../repository/volunteerRepository");
 
@@ -133,6 +137,57 @@ const getLessonsAndAchievementByClassAndMonth = async (req, res) => {
   }
 };
 
+const getAllReportBySemester = async (classId, monthRange) => {
+  let allReports = [];
+  let allLessons = [];
+  for (let index = 0; index < monthRange?.length; index++) {
+    allLessons.push({
+      month: monthRange[index],
+      lessons: await getLessonByClassAndMonth(classId, monthRange[index]),
+    });
+    allReports = allReports.concat(await getReportsByClass(classId, monthRange[index]));
+  }
+  return { allReports, allLessons };
+};
+
+const getLessonsAndAchievementByClassAndSemester = async (req, res) => {
+  try {
+    const monthRange = req.body.monthRange;
+    const classId = req.body.classId;
+    const allReportsBySem = await getAllReportBySemester(classId, monthRange);
+    let allLessons = allReportsBySem.allLessons;
+    let allReports = allReportsBySem.allReports;
+    let lessonsWithReports = [];
+    let allAchievement = [];
+    for (let index = 0; index < allLessons.length; index++) {
+      for (let i = 0; i < allLessons[index].lessons.length; i++) {
+        const currentLesson = allLessons[index].lessons[i];
+        lessonsWithReports.push({
+          month: allLessons[index].month,
+          lesson: currentLesson,
+          report: await getReportByLesson(allReports, currentLesson),
+        });
+      }
+    }
+    const studentList = await getStudentByClassId(classId);
+    for (let index = 0; index < studentList.length; index++) {
+      allAchievement.push(
+        await getReportByStudent(allReports, studentList[index])
+      );
+    }
+    res
+      .status(200)
+      .json({
+        success: true,
+        lessonsWithReport: lessonsWithReports,
+        allAchievement: allAchievement,
+      });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send(error);
+  }
+};
+
 module.exports = {
   addLesson,
   getListLessonByClass,
@@ -142,4 +197,5 @@ module.exports = {
   assignLesson,
   unassignLesson,
   getLessonsAndAchievementByClassAndMonth,
+  getLessonsAndAchievementByClassAndSemester,
 };

@@ -82,7 +82,6 @@ const saveTeachByClassReports = async (reports) => {
 
 const getReportsByVolunteer = async (volunteerId, month) => {
   try {
-    console.log(volunteerId, month)
     const reports = await Report.find({ createdBy: volunteerId })
       .populate({
         path: "achievement",
@@ -99,6 +98,7 @@ const getReportsByVolunteer = async (volunteerId, month) => {
           },
         ],
       })
+      .populate({ path: "subject", select: "title" })
       .sort({ createdAt: -1 });
     const result = reports.filter((item) => {
       const monthTime = item.achievement.lesson.schedule.time.date.slice(0, 7);
@@ -115,7 +115,7 @@ const getReportByStudent = async (reports, student) => {
   return {
     student: student,
     achievement: reports.filter((item) =>
-      compareObjectId(item.achievement.student._id, student._id)
+      compareObjectId(item.achievement?.student._id, student?._id)
     ),
   };
 };

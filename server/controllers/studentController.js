@@ -8,10 +8,9 @@ const {
   deleteStudent,
   updateStudentDescription,
   updateStudentStatus,
+  getStudentByClassId,
 } = require("../repository/studentRepository");
-const {
-  checkDuplicateMail,
-} = require("../repository/userRepository");
+const { checkDuplicateMail } = require("../repository/userRepository");
 const { getVolunteerByUserId } = require("../repository/volunteerRepository");
 const { activeAccount } = require("./authController");
 
@@ -92,7 +91,6 @@ const changeStudentStatus = async (req, res) => {
   }
 };
 
-
 const deleteStudentData = async (req, res) => {
   try {
     await deleteStudent(req.params.id);
@@ -111,6 +109,23 @@ const updateStudentOverview = async (req, res) => {
   }
 };
 
+const getStudentsDataByFilter = async (req, res) => {
+  try {
+    const filterData = req.body;
+    const studentByClass = await getStudentByClassId(filterData.class);
+    const studentByTypes = studentByClass.filter((item) => {
+      const studentTypeArray = item.studentTypes.map((i) => i._id);
+      return filterData.studentType.every((ai) =>
+        studentTypeArray.includes(ai)
+      );
+    });
+    const students = studentByTypes;
+    res.status(200).json({ success: true, students: students });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 module.exports = {
   addNewStudent,
   getStudents,
@@ -118,5 +133,6 @@ module.exports = {
   editStudent,
   deleteStudentData,
   updateStudentOverview,
-  changeStudentStatus
+  changeStudentStatus,
+  getStudentsDataByFilter,
 };

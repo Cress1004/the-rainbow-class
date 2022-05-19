@@ -150,10 +150,15 @@ const getStudentByClass = async (className) => {
 
 const getStudentByClassId = async (classId) => {
   try {
-    const allStudents = await Student.find({}).populate({
-      path: "user",
-      select: "name class",
-    });
+    const allStudents = await Student.find({})
+      .populate({ path: "studentTypes" })
+      .populate({
+        path: "user",
+        select: "name email phoneNumber class",
+        populate: [
+          { path: "class", select: "name" },
+        ],
+      })
     return allStudents.filter((item) =>
       compareObjectId(item.user.class._id, classId)
     );

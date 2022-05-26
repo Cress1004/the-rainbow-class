@@ -1,11 +1,18 @@
 const { compareObjectId } = require("../function/commonFunction");
 const { Schedule } = require("../models/Schedule");
 const { storeAddress, updateAddress } = require("./commonRepository");
+const { createNewNoti } = require("./notificationRepository");
 const { getPairById } = require("./pairTeachingRepository");
 
 const storeInterviewSchedule = async (data) => {
   try {
     const newSchedule = new Schedule(data);
+    // for (let index = 0; index < data.paticipants?.length; index++) {
+    //   await createNewNoti({
+    //     userId: data.paticipants[index],
+    //     type: data.scheduleType === 0 ? 1 : 2, //1: lessson, 2: interview
+    //   });
+    // }
     return newSchedule.save();
   } catch (error) {
     console.log(error);
@@ -74,9 +81,14 @@ const addPaticipant = async (scheduleId, userId) => {
   try {
     const schedule = await Schedule.findOne({ _id: scheduleId });
     schedule.paticipants.push(userId);
+    await createNewNoti({
+      userId: userId,
+      type: schedule.scheduleType === 0 ? 1 : 2, //1: lessson, 2: interview
+      schedule: schedule._id,
+    });
     schedule.save();
   } catch (error) {
-    console.log("fail to add paticipant");
+    console.log(error);
   }
 };
 
@@ -107,8 +119,12 @@ const getAllSchedulesByVolunteer = async (data) => {
 const updatePersonInCharge = async (scheduleId, personInChargeId) => {
   try {
     const schedule = await Schedule.findOne({ _id: scheduleId });
-    console.log(scheduleId);
     schedule.personInCharge = personInChargeId;
+    await createNewNoti({
+      userId: personInChargeId,
+      type: schedule.scheduleType === 0 ? 1 : 2, //1: lessson, 2: interview
+      schedule: schedule._id,
+    });
     return schedule.save();
   } catch (error) {
     console.log("fail to update person incharge");

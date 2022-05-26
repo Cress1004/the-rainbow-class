@@ -8,9 +8,9 @@ const NotificationSchema = mongoose.Schema(
     },
     type: Number, // 0: newCV, ...
     read: {
-        type: Boolean,
-        default: false, //false: unread, true: read
-      },
+      type: Boolean,
+      default: false, //false: unread, true: read
+    },
   },
   {
     timestamps: {

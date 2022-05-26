@@ -1,9 +1,22 @@
-const { getNotificationByUser } = require("../repository/notificationRepository");
+const {
+  getNotificationByUser,
+  updateNotificationStatusRead,
+} = require("../repository/notificationRepository");
 
 const getNotification = async (req, res) => {
   try {
-    const noti = await getNotificationByUser(req.user)
+    const noti = await getNotificationByUser(req.user);
     res.status(200).json({ success: true, notifications: noti });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+const updateNotiStatus = async (req, res) => {
+  try {
+    const notiId = req.params.id;
+    await updateNotificationStatusRead(notiId);
+    res.status(200).json({ success: true });
   } catch (error) {
     res.status(400).send(error);
   }
@@ -11,4 +24,5 @@ const getNotification = async (req, res) => {
 
 module.exports = {
   getNotification,
+  updateNotiStatus
 };

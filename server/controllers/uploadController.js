@@ -30,6 +30,7 @@ const createNewCV = async (req, res) => {
       res.status(200).json({ success: false, message: message });
     }
     try {
+      console.log(req.file)
       const link = `${DEFAULT_CV_PATH}${req.file.filename}`;
       storeCV(userData, link);
       res.status(200).json({ success: true });

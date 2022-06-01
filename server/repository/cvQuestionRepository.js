@@ -23,25 +23,35 @@ const editQuestionData = async (data) => {
 
 const getAllActiveQuestions = async () => {
   try {
-    return CVQuestion.find({deleted: false});
+    return CVQuestion.find({ deleted: false });
   } catch (error) {
     console.log(error);
     return null;
   }
 };
 
+const getAllActiveQuestionsForCV = async () => {
+  try {
+    return CVQuestion.find({ deleted: false }).select("content isRequired");
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
 const removeQuestion = async (id) => {
-    try {
-      return await CVQuestion.delete({ _id: id });
-    } catch (error) {
-      console.log(error);
-      return null;
-    }
-  };
+  try {
+    return await CVQuestion.delete({ _id: id });
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
 
 module.exports = {
   storeQuestion,
   getAllActiveQuestions,
   editQuestionData,
-  removeQuestion
+  removeQuestion,
+  getAllActiveQuestionsForCV,
 };

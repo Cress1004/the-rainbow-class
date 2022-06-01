@@ -1,6 +1,5 @@
 const { NotiCV } = require("../models/NotiCV");
 const { Notification } = require("../models/Notification");
-const { findClassById } = require("./classRepository");
 const { getCurrentClassMonitorAndAdmin } = require("./volunteerRepository");
 
 const createNewNoti = async (data) => {

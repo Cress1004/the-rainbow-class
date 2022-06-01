@@ -27,7 +27,7 @@ const connect = mongoose
   .catch((err) => console.log(err));
 
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: `http://localhost:3000` ,
   credentials: true,
   optionSuccessStatus: 200,
 };

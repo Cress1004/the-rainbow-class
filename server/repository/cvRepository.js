@@ -1,5 +1,6 @@
 const { compareObjectId } = require("../function/commonFunction");
 const { CV } = require("../models/CV");
+const { storeCVAnswer } = require("./cvAnswerRepository");
 const { storeFreeTime, getFreeTimeByCVId } = require("./freeTimeRepository");
 const { createCVNotification } = require("./notificationRepository");
 const {
@@ -17,9 +18,17 @@ const storeCV = async (userData, link) => {
       class: userData.selectedClass,
       note: userData.note,
     };
-    const cv = await new CV(cvData);
-    const freeTimeList = userData.freeTime.split(",");
+    const cvAnswers = JSON.parse(userData.answers)
+    const freeTimeList = JSON.parse(userData.freeTime);
 
+    const cv = await new CV(cvData);
+    for (const item of cvAnswers) {
+      await storeCVAnswer({
+        cv: cv._id,
+        question: item.questionId,
+        content: item.content,
+      });
+    }
     for (const item of freeTimeList) {
       var data = item.split("-");
       await storeFreeTime({

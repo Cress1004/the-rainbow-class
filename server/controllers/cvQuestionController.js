@@ -1,5 +1,5 @@
 const constant = require("../defaultValues/constant");
-const { storeQuestion, getAllActiveQuestions, editQuestionData, removeQuestion } = require("../repository/cvQuestionRepository");
+const { storeQuestion, getAllActiveQuestions, editQuestionData, removeQuestion, getAllActiveQuestionsForCV } = require("../repository/cvQuestionRepository");
 
 const addNewQuestion = async (req, res) => {
   try {
@@ -40,9 +40,19 @@ const deleteQuestion = async (req, res) => {
     }
   };
 
+  const getQuestionForCV = async (req, res) => {
+    try {
+      const questions = await getAllActiveQuestionsForCV();
+      res.status(200).json({ success: true, questions: questions });
+    } catch (error) {
+      res.status(400).send(error);
+    }
+  };
+
 module.exports = {
   addNewQuestion,
   getAllCVQuestions,
   editQuestion,
-  deleteQuestion
+  deleteQuestion,
+  getQuestionForCV
 };

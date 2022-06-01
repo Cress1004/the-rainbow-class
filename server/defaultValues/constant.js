@@ -4,9 +4,9 @@ module.exports = {
   SUB_CLASS_MONITOR: 2,
   CLASS_MONITOR: 3,
   SUPER_ADMIN: 4,
-  DEFAULT_IMAGE_PATH: "http://localhost:5000/images/",
-  DEFAULT_AVATAR_PATH: "http://localhost:5000/avatars/",
-  DEFAULT_CV_PATH: "http://localhost:5000/cv/",
+  DEFAULT_IMAGE_PATH: "https://the-rainbow-class.herokuapp.com/images/",
+  DEFAULT_AVATAR_PATH: "https://the-rainbow-class.herokuapp.com/avatars/",
+  DEFAULT_CV_PATH: "https://the-rainbow-class.herokuapp.com/cv/",
   CV_FOLDER_PATH: "server/uploads/cv",
   AVATAR_FOLDER_PATH: "server/uploads/avatars",
   WEEKDAY: [

@@ -27,10 +27,7 @@ const connect = mongoose
   .catch((err) => console.log(err));
 
 const corsOptions = {
-  origin: [
-    `https://the-rainbow-class-homepage.herokuapp.com`,
-    `https://the-rainbow-class-client.herokuapp.com`,
-  ],
+  origin: `https://the-rainbow-class-homepage.herokuapp.com`,
   credentials: true,
   optionSuccessStatus: 200,
 };

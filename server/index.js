@@ -66,13 +66,14 @@ if (process.env.NODE_ENV === "production") {
   // All the javascript and css files will be read and served from this folder
   app.use(express.static("../client/build"));
 
-  // index.html for all page routes    html or routing and naviagtion
-  // app.get("*", (req, res) => {
-  //   res.sendFile(path.resolve(__dirname, "../client", "build", "index.html"));
-  // });
+  index.html for all page routes    html or routing and naviagtion
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "../client", "build", "index.html"));
+  });
   // app.get("/*", function(req, res) {
   //   res.sendFile(path.join(__dirname, "index.html"));
   // });
+ 
 }
 
 const port = process.env.PORT || 5000;

@@ -25,15 +25,12 @@ const createNewCV = async (req, res) => {
   uploadCVFile.single("cvFile")(req, res, (err) => {
     let message;
     const userData = req.body;
-    console.log(req.body);
     if (err instanceof multer.MulterError) {
       message = "fail to upload cv file!";
       res.status(200).json({ success: false, message: message });
     }
     try {
       const link = `${DEFAULT_CV_PATH}${req.file.filename}`;
-      console.log(link);
-
       storeCV(userData, link);
       res.status(200).json({ success: true });
     } catch (error) {

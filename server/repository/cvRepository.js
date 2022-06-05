@@ -8,13 +8,14 @@ const {
   updateInterviewSchedule,
 } = require("./scheduleRepository");
 
-const storeCV = async (userData, link) => {
+const storeCV = async (userData, cvLink, audioLink) => {
   try {
     const cvData = {
       userName: userData.userName,
       email: userData.email,
       phoneNumber: userData.phoneNumber,
-      cvFileLink: link,
+      cvFileLink: cvLink,
+      audioFileLink: audioLink,
       class: userData.selectedClass,
       note: userData.note,
     };

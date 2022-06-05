@@ -26,14 +26,26 @@ const connect = mongoose
   .then(() => console.log("MongoDB Connected..."))
   .catch((err) => console.log(err));
 
-const corsOptions = {
-  origin: [
-    `https://the-rainbow-class-homepage.herokuapp.com`,
-    `https://the-rainbow-class-client.herokuapp.com`,
-  ],
-  credentials: true,
-  optionSuccessStatus: 200,
-};
+let corsOptionsCheck;
+
+if (process.env.NODE_ENV === "production") {
+  corsOptionsCheck = {
+    origin: [
+      `https://the-rainbow-class-homepage.herokuapp.com`,
+      `https://the-rainbow-class-client.herokuapp.com`,
+    ],
+    credentials: true,
+    optionSuccessStatus: 200,
+  };
+} else {
+  corsOptionsCheck = {
+    origin: [`http://localhost:3000`, `http://localhost:3001`],
+    credentials: true,
+    optionSuccessStatus: 200,
+  };
+}
+
+const corsOptions = corsOptionsCheck;
 
 app.use(cors(corsOptions));
 //to not get any deprecation warning or error
@@ -58,6 +70,7 @@ app.use("/api/notification", require("./routes/notificationRoute"));
 app.use("/api/pairs", require("./routes/pairRoute"));
 app.use("/api/reports", require("./routes/reportRoute"));
 app.use("/api/questions", require("./routes/cvQuestionRoute"));
+app.use("/api/answers", require("./routes/cvAnswerRoute"));
 
 //use this to show the image you have in node js server to client (react js)
 //https://stackoverflow.com/questions/48914987/send-image-path-from-node-js-express-server-to-react-client

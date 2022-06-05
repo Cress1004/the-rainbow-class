@@ -5,6 +5,7 @@ data/package-lock.json
 package-lock.json
 # server/uploads/avatars/
 server/uploads/images/
+server/uploads/cvs/
 # server/uploads/cv
 dev.js
 .env

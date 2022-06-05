@@ -6,6 +6,7 @@ const CVSchema = mongoose.Schema(
     phoneNumber: String,
     email: String,
     cvFileLink: String,
+    audioFileLink: String,
     class: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "ClassName",

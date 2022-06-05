@@ -10,6 +10,21 @@ const storeCVAnswer = async (data) => {
   }
 };
 
+const getCVAnswerByCVId = async (cvId) => {
+  try {
+    const answers = await CVAnswer.find({ cv: cvId })
+      .select("cv question content")
+      .populate({
+        path: "question",
+      })
+    return answers;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
 module.exports = {
   storeCVAnswer,
+  getCVAnswerByCVId,
 };

@@ -45,9 +45,12 @@ if (process.env.NODE_ENV === "production") {
   };
 }
 
-const corsOptions = corsOptionsCheck;
+const corsOptions = {
+  credentials: true,
+  optionSuccessStatus: 200,
+};
 
-app.use(cors());
+app.use(cors(corsOptions));
 //to not get any deprecation warning or error
 //support parsing of application/x-www-form-urlencoded post data
 app.use(bodyParser.urlencoded({ extended: true }));

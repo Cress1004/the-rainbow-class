@@ -47,7 +47,7 @@ if (process.env.NODE_ENV === "production") {
 
 const corsOptions = {
   origin: '*',
-  methods: ['GET', 'POST'],
+  optionSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));

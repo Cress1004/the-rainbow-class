@@ -31,7 +31,7 @@ const createNewCV = async (req, res) => {
     }
     try {
       const cvLink = `${DEFAULT_CV_PATH}${req.files[0].filename}`;
-      const audioLink = `${DEFAULT_CV_PATH}${req.files[1].filename}`;
+      const audioLink = `${DEFAULT_CV_PATH}${req.files[1]?.filename}`;
       storeCV(userData, cvLink, audioLink);
       res.status(200).json({ success: true });
     } catch (error) {

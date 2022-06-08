@@ -45,10 +45,7 @@ if (process.env.NODE_ENV === "production") {
   };
 }
 
-const corsOptions = {
-  origin: '*',
-  optionSuccessStatus: 200,
-};
+const corsOptions = corsOptionsCheck;
 
 app.use(cors(corsOptions));
 //to not get any deprecation warning or error

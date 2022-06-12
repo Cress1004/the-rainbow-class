@@ -239,6 +239,28 @@ const getCurrentClassMonitorAndAdmin = async (classId) => {
   } catch (error) {}
 };
 
+const getAllAdmin = async () => {
+  try {
+    const admin = await Volunteer.find({ isAdmin: true }).populate({
+      path: "user",
+    });
+    return admin;
+  } catch (error) {
+    console.log(error);
+    return { message: error };
+  }
+};
+
+const getAllVolunteers = async () => {
+  try {
+    const volunteers = await Volunteer.find({})
+    return volunteers;
+  } catch (error) {
+    console.log(error);
+    return { message: error };
+  }
+};
+
 module.exports = {
   storeVolunteer,
   getListVolunteers,
@@ -252,4 +274,6 @@ module.exports = {
   upgradeMonitor,
   getCurrentClassMonitor,
   getCurrentClassMonitorAndAdmin,
+  getAllAdmin,
+  getAllVolunteers
 };

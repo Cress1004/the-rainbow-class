@@ -1,4 +1,4 @@
-const { getAllCV, getCVById, updateCV } = require("../repository/cvRepository");
+const { getAllCV, getCVById, updateCV, getAllCVs } = require("../repository/cvRepository");
 
 const getListCV = async (req, res) => {
   try {
@@ -33,8 +33,23 @@ const updateCVStatus = async (req, res) => {
   }
 };
 
+const getNumberOfCV = async (req, res) => {
+  try {
+   const allCV = await getAllCVs();
+   const cvData = {
+     totalCV: allCV.length,
+     pendingCV: allCV.filter(item => item.status === 0).length,
+     waitingCV: allCV.filter(item => item.status === 1).length,
+   }
+    res.status(200).json({ success: true, cvData: cvData });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 module.exports = {
   getListCV,
   getCVDataById,
   updateCVStatus,
+  getNumberOfCV
 };

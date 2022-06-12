@@ -2,6 +2,7 @@ const { VOLUNTEER_ROLE } = require("../defaultValues/constant");
 const { ClassName } = require("../models/ClassName");
 const { storeAddress, updateAddress } = require("./commonRepository");
 const { getLessonsByCLass } = require("./lessonRepository");
+const { createNewNoti } = require("./notificationRepository");
 const { getPairTeachingByClass } = require("./pairTeachingRepository");
 const { getStudentByClass } = require("./studentRepository");
 const {
@@ -39,8 +40,8 @@ const findClassById = (id) => {
   }
 };
 
-const storeClass = (data) => {
-  const newAddress = storeAddress(data.address);
+const storeClass = async (data) => {
+  const newAddress = await storeAddress(data.address);
   const classData = {
     name: data.name,
     description: data.description,
@@ -50,7 +51,7 @@ const storeClass = (data) => {
     teachingOption: data.teachingOption,
   };
   const newClass = new ClassName(classData);
-  newClass.save();
+  await newClass.save();
   return newClass;
 };
 
@@ -104,7 +105,7 @@ const tranformClassData = async (className) => {
     classData = JSON.parse(JSON.stringify(classData));
     classData.students = await getStudentByClass(className);
     classData.volunteers = await getVolunteerByClass(className);
-    classData.pairsTeaching = await getPairTeachingByClass(className)
+    classData.pairsTeaching = await getPairTeachingByClass(className._id);
     return classData;
   } catch (error) {
     console.log(error);

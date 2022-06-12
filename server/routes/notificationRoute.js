@@ -3,7 +3,7 @@ const { getNotification, updateNotiStatus } = require("../controllers/notificati
 const { auth } = require("../middleware/auth");
 const router = express.Router();
 
-router.post("/get-notifications", auth, getNotification);
+router.get("/get-notifications", auth, getNotification);
 router.get("/:id", auth, updateNotiStatus)
 
 module.exports = router;

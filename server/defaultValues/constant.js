@@ -20,7 +20,7 @@ module.exports = {
     { key: 6, value: "Fri", text: "Thứ Sáu" },
     { key: 7, value: "Sat", text: "Thứ Bảy" },
   ],
-  NOON_TIME : [
+  NOON_TIME: [
     {
       key: 0,
       value: "morning",
@@ -44,6 +44,7 @@ module.exports = {
     },
   ],
   LESSON_SCHEDULE: 0,
-  INTERVIEW_SCHEDULE:2,
+  INTERVIEW_SCHEDULE: 2,
+  NOTI_TYPE: { NOTI_CV: 0, NOTI_REMIND_SET_MONITOR: 1 },
+  NOTI_PATH: { NOTI_CV: "cv", NOTI_CLASS: "classes" },
 };
-

@@ -66,7 +66,7 @@ app.use("/api/students", require("./routes/studentRoute"));
 app.use("/api/upload", require("./routes/uploadRoute"));
 app.use("/api/schedule", require("./routes/scheduleRoute"));
 app.use("/api/cv", require("./routes/cvRoute"));
-app.use("/api/notification", require("./routes/notificationRoute"));
+app.use("/api/notifications", require("./routes/notificationRoute"));
 app.use("/api/pairs", require("./routes/pairRoute"));
 app.use("/api/reports", require("./routes/reportRoute"));
 app.use("/api/questions", require("./routes/cvQuestionRoute"));

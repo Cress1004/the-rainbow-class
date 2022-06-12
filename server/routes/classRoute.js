@@ -16,6 +16,7 @@ const {
   newPairTeaching,
   setPairVolunteer,
   getPairDataByVolunteer,
+  getNumberOfClasses,
 } = require("../controllers/classController");
 const {
   addLesson,
@@ -35,6 +36,7 @@ const router = express.Router();
 
 router.post("/add-class", checkAdminRole, addClass);
 router.get("/get-all-classes", auth, getAllClasses);
+router.get("/get-number-of-classes", auth, getNumberOfClasses);
 router.get("/get-list-class-with-name", getListClassWithName);
 router.post("/comment-student", checkAdminAndMonitorRole, updateCommentStudent);
 router.get("/my-class-schedules", auth, getMyClasschedule);

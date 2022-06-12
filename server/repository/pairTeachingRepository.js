@@ -33,9 +33,9 @@ const storeNewPairTeachingWithStudent = async (studentId, classId) => {
   }
 };
 
-const getPairTeachingByClass = async (classData) => {
+const getPairTeachingByClass = async (classId) => {
   try {
-    const pairs = await PairTeaching.find({ class: classData._id })
+    const pairs = await PairTeaching.find({ class: classId })
       .populate({
         path: "student",
         select: "user",
@@ -128,6 +128,16 @@ const getPairById = async (pairId) => {
   }
 };
 
+const getAllPairs = async () => {
+  try {
+    const pairs = await PairTeaching.find({});
+    return pairs;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+};
+
 module.exports = {
   storeNewPairTeachingWithStudent,
   getPairTeachingByClass,
@@ -135,4 +145,5 @@ module.exports = {
   registerPairTeachingWithStudent,
   getPairByVolunteerId,
   getPairById,
+  getAllPairs
 };

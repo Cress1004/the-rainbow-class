@@ -3,10 +3,9 @@
 data/node_modules
 data/package-lock.json
 package-lock.json
-# server/uploads/avatars/
-server/uploads/images/
-server/uploads/cvs/
-# server/uploads/cv
+server/uploads/avatars
+server/uploads/images
+server/uploads/cvs
 dev.js
 .env
 request.http

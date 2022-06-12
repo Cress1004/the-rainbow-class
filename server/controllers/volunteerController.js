@@ -4,6 +4,7 @@ const {
   CLASS_MONITOR,
   SUB_CLASS_MONITOR,
 } = require("../defaultValues/constant");
+const { getAllPairs } = require("../repository/pairTeachingRepository");
 const { getStudentByUserId } = require("../repository/studentRepository");
 const {
   getUserDataById,
@@ -18,6 +19,7 @@ const {
   deleteVolunteer,
   getVolunteerByIdAndClassId,
   getVolunteerByUserId,
+  getAllVolunteers,
 } = require("../repository/volunteerRepository");
 const { activeAccount } = require("./authController");
 const { getCurrentUserRole } = require("./userController");
@@ -124,7 +126,9 @@ const getCurrentVolunteer = async (req, res) => {
   try {
     const userId = req.user._id;
     const currentVolunteerData = await getVolunteerByUserId(userId);
-    res.status(200).json({ success: true, volunteerData: currentVolunteerData});
+    res
+      .status(200)
+      .json({ success: true, volunteerData: currentVolunteerData });
   } catch (error) {
     res.status(400).send(error);
   }
@@ -136,5 +140,5 @@ module.exports = {
   getVolunteerData,
   editVolunteer,
   deleteVolunteerData,
-  getCurrentVolunteer
+  getCurrentVolunteer,
 };

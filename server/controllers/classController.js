@@ -23,10 +23,14 @@ const {
 const { getInterviewSchedule } = require("../repository/cvRepository");
 const { getLessonsByCLass } = require("../repository/lessonRepository");
 const {
+  createNotiRemindSetMonitor,
+} = require("../repository/notificationRepository");
+const {
   setVolunteer,
   registerPairTeachingWithStudent,
   getPairByVolunteer,
   getPairByVolunteerId,
+  getPairTeachingByClass,
 } = require("../repository/pairTeachingRepository");
 const { getStudentByClass } = require("../repository/studentRepository");
 const {
@@ -49,7 +53,8 @@ const getAllClasses = async (req, res) => {
 
 const addClass = async (req, res) => {
   try {
-    storeClass(req.body);
+    const classData = await storeClass(req.body);
+    await createNotiRemindSetMonitor(classData);
     res.status(200).json({ success: true });
   } catch (error) {
     res.status(400).send(error);
@@ -229,6 +234,32 @@ const getPairDataByVolunteer = async (req, res) => {
   }
 };
 
+const getNumberOfClasses = async (req, res) => {
+  try {
+    const allClassesData = await getAllClassesData();
+    let unpairStudent = 0;
+    for (let i = 0; i < allClassesData.length; i++) {
+      const pairDatas = await getPairTeachingByClass(allClassesData[i]._id);
+      for (let j = 0; j < pairDatas.length; j++) {
+        if (!pairDatas[j].student) unpairStudent++;
+      }
+    }
+    const classData = {
+      numberOfAllClases: allClassesData.length,
+      numberOfOfflineClasses: allClassesData.filter(
+        (item) => item.teachingOption === 0
+      ).length,
+      numberOfOnlineClasses: allClassesData.filter(
+        (item) => item.teachingOption === 1
+      ).length,
+      totalUnpairStudent: unpairStudent,
+    };
+    res.status(200).json({ success: true, classData: classData });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 module.exports = {
   addClass,
   getClassData,
@@ -244,4 +275,5 @@ module.exports = {
   newPairTeaching,
   setPairVolunteer,
   getPairDataByVolunteer,
+  getNumberOfClasses,
 };

@@ -47,6 +47,8 @@ if (process.env.NODE_ENV === "production") {
 
 const corsOptions = corsOptionsCheck;
 
+console.log(corsOptions)
+
 app.use(cors(corsOptions));
 //to not get any deprecation warning or error
 //support parsing of application/x-www-form-urlencoded post data

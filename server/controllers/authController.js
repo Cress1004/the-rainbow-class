@@ -73,11 +73,22 @@ const login = (req, res) => {
         if (err) return res.status(400).send(err);
         res.cookie("w_authExp", user.tokenExp, {
           domain: "https://the-rainbow-class-client.herokuapp.com/",
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
         });
-        res.cookie("w_auth", user.token).status(200).json({
-          loginSuccess: true,
-          userId: user._id,
-        });
+        res
+          .cookie("w_auth", user.token, {
+            domain: "https://the-rainbow-class-client.herokuapp.com/",
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+          })
+          .status(200)
+          .json({
+            loginSuccess: true,
+            userId: user._id,
+          });
       });
     });
   });

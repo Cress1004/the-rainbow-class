@@ -71,13 +71,34 @@ const login = (req, res) => {
 
       user.generateToken((err, user) => {
         if (err) return res.status(400).send(err);
-        // res.cookie("w_authExp", user.tokenExp);
-        res.status(200).json({
-          loginSuccess: true,
-          userId: user._id,
-          w_authExp: user.tokenExp,
-          w_auth: user.token 
+        res.cookie("w_authExp", user.tokenExp, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
         });
+        // res.status(200).json({
+        //   loginSuccess: true,
+        //   userId: user._id,
+        //   w_authExp: user.tokenExp,
+        //   w_auth: user.token 
+        // });
+        res
+          .cookie("w_auth", user.token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+          })
+          .status(200)
+          .json({
+            loginSuccess: true,
+            userId: user._id,
+          });
+        // res.status(200).json({
+        //   loginSuccess: true,
+        //   userId: user._id,
+        //   w_authExp: user.tokenExp,
+        //   w_auth: user.token 
+        // });
       });
     });
   });

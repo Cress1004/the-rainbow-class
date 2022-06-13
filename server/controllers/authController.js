@@ -72,14 +72,12 @@ const login = (req, res) => {
       user.generateToken((err, user) => {
         if (err) return res.status(400).send(err);
         res.cookie("w_authExp", user.tokenExp, {
-          domain: "https://the-rainbow-class-client.herokuapp.com/",
           httpOnly: true,
           secure: true,
           sameSite: "none",
         });
         res
           .cookie("w_auth", user.token, {
-            domain: "https://the-rainbow-class-client.herokuapp.com/",
             httpOnly: true,
             secure: true,
             sameSite: "none",

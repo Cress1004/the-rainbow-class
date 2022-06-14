@@ -11,7 +11,7 @@ const { getVolunteerByUserId } = require("../repository/volunteerRepository");
 let auth = (req, res, next) => {
   let token = req.cookies.w_auth;
   console.log(req.rawHeaders.Cookies)
-  console.log(req)
+  console.log(req.get("Cookies"))
 
   User.findByToken(token, (err, user) => {
     if (err) throw err;

@@ -82,7 +82,7 @@ const login = (req, res) => {
           w_authExp: user.tokenExp,
           w_auth: user.token 
         });
-        res
+        // res
           // .cookie("w_auth", user.token, {
           //   httpOnly: true,
           //   secure: true,

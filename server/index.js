@@ -26,30 +26,24 @@ const connect = mongoose
   .then(() => console.log("MongoDB Connected..."))
   .catch((err) => console.log(err));
 
-let corsOptionsCheck = corsOptions = {
-  origin : function(origin , callback){
-    return callback(null, true);
-  },
-  optionsSuccessStatus: 200,
-  credentials: true,
-  };
+let corsOptionsCheck;
 
-// if (process.env.NODE_ENV === "production") {
-//   corsOptionsCheck = {
-//     origin: [
-//       `https://the-rainbow-class-homepage.herokuapp.com`,
-//       `https://the-rainbow-class-client.herokuapp.com`,
-//     ],
-//     credentials: true,
-//     optionSuccessStatus: 200,
-//   };
-// } else {
-//   corsOptionsCheck = {
-//     origin: [`http://localhost:3000`, `http://localhost:3001`],
-//     credentials: true,
-//     optionSuccessStatus: 200,
-//   };
-// }
+if (process.env.NODE_ENV === "production") {
+  corsOptionsCheck = {
+    origin: [
+      `https://the-rainbow-class-homepage.herokuapp.com`,
+      `https://the-rainbow-class-client.herokuapp.com`,
+    ],
+    credentials: true,
+    optionSuccessStatus: 200,
+  };
+} else {
+  corsOptionsCheck = {
+    origin: [`http://localhost:3000`, `http://localhost:3001`],
+    credentials: true,
+    optionSuccessStatus: 200,
+  };
+}
 
 const corsOptions = corsOptionsCheck;
 

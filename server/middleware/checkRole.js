@@ -7,7 +7,8 @@ const { findUserByToken } = require("../repository/userRepository");
 const { getVolunteerByUserId } = require("../repository/volunteerRepository");
 
 const checkAdminRole = async (req, res, next) => {
-  let token = req.cookies.w_auth;
+  let cookies = req.get("Cookies");
+  let token = getCookie(cookies, "w_auth");
   try {
     const user = await findUserByToken(token);
     if (user.role === STUDENT_ROLE) {
@@ -27,7 +28,8 @@ const checkAdminRole = async (req, res, next) => {
 };
 
 const checkAdminAndVolunteerRole = async (req, res, next) => {
-  let token = req.cookies.w_auth;
+  let cookies = req.get("Cookies");
+  let token = getCookie(cookies, "w_auth");
   try {
     const user = await findUserByToken(token);
     if (user.role === STUDENT_ROLE) {

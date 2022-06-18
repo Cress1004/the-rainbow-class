@@ -9,6 +9,7 @@ const {
 } = require("../defaultValues/constant");
 const { compareObjectId } = require("../function/commonFunction");
 const { storeUser, updateUserData, deleteUser } = require("./userRepository");
+const { findAll, findAllWithPopulatedFields } = require("../services");
 
 const storeVolunteer = async (data) => {
   try {
@@ -239,6 +240,42 @@ const getCurrentClassMonitorAndAdmin = async (classId) => {
   } catch (error) {}
 };
 
+const getAllAdmin = async () => {
+  try {
+    const admin = await Volunteer.find({ isAdmin: true }).populate({
+      path: "user",
+    });
+    return admin;
+  } catch (error) {
+    console.log(error);
+    return { message: error };
+  }
+};
+
+const getAdminList = async (params) => {
+  try {
+    const result = await findAllWithPopulatedFields(Volunteer, [],'user' ,{
+      // limit: parseInt(params.limit),
+      query: { isAdmin: true },
+      sort: ['created_at_dsc']
+    });
+    return result;
+  } catch (error) {
+    console.log(error);
+    return { message: error };
+  }
+}
+
+const getAllVolunteers = async () => {
+  try {
+    const volunteers = await Volunteer.find({})
+    return volunteers;
+  } catch (error) {
+    console.log(error);
+    return { message: error };
+  }
+};
+
 module.exports = {
   storeVolunteer,
   getListVolunteers,
@@ -252,4 +289,7 @@ module.exports = {
   upgradeMonitor,
   getCurrentClassMonitor,
   getCurrentClassMonitorAndAdmin,
+  getAllAdmin,
+  getAllVolunteers, 
+  getAdminList
 };

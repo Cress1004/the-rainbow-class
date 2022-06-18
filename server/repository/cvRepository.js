@@ -8,17 +8,18 @@ const {
   updateInterviewSchedule,
 } = require("./scheduleRepository");
 
-const storeCV = async (userData, link) => {
+const storeCV = async (userData, cvLink, audioLink) => {
   try {
     const cvData = {
       userName: userData.userName,
       email: userData.email,
       phoneNumber: userData.phoneNumber,
-      cvFileLink: link,
+      cvFileLink: cvLink,
+      audioFileLink: audioLink,
       class: userData.selectedClass,
       note: userData.note,
     };
-    const cvAnswers = JSON.parse(userData.answers)
+    const cvAnswers = JSON.parse(userData.answers);
     const freeTimeList = JSON.parse(userData.freeTime);
 
     const cv = await new CV(cvData);
@@ -50,22 +51,32 @@ const getAllCV = async (currentUser, currentVolunteer) => {
   try {
     if (currentVolunteer.isAdmin) {
       return CV.find({})
-        .select("userName email phoneNumber status class")
+        .select("userName email phoneNumber status class created_at")
         .populate({
           path: "class",
           select: "name",
         })
-        .sort({ status: 0, created_at: -1 });
+        .sort({ status: 0, created_at: 1 });
     } else {
       return CV.find({ class: currentUser.class })
-        .select("userName email phoneNumber status class")
+        .select("userName email phoneNumber status class created_at")
         .populate({
           path: "class",
           select: "name",
         })
-        .sort({ status: 0, created_at: -1 });
+        .sort({ status: 0, created_at: 1 });
     }
   } catch (error) {
+    console.log("Fail to get all CV");
+    return null;
+  }
+};
+
+const getAllCVs = async (currentUser, currentVolunteer) => {
+  try {
+    return CV.find({})
+      .select("status")
+   } catch (error) {
     console.log("Fail to get all CV");
     return null;
   }
@@ -186,4 +197,5 @@ module.exports = {
   updateCV,
   getInterviewSchedule,
   getCVBySchedule,
+  getAllCVs
 };

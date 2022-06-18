@@ -4,10 +4,11 @@ module.exports = {
   SUB_CLASS_MONITOR: 2,
   CLASS_MONITOR: 3,
   SUPER_ADMIN: 4,
-  DEFAULT_IMAGE_PATH: "http://localhost:5000/images/",
-  DEFAULT_AVATAR_PATH: "http://localhost:5000/avatars/",
-  DEFAULT_CV_PATH: "http://localhost:5000/cv/",
-  CV_FOLDER_PATH: "server/uploads/cv",
+  DEFAULT_IMAGE_PATH: process.env.NODE_ENV === "production" ? "https://the-rainbow-class.herokuapp.com/images/" : "http://localhost:5000/images/",
+  DEFAULT_AVATAR_PATH: process.env.NODE_ENV === "production" ? "https://the-rainbow-class.herokuapp.com/avatars/" : "http://localhost:5000/avatars/",
+  DEFAULT_CV_PATH: process.env.NODE_ENV === "production" ? "https://the-rainbow-class.herokuapp.com/cvs/" : "http://localhost:5000/cvs/",
+  CV_FOLDER_PATH: "server/uploads/cvs",
+  AUDIO_FOLDER_PATH: "server/uploads/audios",
   AVATAR_FOLDER_PATH: "server/uploads/avatars",
   WEEKDAY: [
     { key: 0, value: "all", text: "all" },
@@ -19,7 +20,7 @@ module.exports = {
     { key: 6, value: "Fri", text: "Thứ Sáu" },
     { key: 7, value: "Sat", text: "Thứ Bảy" },
   ],
-  NOON_TIME : [
+  NOON_TIME: [
     {
       key: 0,
       value: "morning",
@@ -43,6 +44,7 @@ module.exports = {
     },
   ],
   LESSON_SCHEDULE: 0,
-  INTERVIEW_SCHEDULE:2,
+  INTERVIEW_SCHEDULE: 2,
+  NOTI_TYPE: { NOTI_CV: 0, NOTI_REMIND_SET_MONITOR: 1 },
+  NOTI_PATH: { NOTI_CV: "cv", NOTI_CLASS: "classes" },
 };
-

@@ -16,6 +16,16 @@ const { promisify } = require("util");
 const crypto = require("crypto");
 const { getCurrentUserRole } = require("./userController");
 const readFile = promisify(fs.readFile);
+const { OAuth2Client } = require("google-auth-library");
+
+const myOAuth2Client = new OAuth2Client(
+  process.env.OAUTH_CLIENT_ID,
+  process.env.OAUTH_CLIENT_SECRET
+);
+// Set Refresh Token vào OAuth2Client Credentials
+myOAuth2Client.setCredentials({
+  refresh_token: process.env.OAUTH_REFRESH_TOKEN,
+});
 
 const authentication = async (req, res) => {
   const user = req.user;
@@ -71,10 +81,12 @@ const login = (req, res) => {
 
       user.generateToken((err, user) => {
         if (err) return res.status(400).send(err);
-        res.cookie("w_authExp", user.tokenExp);
-        res.cookie("w_auth", user.token).status(200).json({
+        // res.cookie("w_authExp", user.tokenExp);
+        res.status(200).json({
           loginSuccess: true,
           userId: user._id,
+          w_authExp: user.tokenExp,
+          w_auth: user.token,
         });
       });
     });
@@ -96,6 +108,8 @@ const logout = (req, res) => {
 
 const resetPassword = async (req, res) => {
   try {
+    const myAccessTokenObject = await myOAuth2Client.getAccessToken();
+    const myAccessToken = myAccessTokenObject?.token;
     const resetEmail = req.body.resetEmail;
     const user = await generateTokenToResetPassword(resetEmail);
     let html = await readFile("./server/mail/ResetPassword.html", "utf8");
@@ -108,8 +122,12 @@ const resetPassword = async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: process.env.EMAIL_SERVICE,
       auth: {
+        type: "OAuth2",
         user: process.env.SEND_EMAIL_ADDRESS,
-        pass: process.env.SEND_EMAIL_PASSWORD,
+        clientId: process.env.OAUTH_CLIENT_ID,
+        clientSecret: process.env.OAUTH_CLIENT_SECRET,
+        refresh_token: process.env.OAUTH_REFRESH_TOKEN,
+        accessToken: myAccessToken,
       },
     });
 
@@ -134,6 +152,8 @@ const resetPassword = async (req, res) => {
 
 const activeAccount = async (email) => {
   try {
+    const myAccessTokenObject = await myOAuth2Client.getAccessToken();
+    const myAccessToken = myAccessTokenObject?.token;
     const user = await generateTokenToResetPassword(email);
     let html = await readFile("./server/mail/ActiveAccount.html", "utf8");
     let template = handlebars.compile(html);
@@ -145,8 +165,12 @@ const activeAccount = async (email) => {
     const transporter = nodemailer.createTransport({
       service: process.env.EMAIL_SERVICE,
       auth: {
+        type: "OAuth2",
         user: process.env.SEND_EMAIL_ADDRESS,
-        pass: process.env.SEND_EMAIL_PASSWORD,
+        clientId: process.env.OAUTH_CLIENT_ID,
+        clientSecret: process.env.OAUTH_CLIENT_SECRET,
+        refresh_token: process.env.OAUTH_REFRESH_TOKEN,
+        accessToken: myAccessToken,
       },
     });
 
@@ -230,7 +254,9 @@ const changePassword = async (req, res) => {
       user.save();
       res.status(200).json({ success: true });
     } else {
-      res.status(200).json({ success: false, message: "Old password is not match" });
+      res
+        .status(200)
+        .json({ success: false, message: "Old password is not match" });
     }
   } catch (error) {
     res.status(400).send(error);

@@ -22,7 +22,7 @@ const uploadAvatar = async (req, res) => {
 };
 
 const createNewCV = async (req, res) => {
-  uploadCVFile.single("cvFile")(req, res, (err) => {
+  uploadCVFile.any()(req, res, (err) => {
     let message;
     const userData = req.body;
     if (err instanceof multer.MulterError) {
@@ -30,8 +30,9 @@ const createNewCV = async (req, res) => {
       res.status(200).json({ success: false, message: message });
     }
     try {
-      const link = `${DEFAULT_CV_PATH}${req.file.filename}`;
-      storeCV(userData, link);
+      const cvLink = `${DEFAULT_CV_PATH}${req.files[0].filename}`;
+      const audioLink = `${DEFAULT_CV_PATH}${req.files[1].filename}`;
+      storeCV(userData, cvLink, audioLink);
       res.status(200).json({ success: true });
     } catch (error) {
       console.log(error);

@@ -1,15 +1,40 @@
+const { NOTI_TYPE, NOTI_PATH } = require("../defaultValues/constant");
 const { NotiCV } = require("../models/NotiCV");
 const { Notification } = require("../models/Notification");
-const { getCurrentClassMonitorAndAdmin } = require("./volunteerRepository");
+const { findAll } = require("../services");
+const { getCurrentClassMonitorAndAdmin, getAllAdmin } = require("./volunteerRepository");
 
 const createNewNoti = async (data) => {
   try {
-    console.log(data)
-    const newNoti= Notification.new({ user: data.userId, type: data.type });
+    const newNoti = await new Notification({
+      user: data.userId,
+      type: data.type,
+      content: data.content
+    });
     return newNoti.save();
   } catch (error) {
     console.log(error);
     return null;
+  }
+};
+
+const createNotiRemindSetMonitor = async (classData) => {
+  try {
+    const adminList = await getAllAdmin();
+    for (let index = 0; index < adminList.length; index++) {
+      await createNewNoti({
+        userId: adminList[index].user._id,
+        type: NOTI_TYPE.NOTI_REMIND_SET_MONITOR,
+        content: {
+          id: classData._id,
+          path: NOTI_PATH.NOTI_CLASS,
+          className: classData.name,
+        },
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    return { message: error };
   }
 };
 
@@ -42,23 +67,28 @@ const getNotiCVByNoti = async (notiId) => {
   }
 };
 
-const getNotificationByUser = async (user) => {
+const getNotificationByUser = async (user, params) => {
   try {
-    const notis = await Notification.find({ user: user._id });
-    let notisData = [];
+    const notisResult = await findAll(Notification, [], {
+      limit: parseInt(params.limit),
+      query: { user: user._id },
+      sort: ['created_at_dsc']
+    });
+    // const notis = notisResult.documents;
+    // let notisData = [];
 
-    for (let index = 0; index < notis.length; index++) {
-      switch (notis[index].type) {
-        case 0:
-          const notiCV = await getNotiCVByNoti(notis[index]._id);
-          notisData.push({ data: notis[index], notiCV: notiCV });
-          break;
+    // for (let index = 0; index < notis.length; index++) {
+    //   switch (notis[index].type) {
+    //     case 0:
+    //       const notiCV = await getNotiCVByNoti(notis[index]._id);
+    //       notisData.push({ data: notis[index], notiCV: notiCV });
+    //       break;
 
-        default:
-          break;
-      }
-    }
-    return notisData;
+    //     default:
+    //       break;
+    //   }
+    // }
+    return notisResult.documents;
   } catch (error) {
     console.log(error);
     return null;
@@ -80,5 +110,6 @@ module.exports = {
   createCVNotification,
   getNotificationByUser,
   updateNotificationStatusRead,
-  createNewNoti
+  createNewNoti,
+  createNotiRemindSetMonitor,
 };

@@ -1,8 +1,8 @@
 const express = require("express");
-const { getAllAdmin } = require("../controllers/adminController");
+const { getAnswerWithCV } = require("../controllers/cvAnswerController");
 const { auth } = require("../middleware/auth");
 const router = express.Router();
 
-router.get("/get-admin", auth, getAllAdmin);
+router.get("/:id", auth, getAnswerWithCV);
 
 module.exports = router;

@@ -70,7 +70,7 @@ const getListStudents = async () => {
         populate: { path: "class", select: "name" },
       })
       .populate("studentTypes")
-      .sort({ created_at: -1 });
+      .sort({ retirementDate: 1, created_at: -1  });
   } catch (error) {
     console.log("fail to get list students");
   }

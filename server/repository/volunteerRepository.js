@@ -26,7 +26,7 @@ const storeVolunteer = async (data) => {
     });
     return newVolunteer.save();
   } catch (error) {
-    console.log("fail to store new volunteer");
+    console.log(error);
   }
 };
 

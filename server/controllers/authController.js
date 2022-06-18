@@ -122,7 +122,14 @@ const resetPassword = async (req, res) => {
     const myAccessToken = myAccessTokenObject?.token;
     const resetEmail = req.body.resetEmail;
     const user = await generateTokenToResetPassword(resetEmail);
-    let html = await readFile("./server/mail/ResetPassword.html", "utf8");
+    let html = await readFile(
+      `${
+        process.env.NODE_ENV === "production"
+          ? "./server/mail/production/ResetPassword.html"
+          : "./server/mail/ResetPassword.html"
+      }`,
+      "utf8"
+    );
     let template = handlebars.compile(html);
     const data = {
       username: user.name,
@@ -165,7 +172,14 @@ const activeAccount = async (email) => {
     const myAccessTokenObject = await myOAuth2Client.getAccessToken();
     const myAccessToken = myAccessTokenObject?.token;
     const user = await generateTokenToResetPassword(email);
-    let html = await readFile("./server/mail/ActiveAccount.html", "utf8");
+    let html = await readFile(
+      `${
+        process.env.NODE_ENV === "production"
+          ? "./server/mail/production/ActiveAccount.html"
+          : "./server/mail/ActiveAccount.html"
+      }`,
+      "utf8"
+    );
     let template = handlebars.compile(html);
     const data = {
       username: user.name,

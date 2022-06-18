@@ -58,33 +58,18 @@ const userSchema = mongoose.Schema(
 
 userSchema.pre("save", function (next) {
   var user = this;
-  console.log(user)
-
   if (user.isModified("password")) {
-    // console.log('password changed')
     bcrypt.genSalt(saltRounds, function (err, salt) {
       if (err) return next(err);
 
-      // bcrypt.hash(user.password, salt, function (err, hash) {
-      //   if (err) return next(err);
-      //   user.password = hash;
-      //   next();
-      // });
-      // } else {
-      // next();
-      // }
-      console.log(user.password);
-      console.log(salt);
-      bcrypt
-        .hash(user.password, salt)
-        .then((hash) => {
-          console.log(hash)
-          user.password = hash;
-        })
-        .catch((error) => {
-         console.log(error)
-        });
+      bcrypt.hash(user.password, salt, function (err, hash) {
+        if (err) return next(err);
+        user.password = hash;
+        next();
+      });
     });
+  } else {
+    next();
   }
 });
 

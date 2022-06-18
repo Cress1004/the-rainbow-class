@@ -41,7 +41,7 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    role: Number,  // student: 0, volunteer: 1
+    role: Number, // student: 0, volunteer: 1
     class: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "ClassName",
@@ -63,16 +63,24 @@ userSchema.pre("save", function (next) {
     // console.log('password changed')
     bcrypt.genSalt(saltRounds, function (err, salt) {
       if (err) return next(err);
-      console.log(salt)
 
-      bcrypt.hash(user.password, salt, function (err, hash) {
-        if (err) return next(err);
-        user.password = hash;
-        next();
-      });
+      // bcrypt.hash(user.password, salt, function (err, hash) {
+      //   if (err) return next(err);
+      //   user.password = hash;
+      //   next();
+      // });
+      // } else {
+      // next();
+      // }
+      bcrypt
+        .hash(user.password, salt)
+        .then((hash) => {
+          user.password = hash;
+        })
+        .catch((error) => {
+         console.log(error)
+        });
     });
-  } else {
-    next();
   }
 });
 
@@ -92,7 +100,7 @@ userSchema.methods.generateToken = function (cb) {
   user.token = token;
   user.save(function (err, user) {
     if (err) return cb(err);
-    cb (null, user);
+    cb(null, user);
   });
 };
 

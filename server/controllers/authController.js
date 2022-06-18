@@ -193,7 +193,7 @@ const activeAccount = async (email) => {
 
     transporter.sendMail(mailOptions, function (err, success) {
       if (err) {
-        console.log(error);
+        console.log(err);
         return false;
       } else {
         return true;

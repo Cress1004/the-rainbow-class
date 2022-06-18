@@ -193,14 +193,14 @@ const activeAccount = async (email) => {
 
     transporter.sendMail(mailOptions, function (err, success) {
       if (err) {
-        console.log("error tu day");
+        console.log(error);
         return false;
       } else {
         return true;
       }
     });
   } catch (error) {
-    console.log("error tu kia");
+    console.log(error);
     return false;
   }
 };

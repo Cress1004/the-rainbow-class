@@ -4,13 +4,15 @@ const {
   CLASS_MONITOR,
   SUB_CLASS_MONITOR,
 } = require("../defaultValues/constant");
+const { getCookie } = require("../function/getCookies");
 const { User } = require("../models/User");
 const { findUserByToken } = require("../repository/userRepository");
 const { getVolunteerByUserId } = require("../repository/volunteerRepository");
 
 let auth = (req, res, next) => {
-  let token = req.cookies.w_auth;
-
+  let cookies = req.get("Cookies");
+  let token = getCookie(cookies, "w_auth");
+  
   User.findByToken(token, (err, user) => {
     if (err) throw err;
     if (!user)
@@ -26,7 +28,8 @@ let auth = (req, res, next) => {
 };
 
 const checkAdminAndMonitorRole = async (req, res, next) => {
-  let token = req.cookies.w_auth;
+  let cookies = req.get("Cookies");
+  let token = getCookie(cookies, "w_auth");
   try {
     const user = await findUserByToken(token);
     if (user.role === STUDENT_ROLE) {

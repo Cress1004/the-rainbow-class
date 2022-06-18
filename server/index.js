@@ -26,11 +26,26 @@ const connect = mongoose
   .then(() => console.log("MongoDB Connected..."))
   .catch((err) => console.log(err));
 
-const corsOptions = {
-  origin: [`http://localhost:3000` , `http://localhost:3001`],
-  credentials: true,
-  optionSuccessStatus: 200,
-};
+let corsOptionsCheck;
+
+if (process.env.NODE_ENV === "production") {
+  corsOptionsCheck = {
+    origin: [
+      `https://the-rainbow-class-homepage.herokuapp.com`,
+      `https://the-rainbow-class-client.herokuapp.com`,
+    ],
+    credentials: true,
+    optionSuccessStatus: 200,
+  };
+} else {
+  corsOptionsCheck = {
+    origin: [`http://localhost:3000`, `http://localhost:3001`],
+    credentials: true,
+    optionSuccessStatus: 200,
+  };
+}
+
+const corsOptions = corsOptionsCheck;
 
 app.use(cors(corsOptions));
 //to not get any deprecation warning or error
@@ -65,12 +80,12 @@ app.use(express.static(path.join(__dirname, "uploads")));
 if (process.env.NODE_ENV === "production") {
   // Set static folder
   // All the javascript and css files will be read and served from this folder
-  app.use(express.static("client/build"));
+  // app.use(express.static("../client/build"));
 
   // index.html for all page routes    html or routing and naviagtion
-  app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "../client", "build", "index.html"));
-  });
+  // app.get("*", (req, res) => {
+  //   res.sendFile(path.resolve(__dirname, "../client", "build", "index.html"));
+  // });
 }
 
 const port = process.env.PORT || 5000;

@@ -1,5 +1,6 @@
 const { VOLUNTEER_ROLE } = require("../defaultValues/constant");
 const { ClassName } = require("../models/ClassName");
+const { findAll } = require("../services");
 const { storeAddress, updateAddress } = require("./commonRepository");
 const { getLessonsByCLass } = require("./lessonRepository");
 const { createNewNoti } = require("./notificationRepository");
@@ -22,12 +23,18 @@ const findAllClasses = (user) => {
   }
 };
 
-const getAllClassesData = () => {
+const getAllClassesData = async (params) => {
   try {
-    return ClassName.find({}).sort({ created_at: -1 });
+    const classResult = await findAll(ClassName, ['name'], {
+      limit: parseInt(params.limit),
+      offset: (params.offset-1)*10,
+      search: params.search,
+      sort: ['created_at_dsc']
+    });
+    return {classResult: classResult.documents, allResults: classResult.count};
   } catch (error) {
-    console.log("cant get all classes data");
-    return null;
+    console.log(error);
+    return { message: error };
   }
 };
 
@@ -149,6 +156,17 @@ const listClassWithName = async () => {
   }
 };
 
+
+const getNumberOfClassesData = async () => {
+  try {
+    return await ClassName.find({})
+  } catch (error) {
+    console.log("cant get all classes data");
+    return null;
+  }
+};
+
+
 module.exports = {
   findAllClasses,
   tranformClassData,
@@ -161,4 +179,5 @@ module.exports = {
   getAllClassesData,
   setMonitor,
   listClassWithName,
+  getNumberOfClassesData
 };

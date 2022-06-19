@@ -19,6 +19,7 @@ const {
   getClassByUser,
   setMonitor,
   listClassWithName,
+  getNumberOfClassesData,
 } = require("../repository/classRepository");
 const { getInterviewSchedule } = require("../repository/cvRepository");
 const { getLessonsByCLass } = require("../repository/lessonRepository");
@@ -40,10 +41,12 @@ const {
 
 const getAllClasses = async (req, res) => {
   try {
-    const classes = await getAllClassesData();
+    const params = req.query;
+    const classesData = await getAllClassesData(params);
+    const classes  = classesData.classResult;
     Promise.all(classes.map((item) => tranformClassData(item))).then(
       (value) => {
-        res.status(200).json({ success: true, classes: value });
+        res.status(200).json({ success: true, classes: value, allNumberOfClasses: classesData.allResults });
       }
     );
   } catch (error) {
@@ -236,7 +239,7 @@ const getPairDataByVolunteer = async (req, res) => {
 
 const getNumberOfClasses = async (req, res) => {
   try {
-    const allClassesData = await getAllClassesData();
+    const allClassesData = await getNumberOfClassesData();
     let unpairStudent = 0;
     for (let i = 0; i < allClassesData.length; i++) {
       const pairDatas = await getPairTeachingByClass(allClassesData[i]._id);

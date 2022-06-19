@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+var mongoose_delete = require('mongoose-delete');
 
 const classSchema = mongoose.Schema(
   {
@@ -39,11 +40,11 @@ const classSchema = mongoose.Schema(
     timestamps: {
       createdAt: "created_at",
       updatedAt: "updated_at",
-      deleteAt: "delete_at",
     },
   }
 );
 
+classSchema.plugin(mongoose_delete, { deletedAt : true });
 const ClassName = mongoose.model("ClassName", classSchema, "classes");
 
 module.exports = { ClassName };

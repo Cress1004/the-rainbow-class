@@ -29,6 +29,7 @@ const getAllClassesData = async (params) => {
       limit: parseInt(params.limit),
       offset: (params.offset-1)*10,
       search: params.search,
+      query: params.query ? JSON.parse(params.query) : null,
       sort: ['created_at_dsc']
     });
     return {classResult: classResult.documents, allResults: classResult.count};

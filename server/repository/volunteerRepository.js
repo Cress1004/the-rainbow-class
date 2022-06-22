@@ -10,6 +10,7 @@ const {
 const { compareObjectId } = require("../function/commonFunction");
 const { storeUser, updateUserData, deleteUser } = require("./userRepository");
 const { findAll, findAllWithPopulatedFields } = require("../services");
+const { findAllWithUserPopulatedFields } = require("../services/queryByParamsServices");
 
 const storeVolunteer = async (data) => {
   try {
@@ -254,9 +255,11 @@ const getAllAdmin = async () => {
 
 const getAdminList = async (params) => {
   try {
-    const result = await findAllWithPopulatedFields(Volunteer, [],'user' ,{
-      // limit: parseInt(params.limit),
+    const result = await findAllWithUserPopulatedFields(Volunteer, ['name', 'email', 'phoneNumber'], {
+      limit: parseInt(params.limit),
+      offset: (params.offset-1)*10,
       query: { isAdmin: true },
+      search: params.search,
       sort: ['created_at_dsc']
     });
     return result;
@@ -265,7 +268,7 @@ const getAdminList = async (params) => {
     return { message: error };
   }
 }
-
+ 
 const getAllVolunteers = async () => {
   try {
     const volunteers = await Volunteer.find({})
@@ -275,6 +278,52 @@ const getAllVolunteers = async () => {
     return { message: error };
   }
 };
+
+// const findVolunteerUser = async (searchFields, {search, query, offset, limit, sort} ) => {
+//   const s = searchFields
+//     .filter(
+//       (field) =>
+//         !(
+//           model.schema.paths[field].instance === "Number" &&
+//           isNaN(parseInt(search, 10))
+//         )
+//     )
+//     .map((field) => {
+//       console.log(model.schema.paths[field].ref)
+//       return model.schema.paths[field].instance === "Number"
+//         ? { [field]: parseInt(search, 10) }
+//         : { [field]: new RegExp(search, "gi") };
+//     });
+
+    
+//   const aggOptions = [
+//     {
+//       '$lookup': {
+//         'from': 'users', 
+//         'localField': 'user', 
+//         'foreignField': '_id', 
+//         'as': 'userInfo'
+//       }
+//     }, {
+//       '$unwind': {
+//         'path': '$userInfo', 
+//         'preserveNullAndEmptyArrays': true
+//       }
+//     }, {
+//       '$match': search ? { $or: s, ...query } : query,
+//     }
+//   ];
+//   if (offset)
+//   aggOptions.push({
+//     $skip: offset,
+//   });
+// if (limit)
+//   aggOptions.push({
+//     $limit: limit,
+//   });
+//   const volunteerList = await Volunteer.aggregate(aggOptions);
+//   return volunteerList;
+// }
 
 module.exports = {
   storeVolunteer,

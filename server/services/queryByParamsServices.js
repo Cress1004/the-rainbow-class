@@ -1,4 +1,5 @@
 const { User } = require("../models/User");
+const mongoose = require("mongoose");
 
 async function findAll(
   model,
@@ -116,9 +117,9 @@ async function findAllWithPopulatedFields(
 async function findAllWithUserPopulatedFields(
   model,
   searchFields,
+  classId,
   { search, query, offset, limit, fields, sort }
 ) {
-  // counter
   const s = searchFields
     .filter(
       (field) =>
@@ -129,22 +130,45 @@ async function findAllWithUserPopulatedFields(
     )
     .map((field) => {
       return User.schema.paths[field].instance === "Number"
-        ? { [`userInfo.${field}`]: `${parseInt(search, 10)}` }
-        : { [`userInfo.${field}`]: new RegExp(search, "gi") };
+        ? { [`user.${field}`]: `${parseInt(search, 10)}` }
+        : { [`user.${field}`]: new RegExp(search, "gi") };
     });
 
+  if (classId) {
+    query["user.class"] = classId;
+  }
+
+  if (query.classInfo) {
+    query["user.class"] = new mongoose.Types.ObjectId(query.classInfo);
+    delete query.classInfo;
+  }
+  
   const aggOptions = [
     {
       $lookup: {
         from: "users",
         localField: "user",
         foreignField: "_id",
-        as: "userInfo",
+        as: "user",
       },
     },
     {
       $unwind: {
-        path: "$userInfo",
+        path: "$user",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: "classes",
+        localField: "user.class",
+        foreignField: "_id",
+        as: "classInfo",
+      },
+    },
+    {
+      $unwind: {
+        path: "$classInfo",
         preserveNullAndEmptyArrays: true,
       },
     },
@@ -153,9 +177,12 @@ async function findAllWithUserPopulatedFields(
     },
     {
       $project: {
-        "userInfo.name": 1,
-        "userInfo.email": 1,
-        "userInfo.phoneNumber": 1,
+        "user.name": 1,
+        "user.email": 1,
+        "user.phoneNumber": 1,
+        "user.isActive": 1,
+        "classInfo._id": 1,
+        "classInfo.name": 1,
       },
     },
     {
@@ -175,6 +202,7 @@ async function findAllWithUserPopulatedFields(
         : { _id: 1 },
     },
   ];
+
   if (offset)
     aggOptions.push({
       $skip: offset,
@@ -183,55 +211,9 @@ async function findAllWithUserPopulatedFields(
     aggOptions.push({
       $limit: limit,
     });
-  // aggOptions.sort({
-  //   $sort: sort
-  //     ? JSON.parse(
-  //         `{${sort
-  //           .map((element) => {
-  //             const field = element.substring(0, element.lastIndexOf("_"));
-  //             const value =
-  //               element.substring(element.lastIndexOf("_") + 1) === "asc"
-  //                 ? 1
-  //                 : -1;
-  //             return `"${field}":${value}`;
-  //           })
-  //           .join(",")}}`
-  //       )
-  //     : { _id: 1 },
-  // });
+
   const documents = await model.aggregate(aggOptions);
   const count = await model.countDocuments(aggOptions);
-  // if (!counter) {
-  //   const documents = await model
-  //     .find(search ? { $or: s, ...query } : query)
-  //     .populate(populateFields)
-  //     .skip(offset || 0)
-  //     .limit(limit || null)
-  //     .sort(
-  //       sort
-  //         ? JSON.parse(
-  //             `{${sort
-  //               .map((element) => {
-  //                 const field = element.substring(0, element.lastIndexOf("_"));
-  //                 const value =
-  //                   element.substring(element.lastIndexOf("_") + 1) === "asc"
-  //                     ? 1
-  //                     : -1;
-  //                 return `"${field}":${value}`;
-  //               })
-  //               .join(",")}}`
-  //           )
-  //         : { _id: 1 }
-  //     )
-  //     .select(
-  //       fields
-  //         ? JSON.parse(
-  //             `{${fields.map((element) => `"${element}":1`).join(",")}}`
-  //           )
-  //         : {}
-  //     )
-  //     .lean();
-
   return { documents, count };
 }
 

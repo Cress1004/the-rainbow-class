@@ -84,23 +84,6 @@ const getVolunteerByUserId = async (userId) => {
 
 const getListVolunteers = async (user, params) => {
   try {
-    // const allVolunteersData = await Volunteer.find({})
-    //   .populate({
-    //     path: "user",
-    //     select: "name email phoneNumber class isActive",
-    //     populate: { path: "class" },
-    //   })
-    //   .sort({ created_at: -1 });
-    // if (user.role === VOLUNTEER_ROLE) {
-    //   const currentVolunteer = await getVolunteerByUserId(user._id);
-    //   if (currentVolunteer.role === SUPER_ADMIN) return null;
-    //   if (currentVolunteer.isAdmin) return allVolunteersData;
-    //   else {
-    //     return allVolunteersData.filter(
-    //       (item) => item.user.class?._id.toString() === user.class.toString()
-    //     );
-    //   }
-    // }
     if (user.role === STUDENT_ROLE) {
       return await findAllWithUserPopulatedFields(
         Volunteer,
@@ -150,6 +133,27 @@ const getListVolunteers = async (user, params) => {
   } catch (error) {
     console.log(error);
     return { message: error };
+  }
+};
+
+const getVolunteerByClassId = async (classId) => {
+  try {
+    const allVolunteers = await Volunteer.find({}).populate({
+      path: "user",
+      select:
+        "name email phoneNumber gender image address role linkFacebook class",
+      populate: [
+        { path: "address", select: "address description" },
+        { path: "class", select: "_id name" },
+      ],
+    });
+    const vol = allVolunteers.filter((item) =>
+      compareObjectId(item.user.class?._id, classIdx)
+    );
+    return vol;
+  } catch (error) {
+    console.log(error);
+    return null;
   }
 };
 
@@ -343,4 +347,5 @@ module.exports = {
   getAllAdmin,
   getAllVolunteers,
   getAdminList,
+  getVolunteerByClassId
 };

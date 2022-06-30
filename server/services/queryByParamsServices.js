@@ -142,7 +142,32 @@ async function findAllWithUserPopulatedFields(
     query["user.class"] = new mongoose.Types.ObjectId(query.classInfo);
     delete query.classInfo;
   }
-  
+
+  if (query.studyingStatus) {
+    if (query.studyingStatus === "retiremented") {
+      query["retirementDate"] = { $exists: true };
+    }
+    if (query.studyingStatus === "studying") {
+      query["retirementDate"] = { $exists: false };
+    }
+    delete query.studyingStatus;
+  }
+
+  if (query.isActive) {
+    query["user.isActive"] = query.isActive === "false" ? false : true;
+    delete query.isActive;
+  }
+
+  if (query.studentTypes) {
+    if (query.studentTypes.length) {
+      const searchTypes = query.studentTypes.map((type) =>
+        mongoose.Types.ObjectId(type)
+      );
+      query["studentTypes._id"] = { $in: searchTypes };
+    }
+    delete query.studentTypes;
+  }
+
   const aggOptions = [
     {
       $lookup: {
@@ -167,6 +192,14 @@ async function findAllWithUserPopulatedFields(
       },
     },
     {
+      $lookup: {
+        from: "studentTypes",
+        localField: "studentTypes",
+        foreignField: "_id",
+        as: "studentTypes",
+      },
+    },
+    {
       $unwind: {
         path: "$classInfo",
         preserveNullAndEmptyArrays: true,
@@ -183,25 +216,18 @@ async function findAllWithUserPopulatedFields(
         "user.isActive": 1,
         "classInfo._id": 1,
         "classInfo.name": 1,
+        studentTypes: 1,
+        retirementDate: 1,
       },
     },
-    {
-      $sort: sort
-        ? JSON.parse(
-            `{${sort
-              .map((element) => {
-                const field = element.substring(0, element.lastIndexOf("_"));
-                const value =
-                  element.substring(element.lastIndexOf("_") + 1) === "asc"
-                    ? 1
-                    : -1;
-                return `"${field}":${value}`;
-              })
-              .join(",")}}`
-          )
-        : { _id: 1 },
-    },
   ];
+
+  if (model.collection.collectionName === "students") {
+    aggOptions.push({ $sort: { retirementDate: 1, created_at: -1 } });
+  }
+  if (model.collection.collectionName === "volunteers") {
+    aggOptions.push({ $sort: { "user.isActive": -1, created_at: -1 } });
+  }
 
   if (offset)
     aggOptions.push({
@@ -211,8 +237,19 @@ async function findAllWithUserPopulatedFields(
     aggOptions.push({
       $limit: limit,
     });
-
   const documents = await model.aggregate(aggOptions);
+
+  // const students = await model.aggregate(aggOptions);
+  // let documents = [];
+  // if (query.month)
+  //   students.forEach(async (student) => {
+  //     const avgAchievement = await getStudentAchievementByMonth(
+  //       student._id,
+  //       month
+  //     );
+  //     if (avgAchievement > query.point) documents.push(student);
+  //   });
+  // const count = documents.length;
   const count = await model.countDocuments(aggOptions);
   return { documents, count };
 }

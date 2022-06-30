@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+var mongoose_delete = require('mongoose-delete');
 
 const studentSchema = mongoose.Schema(
   {
@@ -37,6 +38,7 @@ const studentSchema = mongoose.Schema(
   }
 );
 
+studentSchema.plugin(mongoose_delete, { deletedAt : true });
 const Student = mongoose.model("Student", studentSchema);
 
 module.exports = { Student };

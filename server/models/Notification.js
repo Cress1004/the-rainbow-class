@@ -7,7 +7,7 @@ const NotificationSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-    type: Number, // 0: newCV, 1: remind set monitor
+    type: Number, // 0: newCV, 1: remind set monitor, 2: new lesson
     read: {
       type: Boolean,
       default: false, //false: unread, true: read

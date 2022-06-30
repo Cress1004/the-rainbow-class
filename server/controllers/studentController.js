@@ -1,17 +1,14 @@
-const { STUDENT_ROLE, SUPER_ADMIN } = require("../defaultValues/constant");
-const { compareObjectId } = require("../function/commonFunction");
 const {
   storeStudent,
-  getListStudents,
   getStudentById,
   updateStudent,
   deleteStudent,
   updateStudentDescription,
   updateStudentStatus,
   getStudentByClassId,
+  getListStudentsWithParams,
 } = require("../repository/studentRepository");
 const { checkDuplicateMail } = require("../repository/userRepository");
-const { getVolunteerByUserId } = require("../repository/volunteerRepository");
 const { activeAccount } = require("./authController");
 
 const addNewStudent = async (req, res) => {
@@ -32,25 +29,9 @@ const addNewStudent = async (req, res) => {
 const getStudents = async (req, res) => {
   try {
     const user = req.user;
-    const allStudents = await getListStudents();
-    let students;
-    if (user.role === STUDENT_ROLE) {
-      students = allStudents.filter((item) =>
-        compareObjectId(item.user.class._id, user.class)
-      );
-    } else {
-      const currentVolunteer = await getVolunteerByUserId(user._id);
-      if (currentVolunteer.role === SUPER_ADMIN) {
-        students = null;
-      } else if (currentVolunteer.isAdmin) {
-        students = allStudents;
-      } else {
-        students = allStudents.filter((item) =>
-          compareObjectId(item.user.class._id, user.class)
-        );
-      }
-    }
-    res.status(200).json({ success: true, students: students });
+    const params = req.query;
+    const students = await getListStudentsWithParams(user, params)
+    res.status(200).json({ success: true, students: students.documents, numberOfStudent: students.count });
   } catch (error) {
     res.status(400).send(error);
   }

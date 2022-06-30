@@ -54,5 +54,5 @@ const updateAchievement = async (data) => {
 module.exports = {
   getAchievementByStudentId,
   updateAchievement,
-  storeNewAchievement
+  storeNewAchievement,
 };

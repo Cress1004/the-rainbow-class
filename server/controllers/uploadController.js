@@ -13,7 +13,7 @@ const uploadAvatar = async (req, res) => {
       console.log("fail to upload avatar");
     }
     try {
-      const link = `${DEFAULT_AVATAR_PATH}${req.file.filename}`;
+      const link = req.file.url;
       res.status(200).json({ success: true, link: link });
     } catch (error) {
       console.log("fail to get link avatar");
@@ -30,8 +30,8 @@ const createNewCV = async (req, res) => {
       res.status(200).json({ success: false, message: message });
     }
     try {
-      const cvLink = `${DEFAULT_CV_PATH}${req.files[0].filename}`;
-      const audioLink = `${DEFAULT_CV_PATH}${req.files[1].filename}`;
+      const cvLink = req.files[0].url;
+      const audioLink = req.files[1]?.url;
       storeCV(userData, cvLink, audioLink);
       res.status(200).json({ success: true });
     } catch (error) {

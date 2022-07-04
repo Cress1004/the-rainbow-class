@@ -31,8 +31,8 @@ let corsOptionsCheck;
 if (process.env.NODE_ENV === "production") {
   corsOptionsCheck = {
     origin: [
-      `https://the-rainbow-class-homepage.herokuapp.com`,
-      `https://the-rainbow-class-client.herokuapp.com`,
+      `https://the-rainbow-class-manage.azurewebsites.net`,
+      `https://the-rainbow-class-guess.azurewebsites.net`,
     ],
     credentials: true,
     optionSuccessStatus: 200,

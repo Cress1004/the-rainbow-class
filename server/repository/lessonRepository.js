@@ -1,11 +1,13 @@
 const { compareObjectId } = require("../function/commonFunction");
 const { Lesson } = require("../models/Lesson");
 const { deleteAddress } = require("./commonRepository");
+const { createNewNoti } = require("./notificationRepository");
 const {
   storeNewSchedule,
   deleteSchedule,
   updateSchedule,
 } = require("./scheduleRepository");
+const { getVolunteerByClass, getVolunteerByClassId } = require("./volunteerRepository");
 
 const storeNewLesson = async (data) => {
   try {
@@ -26,6 +28,10 @@ const storeNewLesson = async (data) => {
       class: data.classId,
       pairTeaching: data.pairId,
     });
+    // const sendNotiUsers = await getVolunteerByClassId(data.classId);
+    // for (let i = 0; i < sendNotiUsers.length; i++) {
+    //   await createNewNoti({userId: sendNotiUsers[i].user._id, type: 2, content: {path: '', class: }})      
+    // }
     return newLesson.save();
   } catch (error) {
     return null;

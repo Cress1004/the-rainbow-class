@@ -7,7 +7,7 @@ sockets.init = (server) => {
   const io = require("socket.io")(server, {
     cors: {
       origin: "https://the-rainbow-class-client.herokuapp.com",
-      methods: ["GET", "POST"],
+      methods: ["GET", "POST", "FETCH"],
     },
   });
 

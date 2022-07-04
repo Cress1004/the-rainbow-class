@@ -9,7 +9,9 @@ const {
 } = require("../defaultValues/constant");
 const { compareObjectId } = require("../function/commonFunction");
 const { storeUser, updateUserData, deleteUser } = require("./userRepository");
-const { findAll, findAllWithPopulatedFields } = require("../services");
+const {
+  findAllWithUserPopulatedFields,
+} = require("../services/queryByParamsServices");
 
 const storeVolunteer = async (data) => {
   try {
@@ -80,32 +82,78 @@ const getVolunteerByUserId = async (userId) => {
   }
 };
 
-const getListVolunteers = async (user) => {
+const getListVolunteers = async (user, params) => {
   try {
-    const allVolunteersData = await Volunteer.find({})
-      .populate({
-        path: "user",
-        select: "name email phoneNumber class isActive",
-        populate: { path: "class" },
-      })
-      .sort({ created_at: -1 });
+    if (user.role === STUDENT_ROLE) {
+      return await findAllWithUserPopulatedFields(
+        Volunteer,
+        ["name", "email", "phoneNumber"],
+        user.class,
+        {
+          limit: parseInt(params.limit),
+          offset: (params.offset - 1) * 10,
+          query: {},
+          // query: {isAdmin: true, deleted: false},
+          search: params.search,
+          sort: ["created_at_asc"],
+        }
+      );
+    }
     if (user.role === VOLUNTEER_ROLE) {
       const currentVolunteer = await getVolunteerByUserId(user._id);
-      if (currentVolunteer.role === SUPER_ADMIN) return null;
-      if (currentVolunteer.isAdmin) return allVolunteersData;
+      if (currentVolunteer.isAdmin)
+        return await findAllWithUserPopulatedFields(
+          Volunteer,
+          ["name", "email", "phoneNumber"],
+          null,
+          {
+            limit: parseInt(params.limit),
+            offset: (params.offset - 1) * 10,
+            query: params.query ? JSON.parse(params.query) : {},
+            search: params.search,
+            sort: ["created_at_asc"],
+          }
+        );
       else {
-        return allVolunteersData.filter(
-          (item) => item.user.class?._id.toString() === user.class.toString()
+        return await findAllWithUserPopulatedFields(
+          Volunteer,
+          ["name", "email", "phoneNumber"],
+          user.class,
+          {
+            limit: parseInt(params.limit),
+            offset: (params.offset - 1) * 10,
+            query: {},
+            // query: {isAdmin: true, deleted: false},
+            search: params.search,
+            sort: ["created_at_asc"],
+          }
         );
       }
     }
-    if (user.role === STUDENT_ROLE) {
-      return allVolunteersData.filter((item) =>
-        compareObjectId(item.user.class?._id, user.class)
-      );
-    }
   } catch (error) {
     console.log(error);
+    return { message: error };
+  }
+};
+
+const getVolunteerByClassId = async (classId) => {
+  try {
+    const allVolunteers = await Volunteer.find({}).populate({
+      path: "user",
+      select:
+        "name email phoneNumber gender image address role linkFacebook class",
+      populate: [
+        { path: "address", select: "address description" },
+        { path: "class", select: "_id name" },
+      ],
+    });
+    const vol = allVolunteers.filter((item) =>
+      compareObjectId(item.user.class?._id, classIdx)
+    );
+    return vol;
+  } catch (error) {
+    console.log(error);
+    return null;
   }
 };
 
@@ -254,21 +302,28 @@ const getAllAdmin = async () => {
 
 const getAdminList = async (params) => {
   try {
-    const result = await findAllWithPopulatedFields(Volunteer, [],'user' ,{
-      // limit: parseInt(params.limit),
-      query: { isAdmin: true },
-      sort: ['created_at_dsc']
-    });
+    const result = await findAllWithUserPopulatedFields(
+      Volunteer,
+      ["name", "email", "phoneNumber"],
+      null,
+      {
+        limit: parseInt(params.limit),
+        offset: (params.offset - 1) * 10,
+        query: { isAdmin: true, deleted: false },
+        search: params.search,
+        sort: ["created_at_dsc"],
+      }
+    );
     return result;
   } catch (error) {
     console.log(error);
     return { message: error };
   }
-}
+};
 
 const getAllVolunteers = async () => {
   try {
-    const volunteers = await Volunteer.find({})
+    const volunteers = await Volunteer.find({});
     return volunteers;
   } catch (error) {
     console.log(error);
@@ -290,6 +345,7 @@ module.exports = {
   getCurrentClassMonitor,
   getCurrentClassMonitorAndAdmin,
   getAllAdmin,
-  getAllVolunteers, 
-  getAdminList
+  getAllVolunteers,
+  getAdminList,
+  getVolunteerByClassId
 };

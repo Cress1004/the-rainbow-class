@@ -1,7 +1,7 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const { DEFAULT_IMAGE_PATH } = require("../defaultValues/constant");
+const { DEFAULT_AVATAR_PATH } = require("../defaultValues/constant");
 const { User } = require("../models/User");
 const { storeAddress, updateAddress } = require("./commonRepository");
 
@@ -11,7 +11,7 @@ const storeUser = async (data) => {
     const newUser = await new User({
       name: data.name,
       email: data.email,
-      image: DEFAULT_IMAGE_PATH + "default-image.jpg",
+      image: DEFAULT_AVATAR_PATH + "default-image.jpg",
       password: process.env.DEFAULT_PASSWORD,
       phoneNumber: data.phoneNumber,
       address: address._id,

@@ -57,9 +57,10 @@ const addNewVolunteer = async (req, res) => {
 const getAllVolunteer = async (req, res) => {
   try {
     const userId = req.user._id;
+    const params = req.query;
     const currentUser = await getUserDataById(userId);
-    const volunteers = await getListVolunteers(currentUser);
-    res.status(200).json({ success: true, volunteers: volunteers });
+    const volunteers = await getListVolunteers(currentUser, params);
+    res.status(200).json({ success: true, volunteers: volunteers.documents, numberOfVolunteer: volunteers.count });
   } catch (error) {
     res.status(400).send(error);
   }

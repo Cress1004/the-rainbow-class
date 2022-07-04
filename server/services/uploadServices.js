@@ -1,21 +1,16 @@
 const multer = require("multer");
-const path = require("path");
-const { CV_FOLDER_PATH, AVATAR_FOLDER_PATH } = require("../defaultValues/constant");
-const { randomUnixSuffix } = require("../function/commonFunction");
+var MulterAzureStorage = require("multer-azure-storage");
 
-const storageFile = (folderPath) =>
-  multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, folderPath);
-    },
-    filename: function (req, file, cb) {
-      const uniqueSuffix = randomUnixSuffix() + path.extname(file.originalname);
-      cb(null, file.originalname.split(".")[0] + "-" + uniqueSuffix);
-    },
-  });
+const storageMulter = (containerName) => {
+  return new MulterAzureStorage({
+    azureStorageConnectionString: `DefaultEndpointsProtocol=https;AccountName=${process.env.BLOB_STORAGE_ACCOUNT};AccountKey=${process.env.BLOB_STORAGE_KEY};EndpointSuffix=${process.env.BLOB_ENDPOINT_SUFFIX}`,
+    containerName: containerName,
+    containerSecurity: "blob",
+  })
+}
 
-const uploadImage = multer({ storage: storageFile(AVATAR_FOLDER_PATH) });
+var uploadImage = multer({storage: storageMulter("avatars")});
 
-const uploadCVFile = multer({ storage: storageFile(CV_FOLDER_PATH) });
+const uploadCVFile = multer({ storage: storageMulter("cv-data")});
 
 module.exports = { uploadCVFile, uploadImage };

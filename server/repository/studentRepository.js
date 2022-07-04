@@ -1,9 +1,13 @@
-const { STUDENT_ROLE } = require("../defaultValues/constant");
+const { STUDENT_ROLE, VOLUNTEER_ROLE } = require("../defaultValues/constant");
 const { compareObjectId } = require("../function/commonFunction");
-const { PairTeaching } = require("../models/PairTeaching");
+const { Achievement } = require("../models/Achievement");
 const { Student } = require("../models/Student");
+const {
+  findAllWithUserPopulatedFields,
+} = require("../services/queryByParamsServices");
 const { storeNewPairTeachingWithStudent } = require("./pairTeachingRepository");
 const { storeUser, updateUserData, deleteUser } = require("./userRepository");
+const { getVolunteerByUserId } = require("./volunteerRepository");
 
 const RETIRED = 1;
 
@@ -70,9 +74,79 @@ const getListStudents = async () => {
         populate: { path: "class", select: "name" },
       })
       .populate("studentTypes")
-      .sort({ retirementDate: 1, created_at: -1  });
+      .sort({ retirementDate: 1, created_at: -1 });
   } catch (error) {
     console.log("fail to get list students");
+  }
+};
+
+const getStudentAchievementByMonth = async (studentId, month) => {
+  try {
+    const achievements = await Achievement.find({
+      student: studentId,
+    }).populate({
+      path: "lesson",
+      populate: { path: "schedule" },
+    });
+    return achievements.filter((item) => {
+      const monthTime = item.lesson?.schedule.time.date.slice(0, 7);
+      return monthTime == month;
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const getListStudentsWithParams = async (user, params) => {
+  try {
+    const query = params.query ? JSON.parse(params.query) : {};
+    if (user.role === STUDENT_ROLE) {
+      return await findAllWithUserPopulatedFields(
+        Student,
+        ["name", "email", "phoneNumber"],
+        user.class,
+        {
+          limit: parseInt(params.limit),
+          offset: (params.offset - 1) * 10,
+          query: {},
+          search: params.search,
+          sort: ["retirementDate_dsc", "created_at_asc"],
+        }
+      );
+    }
+    if (user.role === VOLUNTEER_ROLE) {
+      const currentVolunteer = await getVolunteerByUserId(user._id);
+      if (currentVolunteer.isAdmin)
+        return await findAllWithUserPopulatedFields(
+          Student,
+          ["name", "email", "phoneNumber"],
+          null,
+          {
+            limit: parseInt(params.limit),
+            offset: (params.offset - 1) * 10,
+            query: query,
+            search: params.search,
+            sort: ["created_at_asc"],
+          }
+        );
+      else {
+        return await findAllWithUserPopulatedFields(
+          Student,
+          ["name", "email", "phoneNumber"],
+          user.class,
+          {
+            limit: parseInt(params.limit),
+            offset: (params.offset - 1) * 10,
+            query: {},
+            search: params.search,
+            sort: ["created_at_asc"],
+          }
+        );
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    return { message: error };
   }
 };
 
@@ -155,10 +229,8 @@ const getStudentByClassId = async (classId) => {
       .populate({
         path: "user",
         select: "name email phoneNumber class",
-        populate: [
-          { path: "class", select: "name" },
-        ],
-      })
+        populate: [{ path: "class", select: "name" }],
+      });
     return allStudents.filter((item) =>
       compareObjectId(item.user.class._id, classId)
     );
@@ -192,4 +264,6 @@ module.exports = {
   updateStudentDescription,
   updateStudentStatus,
   getStudentByClassId,
+  getListStudentsWithParams,
+  getStudentAchievementByMonth,
 };

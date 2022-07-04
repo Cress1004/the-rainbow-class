@@ -1,3 +1,6 @@
+const { User } = require("../models/User");
+const mongoose = require("mongoose");
+
 async function findAll(
   model,
   searchFields,
@@ -111,4 +114,148 @@ async function findAllWithPopulatedFields(
   return { count };
 }
 
-module.exports = { findAll, findAllWithPopulatedFields };
+async function findAllWithUserPopulatedFields(
+  model,
+  searchFields,
+  classId,
+  { search, query, offset, limit, fields, sort }
+) {
+  const s = searchFields
+    .filter(
+      (field) =>
+        !(
+          User.schema.paths[field].instance === "Number" &&
+          isNaN(parseInt(search, 10))
+        )
+    )
+    .map((field) => {
+      return User.schema.paths[field].instance === "Number"
+        ? { [`user.${field}`]: `${parseInt(search, 10)}` }
+        : { [`user.${field}`]: new RegExp(search, "gi") };
+    });
+
+  if (classId) {
+    query["user.class"] = classId;
+  }
+
+  if (query.classInfo) {
+    query["user.class"] = new mongoose.Types.ObjectId(query.classInfo);
+    delete query.classInfo;
+  }
+
+  if (query.studyingStatus) {
+    if (query.studyingStatus === "retiremented") {
+      query["retirementDate"] = { $exists: true };
+    }
+    if (query.studyingStatus === "studying") {
+      query["retirementDate"] = { $exists: false };
+    }
+    delete query.studyingStatus;
+  }
+
+  if (query.isActive) {
+    query["user.isActive"] = query.isActive === "false" ? false : true;
+    delete query.isActive;
+  }
+
+  if (query.studentTypes) {
+    if (query.studentTypes.length) {
+      const searchTypes = query.studentTypes.map((type) =>
+        mongoose.Types.ObjectId(type)
+      );
+      query["studentTypes._id"] = { $in: searchTypes };
+    }
+    delete query.studentTypes;
+  }
+
+  const aggOptions = [
+    {
+      $lookup: {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        as: "user",
+      },
+    },
+    {
+      $unwind: {
+        path: "$user",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: "classes",
+        localField: "user.class",
+        foreignField: "_id",
+        as: "classInfo",
+      },
+    },
+    {
+      $lookup: {
+        from: "studentTypes",
+        localField: "studentTypes",
+        foreignField: "_id",
+        as: "studentTypes",
+      },
+    },
+    {
+      $unwind: {
+        path: "$classInfo",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $match: search ? { $or: s, ...query } : query,
+    },
+    {
+      $project: {
+        "user.name": 1,
+        "user.email": 1,
+        "user.phoneNumber": 1,
+        "user.isActive": 1,
+        "classInfo._id": 1,
+        "classInfo.name": 1,
+        studentTypes: 1,
+        retirementDate: 1,
+      },
+    },
+  ];
+
+  if (model.collection.collectionName === "students") {
+    aggOptions.push({ $sort: { retirementDate: 1, created_at: -1 } });
+  }
+  if (model.collection.collectionName === "volunteers") {
+    aggOptions.push({ $sort: { "user.isActive": -1, created_at: -1 } });
+  }
+
+  if (offset)
+    aggOptions.push({
+      $skip: offset,
+    });
+  if (limit)
+    aggOptions.push({
+      $limit: limit,
+    });
+  const documents = await model.aggregate(aggOptions);
+
+  // const students = await model.aggregate(aggOptions);
+  // let documents = [];
+  // if (query.month)
+  //   students.forEach(async (student) => {
+  //     const avgAchievement = await getStudentAchievementByMonth(
+  //       student._id,
+  //       month
+  //     );
+  //     if (avgAchievement > query.point) documents.push(student);
+  //   });
+  // const count = documents.length;
+  const count = await model.countDocuments(aggOptions);
+  return { documents, count };
+}
+
+module.exports = {
+  findAll,
+  findAllWithPopulatedFields,
+  findAllWithUserPopulatedFields,
+};

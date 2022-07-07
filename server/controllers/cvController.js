@@ -4,8 +4,9 @@ const getListCV = async (req, res) => {
   try {
     const currentUser = req.currentUser;
     const currentVolunteer = req.currentVolunteer;
-    const cvList = await getAllCV(currentUser, currentVolunteer);
-    res.status(200).json({ success: true, cvList: cvList });
+    const params = req.query;
+    const cvList = await getAllCV(currentUser, currentVolunteer, params);
+    res.status(200).json({ success: true, cvList: cvList.documents, totalNumberOfCV: cvList.count, message: cvList.message });
   } catch (error) {
     res.status(400).send(error);
   }

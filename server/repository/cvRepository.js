@@ -1,5 +1,6 @@
 const { compareObjectId } = require("../function/commonFunction");
 const { CV } = require("../models/CV");
+const { findAllCVsWithParams } = require("../services/queryByParamsServices");
 const { storeCVAnswer } = require("./cvAnswerRepository");
 const { storeFreeTime, getFreeTimeByCVId } = require("./freeTimeRepository");
 const { createCVNotification } = require("./notificationRepository");
@@ -47,36 +48,30 @@ const storeCV = async (userData, cvLink, audioLink) => {
   }
 };
 
-const getAllCV = async (currentUser, currentVolunteer) => {
+const getAllCV = async (currentUser, currentVolunteer, params) => {
   try {
-    if (currentVolunteer.isAdmin) {
-      return CV.find({})
-        .select("userName email phoneNumber status class created_at")
-        .populate({
-          path: "class",
-          select: "name",
-        })
-        .sort({ status: 0, created_at: 1 });
-    } else {
-      return CV.find({ class: currentUser.class })
-        .select("userName email phoneNumber status class created_at")
-        .populate({
-          path: "class",
-          select: "name",
-        })
-        .sort({ status: 0, created_at: 1 });
-    }
+    return await findAllCVsWithParams(
+      CV,
+      ["userName", "phoneNumber", "email"],
+      currentVolunteer.isAdmin ? null : currentUser.class,
+      {
+        limit: parseInt(params.limit),
+        offset: (params.offset - 1) * 10,
+        search: params.search,
+        query: params.query ? JSON.parse(params.query) : {},
+        sort: ["status_asc", "created_at_asc"],
+      }
+    );
   } catch (error) {
-    console.log("Fail to get all CV");
+    console.log(error);
     return null;
   }
 };
 
 const getAllCVs = async (currentUser, currentVolunteer) => {
   try {
-    return CV.find({})
-      .select("status")
-   } catch (error) {
+    return CV.find({}).select("status");
+  } catch (error) {
     console.log("Fail to get all CV");
     return null;
   }
@@ -197,5 +192,5 @@ module.exports = {
   updateCV,
   getInterviewSchedule,
   getCVBySchedule,
-  getAllCVs
+  getAllCVs,
 };

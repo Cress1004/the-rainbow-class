@@ -254,8 +254,99 @@ async function findAllWithUserPopulatedFields(
   return { documents, count };
 }
 
+async function findAllCVsWithParams(
+  model,
+  searchFields,
+  classId,
+  { search, query, offset, limit, fields, sort }
+) {
+  const s = searchFields
+    .filter(
+      (field) =>
+        !(
+          model.schema.paths[field]?.instance === "Number" &&
+          isNaN(parseInt(search, 10))
+        )
+    )
+    .map((field) => {
+      return model.schema.paths[field].instance === "Number"
+        ? { [field]: parseInt(search, 10) }
+        : { [field]: new RegExp(search, "gi") };
+    });
+
+  if (classId) {
+    query["class"] = classId;
+  }
+
+  if (query.classInfo) {
+    query["class"] = new mongoose.Types.ObjectId(query.classInfo);
+    delete query.classInfo;
+  }
+
+  const aggOptions = [
+    {
+      $lookup: {
+        from: "classes",
+        localField: "class",
+        foreignField: "_id",
+        as: "classInfo",
+      },
+    },
+    {
+      $unwind: {
+        path: "$classInfo",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $match: search ? { $or: s, ...query } : query,
+    },
+    {
+      $project: {
+        _id: 1,
+        userName: 1,
+        phoneNumber: 1,
+        email: 1,
+        "classInfo._id": 1,
+        "classInfo.name": 1,
+        status: 1,
+        created_at: 1,
+      },
+    },
+    {
+      $sort: sort
+        ? JSON.parse(
+            `{${sort
+              .map((element) => {
+                const field = element.substring(0, element.lastIndexOf("_"));
+                const value =
+                  element.substring(element.lastIndexOf("_") + 1) === "asc"
+                    ? 1
+                    : -1;
+                return `"${field}":${value}`;
+              })
+              .join(",")}}`
+          )
+        : { _id: 1 },
+    },
+  ];
+
+  if (offset)
+    aggOptions.push({
+      $skip: offset,
+    });
+  if (limit)
+    aggOptions.push({
+      $limit: limit,
+    });
+  const documents = await model.aggregate(aggOptions);
+  const count = await model.countDocuments(aggOptions);
+  return { documents, count };
+}
+
 module.exports = {
   findAll,
   findAllWithPopulatedFields,
   findAllWithUserPopulatedFields,
+  findAllCVsWithParams,
 };

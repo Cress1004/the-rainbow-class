@@ -20,11 +20,12 @@ const storeInterviewSchedule = async (data) => {
   }
 };
 
-const updateInterviewSchedule = async (cv, interviewTime, participants) => {
+const updateInterviewSchedule = async (cv, interviewTime, participants, linkOnline) => {
   try {
     const schedule = await Schedule.findOne({ _id: cv.schedule });
     schedule.time = interviewTime;
     schedule.paticipants = participants;
+    schedule.linkOnline = linkOnline;
     schedule.save();
   } catch (error) {}
 };

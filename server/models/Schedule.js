@@ -15,7 +15,7 @@ const scheduleSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Address",
   },
-  paticipants: [
+  participants: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

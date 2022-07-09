@@ -1,4 +1,6 @@
-const { compareObjectId } = require("../function/commonFunction");
+const {
+  compareObjectId,
+} = require("../function/commonFunction");
 const { CV } = require("../models/CV");
 const { findAllCVsWithParams } = require("../services/queryByParamsServices");
 const {
@@ -7,7 +9,7 @@ const {
 } = require("../services/sendMaiServices");
 const { storeCVAnswer } = require("./cvAnswerRepository");
 const { storeFreeTime, getFreeTimeByCVId } = require("./freeTimeRepository");
-const { createCVNotification } = require("./notificationRepository");
+const { createCVNotification, createNotiSetInterviewParticipants } = require("./notificationRepository");
 const {
   storeInterviewSchedule,
   updateInterviewSchedule,
@@ -90,7 +92,7 @@ const getCVById = async (cvId, currentUser, currentVolunteer) => {
         path: "class",
         select: "name",
       },
-      { path: "schedule" },
+      { path: "schedule", populate: { path: "participants", select: "name" }, },
     ]);
     if (
       currentVolunteer.isAdmin ||
@@ -110,7 +112,7 @@ const getCVById = async (cvId, currentUser, currentVolunteer) => {
 
 const updateCV = async (cvData, currentUser, currentVolunteer) => {
   try {
-    const cv = await CV.findOne({ _id: cvData.cvId });
+    const cv = await CV.findOne({ _id: cvData.cvId }).populate("schedule");
     let sendMailStatus;
     if (currentVolunteer.isAdmin || cv.class === currentUser.class) {
       cv.status = cvData.status;
@@ -139,11 +141,13 @@ const updateCV = async (cvData, currentUser, currentVolunteer) => {
               "EditInterviewTime",
               "[Lớp học Cầu Vồng] Thông báo thay đổi thời gian phỏng vấn"
             );
+            const updatedParticipants = cvData.participants.filter(p => !cv.schedule.participants?.includes(p));
+            await createNotiSetInterviewParticipants(updatedParticipants, cv, interviewTime);
           } else {
             var schedule = await storeInterviewSchedule({
               scheduleType: 2,
               time: interviewTime,
-              paticipants: cvData.participants,
+              participants: cvData.participants,
               linkOnline: cvData.linkOnline,
             });
             cv.schedule = schedule._id;
@@ -157,6 +161,7 @@ const updateCV = async (cvData, currentUser, currentVolunteer) => {
               "SetInterviewTime",
               "[Lớp học Cầu Vồng] Thông báo thời gian phỏng vấn"
             );
+            await createNotiSetInterviewParticipants(cvData.participants, cv, interviewTime);
           }
           break;
         case 2:
@@ -166,9 +171,9 @@ const updateCV = async (cvData, currentUser, currentVolunteer) => {
             class: cv.class,
           });
           const user = await generateTokenToResetPassword(cv.email);
-          sendMailStatus =  await sendMailAccount(
+          sendMailStatus = await sendMailAccount(
             { email: cv.email, userName: cv.userName, token: user.token },
-            "ActiveAccount",
+            "PassInterview",
             "[Lớp học Cầu Vồng] Thông báo trúng tuyển TNV"
           );
           break;
@@ -218,7 +223,7 @@ const getAllInterviewsByClass = async () => {
     return await CV.find({})
       .populate({
         path: "schedule",
-        populate: { path: "address paticipants personInCharge" },
+        populate: { path: "address participants personInCharge" },
       })
       .populate("class");
   } catch (error) {
@@ -237,7 +242,7 @@ const getCVBySchedule = async (scheduleId) => {
             select: "name email phoneNumber ",
           },
           { path: "address" },
-          { path: "paticipants", select: "name email phoneNumber" },
+          { path: "participants", select: "name email phoneNumber" },
         ],
       },
       { path: "class", select: "name" },

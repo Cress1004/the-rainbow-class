@@ -2,14 +2,17 @@ const { NOTI_TYPE, NOTI_PATH } = require("../defaultValues/constant");
 const { NotiCV } = require("../models/NotiCV");
 const { Notification } = require("../models/Notification");
 const { findAll } = require("../services");
-const { getCurrentClassMonitorAndAdmin, getAllAdmin } = require("./volunteerRepository");
+const {
+  getCurrentClassMonitorAndAdmin,
+  getAllAdmin,
+} = require("./volunteerRepository");
 
 const createNewNoti = async (data) => {
   try {
     const newNoti = await new Notification({
       user: data.userId,
       type: data.type,
-      content: data.content
+      content: data.content,
     });
     return newNoti.save();
   } catch (error) {
@@ -29,6 +32,26 @@ const createNotiRemindSetMonitor = async (classData) => {
           id: classData._id,
           path: NOTI_PATH.NOTI_CLASS,
           className: classData.name,
+        },
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    return { message: error };
+  }
+};
+
+const createNotiSetInterviewParticipants = async (participants, cv, time) => {
+  try {
+    for (let index = 0; index < participants.length; index++) {
+      await createNewNoti({
+        userId: participants[index],
+        type: NOTI_TYPE.NOTI_SET_INTERVIEW_PARTICIPANT,
+        content: {
+          id: cv._id,
+          path: NOTI_PATH.NOTI_SET_INTERVIEW_PARTICIPANT,
+          className: cv.class.name,
+          time: time,
         },
       });
     }
@@ -71,8 +94,8 @@ const getNotificationByUser = async (user, params) => {
   try {
     const notisResult = await findAll(Notification, [], {
       limit: parseInt(params.limit),
-      query: { user: user._id },
-      sort: ['created_at_dsc']
+      query: { user: user._id, read: false },
+      sort: ["created_at_dsc"],
     });
     // const notis = notisResult.documents;
     // let notisData = [];
@@ -88,7 +111,7 @@ const getNotificationByUser = async (user, params) => {
     //       break;
     //   }
     // }
-    return notisResult.documents;
+    return notisResult;
   } catch (error) {
     console.log(error);
     return null;
@@ -112,4 +135,5 @@ module.exports = {
   updateNotificationStatusRead,
   createNewNoti,
   createNotiRemindSetMonitor,
+  createNotiSetInterviewParticipants,
 };

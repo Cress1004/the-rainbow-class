@@ -59,7 +59,7 @@ const findLesson = async (lessonId) => {
   try {
     return await Lesson.findOne({ _id: lessonId }).populate({
       path: "schedule",
-      populate: { path: "address paticipants personInCharge" },
+      populate: { path: "address participants personInCharge" },
     });
   } catch (error) {
     console.log("fail to get lesson by class id");
@@ -77,7 +77,7 @@ const getLessonBySchedule = async (scheduleId) => {
             select: "name email phoneNumber ",
           },
           { path: "address" },
-          { path: "paticipants", select: "name email phoneNumber" },
+          { path: "participants", select: "name email phoneNumber" },
         ],
       },
       { path: "class", select: "name" },
@@ -121,7 +121,7 @@ const getAllLessonsByClass = async () => {
     return await Lesson.find({})
       .populate({
         path: "schedule",
-        populate: { path: "address paticipants personInCharge" },
+        populate: { path: "address participants personInCharge" },
       })
       .populate("class");
   } catch (error) {
@@ -134,7 +134,7 @@ const getLessonsByPairId = async (pairId) => {
     return await Lesson.find({ pairTeaching: pairId })
       .populate({
         path: "schedule",
-        populate: { path: "address paticipants personInCharge" },
+        populate: { path: "address participants personInCharge" },
       })
       .populate("class");
   } catch (error) {

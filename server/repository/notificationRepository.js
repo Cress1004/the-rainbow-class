@@ -96,6 +96,22 @@ const createNotiDownMonitorRole = async (userId, classData) => {
   }
 };
 
+const createNotiInchargeLesson = async (userId, lessonData) => {
+  try {
+    await createNewNoti({
+      userId: userId,
+      type: NOTI_TYPE.NOTI_INCHARGE_LESSON,
+      content: {
+        classId: lessonData.class._id,
+        lessonId: lessonData._id,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    return { message: error };
+  }
+};
+
 const createCVNotification = async (cv) => {
   try {
     const classMonitorAndAdmin = await getCurrentClassMonitorAndAdmin(cv.class);
@@ -172,5 +188,6 @@ module.exports = {
   createNotiRemindSetMonitor,
   createNotiSetInterviewParticipants,
   createNotiUpgradeMonitorRole,
-  createNotiDownMonitorRole
+  createNotiDownMonitorRole,
+  createNotiInchargeLesson,
 };

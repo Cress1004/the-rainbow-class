@@ -7,7 +7,10 @@ const {
   deleteSchedule,
   updateSchedule,
 } = require("./scheduleRepository");
-const { getVolunteerByClass, getVolunteerByClassId } = require("./volunteerRepository");
+const {
+  getVolunteerByClass,
+  getVolunteerByClassId,
+} = require("./volunteerRepository");
 
 const storeNewLesson = async (data) => {
   try {
@@ -30,7 +33,7 @@ const storeNewLesson = async (data) => {
     });
     // const sendNotiUsers = await getVolunteerByClassId(data.classId);
     // for (let i = 0; i < sendNotiUsers.length; i++) {
-    //   await createNewNoti({userId: sendNotiUsers[i].user._id, type: 2, content: {path: '', class: }})      
+    //   await createNewNoti({userId: sendNotiUsers[i].user._id, type: 2, content: {path: '', class: }})
     // }
     return newLesson.save();
   } catch (error) {
@@ -48,7 +51,8 @@ const getLessonsByCLass = async (classId) => {
           path: "schedule",
           populate: { path: "personInCharge", select: "name" },
         })
-        .populate("class");
+        .populate("class")
+        .sort({ created_at: -1 });
     }
   } catch (error) {
     console.log(e);
@@ -83,7 +87,8 @@ const getLessonBySchedule = async (scheduleId) => {
       { path: "class", select: "name" },
     ]);
   } catch (error) {
-    console.log("fail to delete lesson");
+    console.log(error);
+    return null;
   }
 };
 
@@ -123,7 +128,8 @@ const getAllLessonsByClass = async () => {
         path: "schedule",
         populate: { path: "address participants personInCharge" },
       })
-      .populate("class");
+      .populate("class")
+      .sort({ created_at: -1 });
   } catch (error) {
     console.log("fail to get user schedule");
   }
@@ -163,7 +169,7 @@ const getLessonByClassAndMonth = async (classId, month) => {
     return result;
   } catch (error) {
     console.log(error);
-    return null
+    return null;
   }
 };
 

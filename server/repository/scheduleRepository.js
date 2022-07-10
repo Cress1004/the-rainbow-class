@@ -78,22 +78,17 @@ const updateSchedule = async (data) => {
   }
 };
 
-const addparticipant = async (scheduleId, userId) => {
+const addParticipant = async (scheduleId, userId) => {
   try {
     const schedule = await Schedule.findOne({ _id: scheduleId });
     schedule.participants.push(userId);
-    await createNewNoti({
-      userId: userId,
-      type: schedule.scheduleType === 0 ? 1 : 2, //1: lessson, 2: interview
-      schedule: schedule._id,
-    });
-    schedule.save();
+    await schedule.save();
   } catch (error) {
     console.log(error);
   }
 };
 
-const removeparticipant = async (scheduleId, currentUserId) => {
+const removeParticipant = async (scheduleId, currentUserId) => {
   try {
     const schedule = await Schedule.findOne({ _id: scheduleId });
     Promise.all(
@@ -121,14 +116,9 @@ const updatePersonInCharge = async (scheduleId, personInChargeId) => {
   try {
     const schedule = await Schedule.findOne({ _id: scheduleId });
     schedule.personInCharge = personInChargeId;
-    await createNewNoti({
-      userId: personInChargeId,
-      type: schedule.scheduleType === 0 ? 1 : 2, //1: lessson, 2: interview
-      schedule: schedule._id,
-    });
     return schedule.save();
   } catch (error) {
-    console.log("fail to update person incharge");
+    console.log(error);
     return null;
   }
 };
@@ -137,8 +127,8 @@ module.exports = {
   storeNewSchedule,
   deleteSchedule,
   updateSchedule,
-  addparticipant,
-  removeparticipant,
+  addParticipant,
+  removeParticipant,
   getAllSchedulesByVolunteer,
   updatePersonInCharge,
   storeInterviewSchedule,

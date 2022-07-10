@@ -61,6 +61,41 @@ const createNotiSetInterviewParticipants = async (participants, cv, time) => {
   }
 };
 
+const createNotiUpgradeMonitorRole = async (userId, classData, role) => {
+  try {
+    await createNewNoti({
+      userId: userId,
+      type: NOTI_TYPE.NOTI_UPGRADE_MONITOR_ROLE,
+      content: {
+        id: classData._id,
+        path: NOTI_PATH.NOTI_UPGRADE_MONITOR_ROLE,
+        className: classData.name,
+        role: role,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    return { message: error };
+  }
+};
+
+const createNotiDownMonitorRole = async (userId, classData) => {
+  try {
+    await createNewNoti({
+      userId: userId,
+      type: NOTI_TYPE.NOTI_DOWNGRADE_MONITOR_ROLE,
+      content: {
+        id: classData._id,
+        path: NOTI_PATH.NOTI_DOWNGRADE_MONITOR_ROLE,
+        className: classData.name,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    return { message: error };
+  }
+};
+
 const createCVNotification = async (cv) => {
   try {
     const classMonitorAndAdmin = await getCurrentClassMonitorAndAdmin(cv.class);
@@ -136,4 +171,6 @@ module.exports = {
   createNewNoti,
   createNotiRemindSetMonitor,
   createNotiSetInterviewParticipants,
+  createNotiUpgradeMonitorRole,
+  createNotiDownMonitorRole
 };

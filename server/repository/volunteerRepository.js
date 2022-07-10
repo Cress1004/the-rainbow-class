@@ -8,10 +8,16 @@ const {
   SUB_CLASS_MONITOR,
 } = require("../defaultValues/constant");
 const { compareObjectId } = require("../function/commonFunction");
-const { storeUser, updateUserData, deleteUser } = require("./userRepository");
+const {
+  storeUser,
+  updateUserData,
+  deleteUser,
+  getUserByVolunteer,
+} = require("./userRepository");
 const {
   findAllWithUserPopulatedFields,
 } = require("../services/queryByParamsServices");
+const { createNotiUpgradeMonitorRole, createNotiDownMonitorRole } = require("./notificationRepository");
 
 const storeVolunteer = async (data) => {
   try {
@@ -223,15 +229,19 @@ const downgradeMonitor = async (currentClass) => {
       const monitor = await Volunteer.findOne({
         _id: currentClass.classMonitor,
       });
+      const userMonitor = await getUserByVolunteer(monitor);
       monitor.role = 1;
-      monitor.save();
+      await monitor.save();
+      await createNotiDownMonitorRole(userMonitor._id, currentClass);
     }
     if (currentClass.subClassMonitor) {
       const subMonitor = await Volunteer.findOne({
         _id: currentClass.subClassMonitor,
       });
+      const userSubMonitor = await getUserByVolunteer(subMonitor);
       subMonitor.role = 1;
-      subMonitor.save();
+      await subMonitor.save();
+      await createNotiDownMonitorRole(userSubMonitor._id, currentClass);
     }
   } catch (error) {
     console.log("fail to downgrade monitor");
@@ -239,17 +249,21 @@ const downgradeMonitor = async (currentClass) => {
   }
 };
 
-const upgradeMonitor = async (monitorId, subMonitorId) => {
+const upgradeMonitor = async (currentClass, monitorId, subMonitorId) => {
   try {
-    if (monitorId) {
+    if (monitorId && currentClass.monitorId !== monitorId) {
       const monitor = await Volunteer.findOne({ _id: monitorId });
+      const userMonitor = await getUserByVolunteer(monitor);
       monitor.role = 2;
-      monitor.save();
+      await monitor.save();
+      await createNotiUpgradeMonitorRole(userMonitor._id, currentClass, 2);
     }
-    if (subMonitorId) {
+    if (subMonitorId && currentClass.subClassMonitor !== subMonitorId) {
       const subMonitor = await Volunteer.findOne({ _id: subMonitorId });
+      const userSubMonitor = await getUserByVolunteer(subMonitor);
       subMonitor.role = 3;
-      subMonitor.save();
+      await subMonitor.save();
+      await createNotiUpgradeMonitorRole(userSubMonitor._id, currentClass, 3);
     }
   } catch (error) {
     console.log("fail to upgrade monitor");
@@ -347,5 +361,5 @@ module.exports = {
   getAllAdmin,
   getAllVolunteers,
   getAdminList,
-  getVolunteerByClassId
+  getVolunteerByClassId,
 };

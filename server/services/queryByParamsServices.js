@@ -239,18 +239,9 @@ async function findAllWithUserPopulatedFields(
     });
   const documents = await model.aggregate(aggOptions);
 
-  // const students = await model.aggregate(aggOptions);
-  // let documents = [];
-  // if (query.month)
-  //   students.forEach(async (student) => {
-  //     const avgAchievement = await getStudentAchievementByMonth(
-  //       student._id,
-  //       month
-  //     );
-  //     if (avgAchievement > query.point) documents.push(student);
-  //   });
-  // const count = documents.length;
-  const count = await model.countDocuments(aggOptions);
+  const count = await model.countDocuments(
+    search ? { $or: s, ...query } : query
+  );
   return { documents, count };
 }
 
@@ -340,7 +331,10 @@ async function findAllCVsWithParams(
       $limit: limit,
     });
   const documents = await model.aggregate(aggOptions);
-  const count = await model.countDocuments(aggOptions);
+  
+  const count = await model.countDocuments(
+    search ? { $or: s, ...query } : query
+  );
   return { documents, count };
 }
 

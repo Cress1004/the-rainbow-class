@@ -38,6 +38,7 @@ const getPairTeachingByClass = async (classId) => {
     const pairs = await PairTeaching.find({ class: classId })
       .populate({
         path: "student",
+        find: { retirementDate: { $exists: false } },
         select: "user",
         populate: { path: "user", select: "name" },
       })
@@ -52,7 +53,7 @@ const getPairTeachingByClass = async (classId) => {
       .populate({
         path: "subjects",
       })
-      .sort({ volunteer: null });
+      .sort({ updated_at: -1 });
     return pairs;
   } catch (err) {
     console.log(err);
@@ -145,5 +146,5 @@ module.exports = {
   registerPairTeachingWithStudent,
   getPairByVolunteerId,
   getPairById,
-  getAllPairs
+  getAllPairs,
 };

@@ -38,14 +38,13 @@ const getPairTeachingByClass = async (classId) => {
     const pairs = await PairTeaching.find({ class: classId })
       .populate({
         path: "student",
-        find: { retirementDate: { $exists: false } },
         select: "user",
         populate: { path: "user", select: "name" },
       })
       .populate({
         path: "volunteer",
         select: "user",
-        populate: { path: "user", select: "name" },
+        populate: { path: "user", select: "name retirementDate" },
       })
       .populate({
         path: "grade",
@@ -76,6 +75,34 @@ const setVolunteer = async (data) => {
 const getPairByVolunteerId = async (volunteerId) => {
   try {
     const pair = await PairTeaching.findOne({ volunteer: volunteerId })
+      .populate({
+        path: "student",
+        select: "user",
+        populate: { path: "user", select: "name" },
+      })
+      .populate({
+        path: "volunteer",
+        select: "user",
+        populate: { path: "user", select: "name" },
+      })
+      .populate({
+        path: "grade",
+      })
+      .populate({
+        path: "subjects",
+      })
+      .populate({ path: "address" })
+      .sort({ volunteer: null });
+    return pair;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+};
+
+const getPairByStudentId = async (studentId) => {
+  try {
+    const pair = await PairTeaching.findOne({ student: studentId })
       .populate({
         path: "student",
         select: "user",
@@ -147,4 +174,5 @@ module.exports = {
   getPairByVolunteerId,
   getPairById,
   getAllPairs,
+  getPairByStudentId,
 };

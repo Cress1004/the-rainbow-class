@@ -32,6 +32,7 @@ const {
   getPairByVolunteer,
   getPairByVolunteerId,
   getPairTeachingByClass,
+  getPairByStudentId,
 } = require("../repository/pairTeachingRepository");
 const { getStudentByClass } = require("../repository/studentRepository");
 const {
@@ -237,6 +238,16 @@ const getPairDataByVolunteer = async (req, res) => {
   }
 };
 
+const getPairDataByStudent = async (req, res) => {
+  try {
+    const studentId = req.body.studentId;
+    const pairData = await getPairByStudentId(studentId);
+    res.status(200).json({ success: true, pairData: pairData });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 const getNumberOfClasses = async (req, res) => {
   try {
     const allClassesData = await getNumberOfClassesData();
@@ -279,4 +290,5 @@ module.exports = {
   setPairVolunteer,
   getPairDataByVolunteer,
   getNumberOfClasses,
+  getPairDataByStudent
 };

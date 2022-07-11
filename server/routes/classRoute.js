@@ -17,6 +17,7 @@ const {
   setPairVolunteer,
   getPairDataByVolunteer,
   getNumberOfClasses,
+  getPairDataByStudent,
 } = require("../controllers/classController");
 const {
   addLesson,
@@ -63,6 +64,7 @@ router.post(
   setPairVolunteer
 );
 router.post("/:id/pairs/get-pair-data", auth, getPairDataByVolunteer);
+router.post("/:id/pairs/get-pair-data-by-student", auth, getPairDataByStudent);
 router.get("/:id/lessons/:lessonId", auth, getLessonData);
 router.get("/:id/lessons/:lessonId/delete", auth, deleteLessonData);
 router.post("/:id/lessons/:lessonId/edit", auth, editLessonData);

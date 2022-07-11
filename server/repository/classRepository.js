@@ -3,10 +3,8 @@ const { ClassName } = require("../models/ClassName");
 const { findAll } = require("../services");
 const { storeAddress, updateAddress } = require("./commonRepository");
 const { getLessonsByCLass } = require("./lessonRepository");
-const { createNewNoti } = require("./notificationRepository");
 const { getPairTeachingByClass } = require("./pairTeachingRepository");
 const { getStudentByClass } = require("./studentRepository");
-const { getUserByVolunteer } = require("./userRepository");
 const {
   getVolunteerByClass,
   downgradeMonitor,

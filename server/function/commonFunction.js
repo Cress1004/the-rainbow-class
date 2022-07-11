@@ -22,9 +22,16 @@ const transformScheduleTimeData = (time) => {
   else return null;
 }
 
+const checkRetirement = (dateString) => {
+  const retirementDate = new Date(dateString);
+  const currentDate = new Date();
+  return retirementDate <= currentDate;
+}
+
 module.exports = {
   compareObjectId,
   randomUnixSuffix,
   checkCurrentUserBelongToCurrentClass,
-  transformScheduleTimeData
+  transformScheduleTimeData,
+  checkRetirement
 };

@@ -4,7 +4,6 @@ const {
   CLASS_MONITOR,
   SUB_CLASS_MONITOR,
 } = require("../defaultValues/constant");
-const { getAllPairs } = require("../repository/pairTeachingRepository");
 const { getStudentByUserId } = require("../repository/studentRepository");
 const {
   getUserDataById,
@@ -60,7 +59,11 @@ const getAllVolunteer = async (req, res) => {
     const params = req.query;
     const currentUser = await getUserDataById(userId);
     const volunteers = await getListVolunteers(currentUser, params);
-    res.status(200).json({ success: true, volunteers: volunteers.documents, numberOfVolunteer: volunteers.count });
+    res.status(200).json({
+      success: true,
+      volunteers: volunteers.documents,
+      numberOfVolunteer: volunteers.count,
+    });
   } catch (error) {
     res.status(400).send(error);
   }
@@ -135,6 +138,24 @@ const getCurrentVolunteer = async (req, res) => {
   }
 };
 
+const volunteerCount = async (req, res) => {
+  try {
+    const allVolunteers = await getAllVolunteers();
+    const volunteerCountData = {
+      numberOfAdmins: allVolunteers.filter((item) => item.isAdmin).length,
+      numberOfInactiveVolunteer: allVolunteers.filter(
+        (item) => !item.user.isActive
+      ).length,
+      numberOfVolunteers: allVolunteers.length,
+    };
+    res
+      .status(200)
+      .json({ success: true, volunteerCountData: volunteerCountData });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 module.exports = {
   addNewVolunteer,
   getAllVolunteer,
@@ -142,4 +163,5 @@ module.exports = {
   editVolunteer,
   deleteVolunteerData,
   getCurrentVolunteer,
+  volunteerCount,
 };

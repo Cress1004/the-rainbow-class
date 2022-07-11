@@ -2,7 +2,6 @@ const { Volunteer } = require("../models/Volunteer");
 const { User } = require("../models/User");
 const {
   VOLUNTEER_ROLE,
-  SUPER_ADMIN,
   STUDENT_ROLE,
   CLASS_MONITOR,
   SUB_CLASS_MONITOR,
@@ -17,7 +16,10 @@ const {
 const {
   findAllWithUserPopulatedFields,
 } = require("../services/queryByParamsServices");
-const { createNotiUpgradeMonitorRole, createNotiDownMonitorRole } = require("./notificationRepository");
+const {
+  createNotiUpgradeMonitorRole,
+  createNotiDownMonitorRole,
+} = require("./notificationRepository");
 
 const storeVolunteer = async (data) => {
   try {
@@ -49,7 +51,7 @@ const getVolunteerById = async (id) => {
       ],
     });
   } catch (error) {
-    console.log("fail to get volunteer data by ID");
+    console.log(error);
   }
 };
 
@@ -337,7 +339,9 @@ const getAdminList = async (params) => {
 
 const getAllVolunteers = async () => {
   try {
-    const volunteers = await Volunteer.find({});
+    const volunteers = await Volunteer.find({ deleted: false }).populate(
+      "user"
+    );
     return volunteers;
   } catch (error) {
     console.log(error);

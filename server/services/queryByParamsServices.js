@@ -168,6 +168,8 @@ async function findAllWithUserPopulatedFields(
     delete query.studentTypes;
   }
 
+  query["deleted"] = false;
+
   const aggOptions = [
     {
       $lookup: {
@@ -331,7 +333,7 @@ async function findAllCVsWithParams(
       $limit: limit,
     });
   const documents = await model.aggregate(aggOptions);
-  
+
   const count = await model.countDocuments(
     search ? { $or: s, ...query } : query
   );

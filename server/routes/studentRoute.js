@@ -10,9 +10,11 @@ const {
   updateStudentOverview,
   changeStudentStatus,
   getStudentsDataByFilter,
+  studentCount,
 } = require("../controllers/studentController");
 
 router.post("/add-student", checkAdminAndMonitorRole, addNewStudent);
+router.get("/student-count", auth, studentCount);
 router.get("/get-students", auth, getStudents);
 router.get("/:id", auth, getStudentInfo);
 router.post(

@@ -29,9 +29,7 @@ const {
 const {
   setVolunteer,
   registerPairTeachingWithStudent,
-  getPairByVolunteer,
   getPairByVolunteerId,
-  getPairTeachingByClass,
   getPairByStudentId,
 } = require("../repository/pairTeachingRepository");
 const { getStudentByClass } = require("../repository/studentRepository");
@@ -44,10 +42,16 @@ const getAllClasses = async (req, res) => {
   try {
     const params = req.query;
     const classesData = await getAllClassesData(params);
-    const classes  = classesData.classResult;
+    const classes = classesData.classResult;
     Promise.all(classes.map((item) => tranformClassData(item))).then(
       (value) => {
-        res.status(200).json({ success: true, classes: value, allNumberOfClasses: classesData.allResults });
+        res
+          .status(200)
+          .json({
+            success: true,
+            classes: value,
+            allNumberOfClasses: classesData.allResults,
+          });
       }
     );
   } catch (error) {
@@ -251,13 +255,6 @@ const getPairDataByStudent = async (req, res) => {
 const getNumberOfClasses = async (req, res) => {
   try {
     const allClassesData = await getNumberOfClassesData();
-    let unpairStudent = 0;
-    for (let i = 0; i < allClassesData.length; i++) {
-      const pairDatas = await getPairTeachingByClass(allClassesData[i]._id);
-      for (let j = 0; j < pairDatas.length; j++) {
-        if (!pairDatas[j].student) unpairStudent++;
-      }
-    }
     const classData = {
       numberOfAllClases: allClassesData.length,
       numberOfOfflineClasses: allClassesData.filter(
@@ -266,7 +263,6 @@ const getNumberOfClasses = async (req, res) => {
       numberOfOnlineClasses: allClassesData.filter(
         (item) => item.teachingOption === 1
       ).length,
-      totalUnpairStudent: unpairStudent,
     };
     res.status(200).json({ success: true, classData: classData });
   } catch (error) {
@@ -290,5 +286,5 @@ module.exports = {
   setPairVolunteer,
   getPairDataByVolunteer,
   getNumberOfClasses,
-  getPairDataByStudent
+  getPairDataByStudent,
 };

@@ -42,14 +42,18 @@ const storeVolunteer = async (data) => {
 
 const getVolunteerById = async (id) => {
   try {
-    return await Volunteer.findOne({ _id: id }).populate({
-      path: "user",
-      select: "name email phoneNumber gender image address class linkFacebook",
-      populate: [
-        { path: "address", select: "address description" },
-        { path: "class" },
-      ],
-    });
+    return await Volunteer.findOne({ _id: id })
+      .populate({
+        path: "user",
+        select:
+          "name email phoneNumber gender image address class linkFacebook",
+        populate: [
+          { path: "address", select: "address description" },
+          { path: "class" },
+          { path: "updatedBy", select: "name" },
+        ],
+      })
+      .populate({ path: "updatedBy", select: "name" });
   } catch (error) {
     console.log(error);
   }
@@ -66,7 +70,8 @@ const getVolunteerByIdAndClassId = async (volunteerData, classId) => {
           { path: "address", select: "address description" },
           { path: "class", select: "name" },
         ],
-      });
+      })
+      .populate({ path: "updatedBy", select: "name" });
   } catch (error) {
     console.log("fail to get volunteer data by ID and class ID");
     return null;
@@ -349,6 +354,18 @@ const getAllVolunteers = async () => {
   }
 };
 
+const updateVolunteerStatus = async (currentUser, updateData) => {
+  try {
+    const volunteer = await Volunteer.findOne({ _id: updateData.volunteerId });
+    volunteer.retirementDate = updateData.retirementDate;
+    volunteer.updatedBy = currentUser._id;
+    return volunteer.save();
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
 module.exports = {
   storeVolunteer,
   getListVolunteers,
@@ -366,4 +383,5 @@ module.exports = {
   getAllVolunteers,
   getAdminList,
   getVolunteerByClassId,
+  updateVolunteerStatus,
 };

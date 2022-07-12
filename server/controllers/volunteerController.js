@@ -19,6 +19,7 @@ const {
   getVolunteerByIdAndClassId,
   getVolunteerByUserId,
   getAllVolunteers,
+  updateVolunteerStatus,
 } = require("../repository/volunteerRepository");
 const { activeAccount } = require("./authController");
 const { getCurrentUserRole } = require("./userController");
@@ -156,6 +157,17 @@ const volunteerCount = async (req, res) => {
   }
 };
 
+const changeVolunteerStatus = async (req, res) => {
+  try {
+    const currentUser = req.currentUser;
+    const updateData = req.body.dataToSend;
+    await updateVolunteerStatus(currentUser, updateData);
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 module.exports = {
   addNewVolunteer,
   getAllVolunteer,
@@ -164,4 +176,5 @@ module.exports = {
   deleteVolunteerData,
   getCurrentVolunteer,
   volunteerCount,
+  changeVolunteerStatus
 };

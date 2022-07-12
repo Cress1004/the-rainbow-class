@@ -253,6 +253,15 @@ const updateStudentDescription = async (data) => {
   }
 };
 
+const getAllStudents = async () => {
+  try {
+    return await Student.find({ deleted: false }).populate("user");
+  } catch (error) {
+    console.log(error);
+    return { message: error };
+  }
+};
+
 module.exports = {
   storeStudent,
   getListStudents,
@@ -266,4 +275,5 @@ module.exports = {
   getStudentByClassId,
   getListStudentsWithParams,
   getStudentAchievementByMonth,
+  getAllStudents,
 };

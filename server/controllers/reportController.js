@@ -5,6 +5,7 @@ const {
   getReportsByVolunteer,
   getReportsByClass,
   getReportByStudent,
+  getReportsByStudent,
 } = require("../repository/reportRepository");
 const { getStudentByClassId } = require("../repository/studentRepository");
 
@@ -47,6 +48,18 @@ const getReportByVolunteerAndMonth = async (req, res) => {
   }
 };
 
+const getReportByStudentAndMonth = async (req, res) => {
+  try {
+    const reports = await getReportsByStudent(
+      req.body.studentId,
+      req.body.month
+    );
+    res.status(200).json({ success: true, reports: reports });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 const getReportByClassAndMonth = async (req, res) => {
   try {
     const reports = await getReportsByClass(req.body.classId, req.body.month);
@@ -68,4 +81,5 @@ module.exports = {
   teachByClassNewReport,
   getReportByVolunteerAndMonth,
   getReportByClassAndMonth,
+  getReportByStudentAndMonth
 };

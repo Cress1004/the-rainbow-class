@@ -169,6 +169,17 @@ const getUserByVolunteer = async (volunteer) => {
   }
 };
 
+const generateTokenToResetPassword = async (email) => {
+  try {
+    var user = await getUserDataByEmail(email);
+    var token = crypto.randomBytes(64).toString("hex");
+    user.token = token;
+    return user.save();
+  } catch (error) {
+    return "Generate token fail";
+  }
+};
+
 module.exports = {
   storeUser,
   updateUserData,
@@ -182,5 +193,6 @@ module.exports = {
   checkDuplicateMail,
   findUserByToken,
   comparePassword,
-  getUserByVolunteer
+  getUserByVolunteer,
+  generateTokenToResetPassword
 };

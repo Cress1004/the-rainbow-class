@@ -1,3 +1,4 @@
+const { checkRetirement } = require("../function/commonFunction");
 const {
   storeStudent,
   getStudentById,
@@ -7,6 +8,7 @@ const {
   updateStudentStatus,
   getStudentByClassId,
   getListStudentsWithParams,
+  getAllStudents,
 } = require("../repository/studentRepository");
 const { checkDuplicateMail } = require("../repository/userRepository");
 const { activeAccount } = require("./authController");
@@ -30,8 +32,14 @@ const getStudents = async (req, res) => {
   try {
     const user = req.user;
     const params = req.query;
-    const students = await getListStudentsWithParams(user, params)
-    res.status(200).json({ success: true, students: students.documents, numberOfStudent: students.count });
+    const students = await getListStudentsWithParams(user, params);
+    res
+      .status(200)
+      .json({
+        success: true,
+        students: students.documents,
+        numberOfStudent: students.count,
+      });
   } catch (error) {
     res.status(400).send(error);
   }
@@ -107,6 +115,23 @@ const getStudentsDataByFilter = async (req, res) => {
   }
 };
 
+const studentCount = async (req, res) => {
+  try {
+    const allStudents = await getAllStudents();
+    const studentCountData = {
+      numberOfStudent: allStudents.length,
+      studyingStudent: allStudents.filter((item) => !item.retirementDate)
+        .length,
+      retiredStudent: allStudents.filter(
+        (item) => item.retirementDate && checkRetirement(item.retirementDate)
+      ).length,
+    };
+    res.status(200).json({ success: true, studentCountData: studentCountData });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 module.exports = {
   addNewStudent,
   getStudents,
@@ -116,4 +141,5 @@ module.exports = {
   updateStudentOverview,
   changeStudentStatus,
   getStudentsDataByFilter,
+  studentCount,
 };

@@ -12,6 +12,11 @@ const volunteerSchema = mongoose.Schema(
       default: 1, // 1: volunteer, 2: class_monitor, 3: sub_class_monitor, 4: superadmin
     },
     isAdmin: Boolean,
+    retirementDate: String,
+    updatedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
   {
     timestamps: {

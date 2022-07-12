@@ -7,7 +7,10 @@ const {
   deleteSchedule,
   updateSchedule,
 } = require("./scheduleRepository");
-const { getVolunteerByClass, getVolunteerByClassId } = require("./volunteerRepository");
+const {
+  getVolunteerByClass,
+  getVolunteerByClassId,
+} = require("./volunteerRepository");
 
 const storeNewLesson = async (data) => {
   try {
@@ -30,7 +33,7 @@ const storeNewLesson = async (data) => {
     });
     // const sendNotiUsers = await getVolunteerByClassId(data.classId);
     // for (let i = 0; i < sendNotiUsers.length; i++) {
-    //   await createNewNoti({userId: sendNotiUsers[i].user._id, type: 2, content: {path: '', class: }})      
+    //   await createNewNoti({userId: sendNotiUsers[i].user._id, type: 2, content: {path: '', class: }})
     // }
     return newLesson.save();
   } catch (error) {
@@ -48,7 +51,8 @@ const getLessonsByCLass = async (classId) => {
           path: "schedule",
           populate: { path: "personInCharge", select: "name" },
         })
-        .populate("class");
+        .populate("class")
+        .sort({ created_at: -1 });
     }
   } catch (error) {
     console.log(e);
@@ -57,12 +61,23 @@ const getLessonsByCLass = async (classId) => {
 
 const findLesson = async (lessonId) => {
   try {
-    return await Lesson.findOne({ _id: lessonId }).populate({
-      path: "schedule",
-      populate: { path: "address paticipants personInCharge" },
-    });
+    return await Lesson.findOne({ _id: lessonId })
+      .populate({
+        path: "schedule",
+        populate: { path: "address participants personInCharge" },
+      })
+      .populate({
+        path: "pairTeaching",
+        populate: {
+          path: "volunteer",
+          populate: {
+            path: "user",
+            select: "id name",
+          },
+        },
+      });
   } catch (error) {
-    console.log("fail to get lesson by class id");
+    console.log(error);
   }
 };
 
@@ -77,13 +92,14 @@ const getLessonBySchedule = async (scheduleId) => {
             select: "name email phoneNumber ",
           },
           { path: "address" },
-          { path: "paticipants", select: "name email phoneNumber" },
+          { path: "participants", select: "name email phoneNumber" },
         ],
       },
       { path: "class", select: "name" },
     ]);
   } catch (error) {
-    console.log("fail to delete lesson");
+    console.log(error);
+    return null;
   }
 };
 
@@ -121,9 +137,10 @@ const getAllLessonsByClass = async () => {
     return await Lesson.find({})
       .populate({
         path: "schedule",
-        populate: { path: "address paticipants personInCharge" },
+        populate: { path: "address participants personInCharge" },
       })
-      .populate("class");
+      .populate("class")
+      .sort({ created_at: -1 });
   } catch (error) {
     console.log("fail to get user schedule");
   }
@@ -134,7 +151,7 @@ const getLessonsByPairId = async (pairId) => {
     return await Lesson.find({ pairTeaching: pairId })
       .populate({
         path: "schedule",
-        populate: { path: "address paticipants personInCharge" },
+        populate: { path: "address participants personInCharge" },
       })
       .populate("class");
   } catch (error) {
@@ -163,7 +180,7 @@ const getLessonByClassAndMonth = async (classId, month) => {
     return result;
   } catch (error) {
     console.log(error);
-    return null
+    return null;
   }
 };
 

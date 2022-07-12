@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+var mongoose_delete = require('mongoose-delete');
 
 const CVSchema = mongoose.Schema(
   {
@@ -25,11 +26,11 @@ const CVSchema = mongoose.Schema(
     timestamps: {
       createdAt: "created_at",
       updatedAt: "updated_at",
-      deleteAt: "delete_at",
     },
   }
 );
 
+CVSchema.plugin(mongoose_delete, { deletedAt : true });
 const CV = mongoose.model("CV", CVSchema, "cv");
 
 module.exports = { CV };

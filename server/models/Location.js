@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+var mongoose_delete = require('mongoose-delete');
 
 const locationSchema = mongoose.Schema({
     id: String,
@@ -19,6 +20,7 @@ const locationSchema = mongoose.Schema({
     }
 })
 
+locationSchema.plugin(mongoose_delete, { deletedAt : true });
 const Location = mongoose.model('Location', locationSchema, 'locations');
 
 module.exports = { Location }

@@ -16,6 +16,8 @@ const {
   findSemesters,
   storeSemester,
   removeSemester,
+  findStudentTypeWithParams,
+  updateStudentType,
 } = require("../repository/commonRepository");
 
 const getLocation = async (req, res) => {
@@ -50,8 +52,16 @@ const getWards = async (req, res) => {
 
 const getStudentTypes = async (req, res) => {
   try {
-    const studentTypes = await findAllStudentTypes();
-    res.status(200).json({ success: true, studentTypes: studentTypes });
+    const params = req.query;
+    const studentTypes = await findStudentTypeWithParams(params);
+    res
+      .status(200)
+      .json({
+        success: true,
+        studentTypes: studentTypes.documents,
+        count: studentTypes.count,
+        message: studentTypes.message,
+      });
   } catch (error) {
     res.status(400).send(error);
   }
@@ -70,6 +80,16 @@ const addStudentType = async (req, res) => {
   try {
     const studentType = await storeStudentType(req.body);
     res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+const editStudentType = async (req, res) => {
+  try {
+    const result = await updateStudentType(req.body);
+    console.log(result)
+    res.status(200).json({ success: true, message: result.message });
   } catch (error) {
     res.status(400).send(error);
   }
@@ -169,6 +189,7 @@ module.exports = {
   getLocation,
   getStudentTypes,
   addStudentType,
+  editStudentType,
   getStudentType,
   deleteStudentType,
   getDistricts,

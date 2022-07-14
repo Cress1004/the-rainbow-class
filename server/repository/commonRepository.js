@@ -4,6 +4,7 @@ const { Location } = require("../models/Location");
 const { Semester } = require("../models/Semester");
 const { StudentType } = require("../models/StudentType");
 const { Subject } = require("../models/Subject");
+const { findAll } = require("../services");
 
 const findAllLocation = () => {
   return Location.find({});
@@ -46,7 +47,22 @@ const deleteAddress = async (id) => {
 };
 
 const findAllStudentTypes = () => {
-  return StudentType.find({});
+  return StudentType.find({ deleted: false });
+};
+
+const findStudentTypeWithParams = async (params) => {
+  try {
+    return await findAll(StudentType, ["title"], {
+      limit: parseInt(params.limit),
+      offset: (params.offset - 1) * 10,
+      search: params.search,
+      query: { deleted: false },
+      sort: ["created_at_dsc"],
+    });
+  } catch (error) {
+    console.log(error);
+    return { message: error };
+  }
 };
 
 const getStudentTypeById = (id) => {
@@ -56,6 +72,22 @@ const getStudentTypeById = (id) => {
 const storeStudentType = (data) => {
   const studentType = new StudentType(data);
   return studentType.save();
+};
+
+const updateStudentType = async (data) => {
+  try {
+    return await StudentType.findOneAndUpdate(
+      { _id: data.id },
+      { title: data.title },
+      {
+        new: true,
+        upsert: true, // Make this update into an upsert
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    return { message: error };
+  }
 };
 
 const removeStudentType = async (id) => {
@@ -164,6 +196,7 @@ module.exports = {
   findAllStudentTypes,
   getStudentTypeById,
   storeStudentType,
+  updateStudentType,
   storeAddress,
   updateAddress,
   removeStudentType,
@@ -180,4 +213,5 @@ module.exports = {
   findSemesters,
   storeSemester,
   removeSemester,
+  findStudentTypeWithParams,
 };

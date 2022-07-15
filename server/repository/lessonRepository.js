@@ -139,7 +139,9 @@ const getAllLessonsByClass = async () => {
         path: "schedule",
         populate: { path: "address participants personInCharge" },
       })
-      .populate("class")
+      .populate({
+        path: "class",
+      })
       .sort({ created_at: -1 });
   } catch (error) {
     console.log("fail to get user schedule");

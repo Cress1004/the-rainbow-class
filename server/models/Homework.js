@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+var mongoose_delete = require('mongoose-delete');
 
 const homeworkSchema = mongoose.Schema({
     content: {
@@ -16,6 +17,7 @@ const homeworkSchema = mongoose.Schema({
     deadline: Date
 });
 
+homeworkSchema.plugin(mongoose_delete, { deletedAt : true });
 const Homework = mongoose.model('Homework', homeworkSchema);
 
 module.exports = { Homework }

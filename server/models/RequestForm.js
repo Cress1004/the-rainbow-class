@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+var mongoose_delete = require('mongoose-delete');
 
 const requestFormSchema = mongoose.Schema({
     requestType: {
@@ -21,6 +22,7 @@ const requestFormSchema = mongoose.Schema({
     }
 })
 
+requestFormSchema.plugin(mongoose_delete, { deletedAt : true });
 const RequestForm = mongoose.model('RequestForm', requestFormSchema);
 
 module.exports = { RequestForm }

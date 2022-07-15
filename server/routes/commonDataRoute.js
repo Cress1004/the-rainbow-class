@@ -15,6 +15,7 @@ const {
   getSemesters,
   addSemester,
   deleteSemester,
+  editStudentType,
 } = require("../controllers/commonDataController");
 const { auth } = require("../middleware/auth");
 const { checkAdminRole } = require("../middleware/checkRole");
@@ -25,6 +26,7 @@ router.post("/province/:id/get-districts", auth, getDistricts);
 router.post("/district/:id/get-wards", auth, getWards);
 router.get("/student-types", auth, getStudentTypes);
 router.post("/add-student-type", checkAdminRole, addStudentType);
+router.post("/edit-student-type", checkAdminRole, editStudentType);
 router.post("/student-types/:id/delete", checkAdminRole, deleteStudentType);
 
 router.get("/subjects", auth, getSubjects);

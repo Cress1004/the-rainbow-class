@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const jwt = require("jsonwebtoken");
 const moment = require("moment");
+var mongoose_delete = require('mongoose-delete');
 
 const userSchema = mongoose.Schema(
   {
@@ -104,6 +105,7 @@ userSchema.statics.findByToken = function (token, cb) {
   });
 };
 
+userSchema.plugin(mongoose_delete, { deletedAt : true });
 const User = mongoose.model("User", userSchema);
 
 module.exports = { User };

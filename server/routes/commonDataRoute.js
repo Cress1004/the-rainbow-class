@@ -31,6 +31,7 @@ router.post("/student-types/:id/delete", checkAdminRole, deleteStudentType);
 
 router.get("/subjects", auth, getSubjects);
 router.post("/add-subject", checkAdminRole, addSubject);
+router.post("/edit-subject", checkAdminRole, editStudentType);
 router.post("/subjects/:id/delete", checkAdminRole, deleteSubject);
 
 router.get("/grades", auth, getGrades);

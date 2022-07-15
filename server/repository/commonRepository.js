@@ -81,7 +81,7 @@ const updateStudentType = async (data) => {
       { title: data.title },
       {
         new: true,
-        upsert: true, // Make this update into an upsert
+        upsert: true,
       }
     );
   } catch (error) {
@@ -100,10 +100,25 @@ const removeStudentType = async (id) => {
 
 const findAllSubjects = () => {
   try {
-    return Subject.find({});
+    return Subject.find({ deleted: false });
   } catch (error) {
     console.log(error);
     return null;
+  }
+};
+
+const findSubjectWithParams = async (params) => {
+  try {
+    return await findAll(Subject, ["title"], {
+      limit: parseInt(params.limit),
+      offset: (params.offset - 1) * 10,
+      search: params.search,
+      query: { deleted: false },
+      sort: ["created_at_dsc"],
+    });
+  } catch (error) {
+    console.log(error);
+    return { message: error };
   }
 };
 
@@ -123,6 +138,22 @@ const storeSubject = (data) => {
   } catch (error) {
     console.log(error);
     return null;
+  }
+};
+
+const updateSubject = async (data) => {
+  try {
+    return await Subject.findOneAndUpdate(
+      { _id: data.id },
+      { title: data.title },
+      {
+        new: true,
+        upsert: true,
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    return { message: error };
   }
 };
 
@@ -214,4 +245,6 @@ module.exports = {
   storeSemester,
   removeSemester,
   findStudentTypeWithParams,
+  findSubjectWithParams,
+  updateSubject,
 };

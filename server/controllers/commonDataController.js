@@ -20,6 +20,8 @@ const {
   updateSubject,
   updateGrade,
   findGragesWithParams,
+  updateSemester,
+  findSemestersWithParams,
 } = require("../repository/commonRepository");
 
 const getLocation = async (req, res) => {
@@ -189,8 +191,14 @@ const deleteGrade = async (req, res) => {
 
 const getSemesters = async (req, res) => {
   try {
-    const semesters = await findSemesters();
-    res.status(200).json({ success: true, semesters: semesters });
+    const params = req.query;
+    const semesters =  await findSemestersWithParams(params);
+    res.status(200).json({
+      success: true,
+      semesters: semesters.documents,
+      count: semesters.count,
+      message: semesters.message,
+    });
   } catch (error) {
     res.status(400).send(error);
   }
@@ -200,6 +208,15 @@ const addSemester = async (req, res) => {
   try {
     await storeSemester(req.body);
     res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+const editSemester= async (req, res) => {
+  try {
+    const result = await updateSemester(req.body);
+    res.status(200).json({ success: true, message: result.message });
   } catch (error) {
     res.status(400).send(error);
   }
@@ -233,5 +250,6 @@ module.exports = {
   addSemester,
   deleteSemester,
   editSubject,
-  editGrade
+  editGrade,
+  editSemester
 };

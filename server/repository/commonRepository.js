@@ -201,8 +201,14 @@ const storeGrade = (data) => {
 
 const removeGrade = async (id) => {
   try {
-    return Grade.findByIdAndDelete({ _id: id });
-  } catch (error) {
+    return await Grade.findOneAndUpdate(
+      { _id: id },
+      { deleted: true },
+      {
+        new: true,
+        upsert: true,
+      }
+    );  } catch (error) {
     console.log(error);
     return null;
   }
@@ -210,7 +216,7 @@ const removeGrade = async (id) => {
 
 const findSemesters = () => {
   try {
-    return Semester.find({});
+    return Semester.find({ deleted: false });
   } catch (error) {
     console.log(error);
     return null;
@@ -219,8 +225,8 @@ const findSemesters = () => {
 
 const storeSemester = (data) => {
   try {
-    const grade = new Semester(data);
-    return grade.save();
+    const semester = new Semester(data);
+    return semester.save();
   } catch (error) {
     console.log(error);
     return null;
@@ -229,7 +235,14 @@ const storeSemester = (data) => {
 
 const removeSemester = async (id) => {
   try {
-    return Semester.findByIdAndDelete({ _id: id });
+    return await Semester.findOneAndUpdate(
+      { _id: id },
+      { deleted: true },
+      {
+        new: true,
+        upsert: true,
+      }
+    );
   } catch (error) {
     console.log(error);
     return null;
@@ -256,6 +269,37 @@ const updateGrade = async (data) => {
     return await Grade.findOneAndUpdate(
       { _id: data.id },
       { title: data.title },
+      {
+        new: true,
+        upsert: true,
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    return { message: error };
+  }
+};
+
+const findSemestersWithParams = async (params) => {
+  try {
+    return await findAll(Semester, ["title", "startDate", "endDate"], {
+      limit: parseInt(params.limit),
+      offset: (params.offset - 1) * 10,
+      search: params.search,
+      query: { deleted: false },
+      sort: ["created_at_dsc"],
+    });
+  } catch (error) {
+    console.log(error);
+    return { message: error };
+  }
+};
+
+const updateSemester = async (data) => {
+  try {
+    return await Semester.findOneAndUpdate(
+      { _id: data.id },
+      { title: data.title, startDate: data.startDate, endDate: data.endDate },
       {
         new: true,
         upsert: true,
@@ -294,4 +338,6 @@ module.exports = {
   updateSubject,
   findGragesWithParams,
   updateGrade,
+  findSemestersWithParams,
+  updateSemester,
 };

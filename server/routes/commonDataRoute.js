@@ -16,6 +16,7 @@ const {
   addSemester,
   deleteSemester,
   editStudentType,
+  editGrade,
 } = require("../controllers/commonDataController");
 const { auth } = require("../middleware/auth");
 const { checkAdminRole } = require("../middleware/checkRole");
@@ -36,6 +37,7 @@ router.post("/subjects/:id/delete", checkAdminRole, deleteSubject);
 
 router.get("/grades", auth, getGrades);
 router.post("/add-grade", checkAdminRole, addGrade);
+router.post("/edit-grade", checkAdminRole, editGrade);
 router.post("/grades/:id/delete", checkAdminRole, deleteGrade);
 
 router.get("/semesters", auth, getSemesters);

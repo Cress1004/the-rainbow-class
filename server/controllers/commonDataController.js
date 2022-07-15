@@ -18,6 +18,8 @@ const {
   updateStudentType,
   findSubjectWithParams,
   updateSubject,
+  updateGrade,
+  findGragesWithParams,
 } = require("../repository/commonRepository");
 
 const getLocation = async (req, res) => {
@@ -85,7 +87,7 @@ const addStudentType = async (req, res) => {
 
 const editStudentType = async (req, res) => {
   try {
-    const result = await updateSubject(req.body);
+    const result = await updateStudentType(req.body);
     res.status(200).json({ success: true, message: result.message });
   } catch (error) {
     res.status(400).send(error);
@@ -145,8 +147,23 @@ const deleteSubject = async (req, res) => {
 
 const getGrades = async (req, res) => {
   try {
-    const grades = await findGrades();
-    res.status(200).json({ success: true, grades: grades });
+    const params = req.query;
+    const grades = await findGragesWithParams(params);
+    res.status(200).json({
+      success: true,
+      grades: grades.documents,
+      count: grades.count,
+      message: grades.message,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+const editGrade= async (req, res) => {
+  try {
+    const result = await updateGrade(req.body);
+    res.status(200).json({ success: true, message: result.message });
   } catch (error) {
     res.status(400).send(error);
   }
@@ -216,4 +233,5 @@ module.exports = {
   addSemester,
   deleteSemester,
   editSubject,
+  editGrade
 };

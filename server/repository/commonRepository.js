@@ -92,9 +92,16 @@ const updateStudentType = async (data) => {
 
 const removeStudentType = async (id) => {
   try {
-    return StudentType.findByIdAndDelete({ _id: id });
+    return await StudentType.findOneAndUpdate(
+      { _id: data.id },
+      { deleted: true },
+      {
+        new: true,
+        upsert: true,
+      }
+    );
   } catch (error) {
-    console.log("delete student type fail");
+    console.log(error);
   }
 };
 
@@ -159,7 +166,14 @@ const updateSubject = async (data) => {
 
 const removeSubject = async (id) => {
   try {
-    return Subject.findByIdAndDelete({ _id: id });
+    return await Subject.findOneAndUpdate(
+      { _id: id },
+      { deleted: true },
+      {
+        new: true,
+        upsert: true,
+      }
+    );
   } catch (error) {
     console.log(error);
     return null;
@@ -168,7 +182,7 @@ const removeSubject = async (id) => {
 
 const findGrades = () => {
   try {
-    return Grade.find({});
+    return Grade.find({ deleted: false });
   } catch (error) {
     console.log(error);
     return null;
@@ -222,6 +236,37 @@ const removeSemester = async (id) => {
   }
 };
 
+const findGragesWithParams = async (params) => {
+  try {
+    return await findAll(Grade, ["title"], {
+      limit: parseInt(params.limit),
+      offset: (params.offset - 1) * 10,
+      search: params.search,
+      query: { deleted: false },
+      sort: ["created_at_dsc"],
+    });
+  } catch (error) {
+    console.log(error);
+    return { message: error };
+  }
+};
+
+const updateGrade = async (data) => {
+  try {
+    return await Grade.findOneAndUpdate(
+      { _id: data.id },
+      { title: data.title },
+      {
+        new: true,
+        upsert: true,
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    return { message: error };
+  }
+};
+
 module.exports = {
   findAllLocation,
   findAllStudentTypes,
@@ -247,4 +292,6 @@ module.exports = {
   findStudentTypeWithParams,
   findSubjectWithParams,
   updateSubject,
+  findGragesWithParams,
+  updateGrade,
 };

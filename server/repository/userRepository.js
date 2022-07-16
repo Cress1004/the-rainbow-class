@@ -1,4 +1,5 @@
 require("dotenv").config();
+const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { DEFAULT_AVATAR_PATH } = require("../defaultValues/constant");
@@ -176,7 +177,7 @@ const generateTokenToResetPassword = async (email) => {
     user.token = token;
     return user.save();
   } catch (error) {
-    return "Generate token fail";
+    return error;
   }
 };
 

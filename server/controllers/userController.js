@@ -48,6 +48,15 @@ const getMyClasschedule = async (req, res) => {
     const scheduleLesson = await getClassScheduleByUser(user);
     const scheduleInterview = await getInterviewSchedule(user.class);
     const classData = await getClassByUser(user);
+    if(user.role === STUDENT_ROLE) {
+      res
+      .status(200)
+      .json({
+        success: true,
+        schedule: scheduleLesson,
+        classData: classData,
+      });
+    }
     res
       .status(200)
       .json({

@@ -1,12 +1,10 @@
 const {
   findAllLocation,
-  findAllStudentTypes,
   getStudentTypeById,
   storeStudentType,
   removeStudentType,
   getDistrictsByProvinceId,
   getWardsByDistrictId,
-  findAllSubjects,
   getSubjectById,
   storeSubject,
   removeSubject,
@@ -18,6 +16,12 @@ const {
   removeSemester,
   findStudentTypeWithParams,
   updateStudentType,
+  findSubjectWithParams,
+  updateSubject,
+  updateGrade,
+  findGragesWithParams,
+  updateSemester,
+  findSemestersWithParams,
 } = require("../repository/commonRepository");
 
 const getLocation = async (req, res) => {
@@ -54,14 +58,12 @@ const getStudentTypes = async (req, res) => {
   try {
     const params = req.query;
     const studentTypes = await findStudentTypeWithParams(params);
-    res
-      .status(200)
-      .json({
-        success: true,
-        studentTypes: studentTypes.documents,
-        count: studentTypes.count,
-        message: studentTypes.message,
-      });
+    res.status(200).json({
+      success: true,
+      studentTypes: studentTypes.documents,
+      count: studentTypes.count,
+      message: studentTypes.message,
+    });
   } catch (error) {
     res.status(400).send(error);
   }
@@ -78,7 +80,7 @@ const getStudentType = async (id) => {
 
 const addStudentType = async (req, res) => {
   try {
-    const studentType = await storeStudentType(req.body);
+    await storeStudentType(req.body);
     res.status(200).json({ success: true });
   } catch (error) {
     res.status(400).send(error);
@@ -88,7 +90,6 @@ const addStudentType = async (req, res) => {
 const editStudentType = async (req, res) => {
   try {
     const result = await updateStudentType(req.body);
-    console.log(result)
     res.status(200).json({ success: true, message: result.message });
   } catch (error) {
     res.status(400).send(error);
@@ -106,8 +107,14 @@ const deleteStudentType = async (req, res) => {
 
 const getSubjects = async (req, res) => {
   try {
-    const subjects = await findAllSubjects();
-    res.status(200).json({ success: true, subjects: subjects });
+    const params = req.query;
+    const subjects = await findSubjectWithParams(params);
+    res.status(200).json({
+      success: true,
+      subjects: subjects.documents,
+      count: subjects.count,
+      message: subjects.message,
+    });
   } catch (error) {
     res.status(400).send(error);
   }
@@ -117,6 +124,15 @@ const addSubject = async (req, res) => {
   try {
     await storeSubject(req.body);
     res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+const editSubject = async (req, res) => {
+  try {
+    const result = await updateSubject(req.body);
+    res.status(200).json({ success: true, message: result.message });
   } catch (error) {
     res.status(400).send(error);
   }
@@ -133,8 +149,23 @@ const deleteSubject = async (req, res) => {
 
 const getGrades = async (req, res) => {
   try {
-    const grades = await findGrades();
-    res.status(200).json({ success: true, grades: grades });
+    const params = req.query;
+    const grades = await findGragesWithParams(params);
+    res.status(200).json({
+      success: true,
+      grades: grades.documents,
+      count: grades.count,
+      message: grades.message,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+const editGrade= async (req, res) => {
+  try {
+    const result = await updateGrade(req.body);
+    res.status(200).json({ success: true, message: result.message });
   } catch (error) {
     res.status(400).send(error);
   }
@@ -160,8 +191,14 @@ const deleteGrade = async (req, res) => {
 
 const getSemesters = async (req, res) => {
   try {
-    const semesters = await findSemesters();
-    res.status(200).json({ success: true, semesters: semesters });
+    const params = req.query;
+    const semesters =  await findSemestersWithParams(params);
+    res.status(200).json({
+      success: true,
+      semesters: semesters.documents,
+      count: semesters.count,
+      message: semesters.message,
+    });
   } catch (error) {
     res.status(400).send(error);
   }
@@ -171,6 +208,15 @@ const addSemester = async (req, res) => {
   try {
     await storeSemester(req.body);
     res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+const editSemester= async (req, res) => {
+  try {
+    const result = await updateSemester(req.body);
+    res.status(200).json({ success: true, message: result.message });
   } catch (error) {
     res.status(400).send(error);
   }
@@ -203,4 +249,7 @@ module.exports = {
   getSemesters,
   addSemester,
   deleteSemester,
+  editSubject,
+  editGrade,
+  editSemester
 };

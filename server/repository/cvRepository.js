@@ -1,6 +1,4 @@
-const {
-  compareObjectId,
-} = require("../function/commonFunction");
+const { compareObjectId } = require("../function/commonFunction");
 const { CV } = require("../models/CV");
 const { findAllCVsWithParams } = require("../services/queryByParamsServices");
 const {
@@ -9,12 +7,18 @@ const {
 } = require("../services/sendMaiServices");
 const { storeCVAnswer } = require("./cvAnswerRepository");
 const { storeFreeTime, getFreeTimeByCVId } = require("./freeTimeRepository");
-const { createCVNotification, createNotiSetInterviewParticipants } = require("./notificationRepository");
+const {
+  createCVNotification,
+  createNotiSetInterviewParticipants,
+} = require("./notificationRepository");
 const {
   storeInterviewSchedule,
   updateInterviewSchedule,
 } = require("./scheduleRepository");
-const { generateTokenToResetPassword } = require("./userRepository");
+const {
+  generateTokenToResetPassword,
+  checkDuplicateMail,
+} = require("./userRepository");
 const { storeVolunteer } = require("./volunteerRepository");
 
 const storeCV = async (userData, cvLink, audioLink) => {
@@ -47,8 +51,16 @@ const storeCV = async (userData, cvLink, audioLink) => {
         noon: Number(data[1]),
       });
     }
-    cv.save();
+    await cv.save();
     await createCVNotification(cv);
+    await sendMailInterview(
+      {
+        email: userData.email,
+        userName: userData.userName,
+      },
+      "ThanksForRegister",
+      "[Lớp học Cầu Vồng] Thông báo gửi thông tin đăng ký thành công"
+    );
     return cv;
   } catch (error) {
     console.log(error);
@@ -92,7 +104,7 @@ const getCVById = async (cvId, currentUser, currentVolunteer) => {
         path: "class",
         select: "name",
       },
-      { path: "schedule", populate: { path: "participants", select: "name" }, },
+      { path: "schedule", populate: { path: "participants", select: "name" } },
     ]);
     if (
       currentVolunteer.isAdmin ||
@@ -114,6 +126,7 @@ const updateCV = async (cvData, currentUser, currentVolunteer) => {
   try {
     const cv = await CV.findOne({ _id: cvData.cvId }).populate("schedule");
     let sendMailStatus;
+    let duplicateMail;
     if (currentVolunteer.isAdmin || cv.class === currentUser.class) {
       cv.status = cvData.status;
       switch (cvData.status) {
@@ -141,8 +154,14 @@ const updateCV = async (cvData, currentUser, currentVolunteer) => {
               "EditInterviewTime",
               "[Lớp học Cầu Vồng] Thông báo thay đổi thời gian phỏng vấn"
             );
-            const updatedParticipants = cvData.participants.filter(p => !cv.schedule.participants?.includes(p));
-            await createNotiSetInterviewParticipants(updatedParticipants, cv, interviewTime);
+            const updatedParticipants = cvData.participants.filter(
+              (p) => !cv.schedule.participants?.includes(p)
+            );
+            await createNotiSetInterviewParticipants(
+              updatedParticipants,
+              cv,
+              interviewTime
+            );
           } else {
             var schedule = await storeInterviewSchedule({
               scheduleType: 2,
@@ -161,21 +180,35 @@ const updateCV = async (cvData, currentUser, currentVolunteer) => {
               "SetInterviewTime",
               "[Lớp học Cầu Vồng] Thông báo thời gian phỏng vấn"
             );
-            await createNotiSetInterviewParticipants(cvData.participants, cv, interviewTime);
+            await createNotiSetInterviewParticipants(
+              cvData.participants,
+              cv,
+              interviewTime
+            );
           }
           break;
         case 2:
-          await storeVolunteer({
-            name: cv.userName,
-            email: cv.email,
-            class: cv.class,
-          });
-          const user = await generateTokenToResetPassword(cv.email);
-          sendMailStatus = await sendMailAccount(
-            { email: cv.email, userName: cv.userName, token: user.token },
-            "PassInterview",
-            "[Lớp học Cầu Vồng] Thông báo trúng tuyển TNV"
-          );
+          duplicateMail = await checkDuplicateMail(cv.email);
+          if (duplicateMail) {
+            sendMailStatus = await sendMailInterview(
+              { email: cv.email, userName: cv.userName },
+              "PassInterviewNotAutoAdd",
+              "[Lớp học Cầu Vồng] Thông báo trúng tuyển TNV"
+            );
+          } else {
+            await storeVolunteer({
+              name: cv.userName,
+              email: cv.email,
+              phoneNumber: cv.phoneNumber,
+              class: cv.class,
+            });
+            const user = await generateTokenToResetPassword(cv.email);
+            sendMailStatus = await sendMailAccount(
+              { email: cv.email, userName: cv.userName, token: user.token },
+              "PassInterview",
+              "[Lớp học Cầu Vồng] Thông báo trúng tuyển TNV"
+            );
+          }
           break;
         case 3:
           sendMailStatus = await sendMailInterview(
@@ -190,7 +223,14 @@ const updateCV = async (cvData, currentUser, currentVolunteer) => {
         default:
           break;
       }
-      if (sendMailStatus) return cv.save();
+      if (sendMailStatus)  {
+        await cv.save();
+        if(duplicateMail) {
+          return {duplicateMail: true}
+        } else {
+          return {duplicateMail: false}
+        }
+      }
       else return { message: "fail to send mail services" };
     } else {
       return null;

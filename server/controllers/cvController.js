@@ -39,8 +39,8 @@ const getCVDataById = async (req, res) => {
 const updateCVStatus = async (req, res) => {
   try {
     const cvData = req.body;
-    await updateCV(cvData, req.currentUser, req.currentVolunteer);
-    res.status(200).json({ success: true });
+    const result = await updateCV(cvData, req.currentUser, req.currentVolunteer);
+    res.status(200).json({ success: true, duplicateMail: result.duplicateMail });
   } catch (error) {
     res.status(400).send(error);
   }

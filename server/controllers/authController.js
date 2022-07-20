@@ -17,6 +17,8 @@ const crypto = require("crypto");
 const { getCurrentUserRole } = require("./userController");
 const readFile = promisify(fs.readFile);
 const { OAuth2Client } = require("google-auth-library");
+const { VOLUNTEER_ROLE } = require("../defaultValues/constant");
+const { getVolunteerByUserId } = require("../repository/volunteerRepository");
 
 const myOAuth2Client = new OAuth2Client(
   process.env.OAUTH_CLIENT_ID,
@@ -75,10 +77,16 @@ const login = (req, res) => {
         message: "Account was not active",
       });
     }
-    user.comparePassword(req.body.password, (err, isMatch) => {
+    user.comparePassword(req.body.password, async (err, isMatch) => {
       if (!isMatch)
         return res.json({ loginSuccess: false, message: "Wrong password" });
-
+      var userRole = {};
+      userRole.role = user.role;
+      if (userRole.role === VOLUNTEER_ROLE) {
+        const volunteer = await getVolunteerByUserId(user._id);
+        userRole.subRole = volunteer.role;
+        userRole.isAdmin = volunteer.isAdmin;
+      }
       user.generateToken((err, user) => {
         if (err) return res.status(400).send(err);
         res.status(200).json({
@@ -86,6 +94,8 @@ const login = (req, res) => {
           userId: user._id,
           w_authExp: user.tokenExp,
           w_auth: user.token,
+          classId: user.class,
+          userRole: userRole,
         });
         // res
           // .cookie("w_auth", user.token, {

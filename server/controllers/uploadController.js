@@ -1,9 +1,5 @@
 require("dotenv").config();
 const multer = require("multer");
-const {
-  DEFAULT_AVATAR_PATH,
-  DEFAULT_CV_PATH,
-} = require("../defaultValues/constant");
 const { storeCV } = require("../repository/cvRepository");
 const { uploadCVFile, uploadImage } = require("../services/uploadServices");
 

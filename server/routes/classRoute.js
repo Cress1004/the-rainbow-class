@@ -40,7 +40,7 @@ router.get("/get-all-classes", auth, getAllClasses);
 router.get("/get-number-of-classes", auth, getNumberOfClasses);
 router.get("/get-list-class-with-name", getListClassWithName);
 router.post("/comment-student", checkAdminAndMonitorRole, updateCommentStudent);
-router.get("/my-class-schedules", auth, getMyClasschedule);
+router.post("/my-class-schedules", auth, getMyClasschedule);
 router.post("/get-class-schedules", auth, getClassSchedule);
 router.get("/:id", auth, getClassData);
 router.get(

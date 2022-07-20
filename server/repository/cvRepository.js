@@ -223,15 +223,14 @@ const updateCV = async (cvData, currentUser, currentVolunteer) => {
         default:
           break;
       }
-      if (sendMailStatus)  {
+      if (sendMailStatus) {
         await cv.save();
-        if(duplicateMail) {
-          return {duplicateMail: true}
+        if (duplicateMail) {
+          return { duplicateMail: true };
         } else {
-          return {duplicateMail: false}
+          return { duplicateMail: false };
         }
-      }
-      else return { message: "fail to send mail services" };
+      } else return { message: "fail to send mail services" };
     } else {
       return null;
     }
@@ -253,6 +252,29 @@ const getInterviewSchedule = async (classId) => {
         })
         .populate("class");
     }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const getInterviewScheduleByClassAndMonth = async (classId, month) => {
+  try {
+    let allCV;
+    if (classId == 0) {
+      allCV = await getAllInterviewsByClass();
+    } else {
+      allCV = await CV.find({ class: classId })
+        .populate({
+          path: "schedule",
+          populate: { path: "personInCharge", select: "name" },
+        })
+        .populate("class");
+    }
+    const result = allCV.filter((cv) => {
+      const monthTime = cv.schedule?.time?.date?.slice(0, 7);
+      return monthTime == month;
+    });
+    return result;
   } catch (error) {
     console.log(error);
   }
@@ -301,4 +323,5 @@ module.exports = {
   getInterviewSchedule,
   getCVBySchedule,
   getAllCVs,
+  getInterviewScheduleByClassAndMonth,
 };

@@ -20,9 +20,12 @@ const {
   setMonitor,
   listClassWithName,
   getNumberOfClassesData,
+  findClassWithName,
 } = require("../repository/classRepository");
-const { getInterviewSchedule } = require("../repository/cvRepository");
-const { getLessonsByCLass } = require("../repository/lessonRepository");
+const {
+  getInterviewScheduleByClassAndMonth,
+} = require("../repository/cvRepository");
+const { getLessonByClassAndMonth } = require("../repository/lessonRepository");
 const {
   createNotiRemindSetMonitor,
 } = require("../repository/notificationRepository");
@@ -45,13 +48,11 @@ const getAllClasses = async (req, res) => {
     const classes = classesData.classResult;
     Promise.all(classes.map((item) => tranformClassData(item))).then(
       (value) => {
-        res
-          .status(200)
-          .json({
-            success: true,
-            classes: value,
-            allNumberOfClasses: classesData.allResults,
-          });
+        res.status(200).json({
+          success: true,
+          classes: value,
+          allNumberOfClasses: classesData.allResults,
+        });
       }
     );
   } catch (error) {
@@ -118,9 +119,18 @@ const deleteClassData = async (req, res) => {
 const getClassSchedule = async (req, res) => {
   try {
     const classId = req.body.classId;
-    const scheduleLesson = await getLessonsByCLass(classId);
-    const scheduleInterview = await getInterviewSchedule(classId);
-    const classData = await findClassById(classId);
+    const monthRange = req.body.monthRange;
+    let scheduleLesson = [];
+    let scheduleInterview = [];
+    for (let index = 0; index < monthRange.length; index++) {
+      scheduleLesson = scheduleLesson.concat(
+        await getLessonByClassAndMonth(classId, monthRange[index])
+      );
+      scheduleInterview = scheduleInterview.concat(
+        await getInterviewScheduleByClassAndMonth(classId, monthRange[index])
+      );
+    }
+    const classData = await findClassWithName(classId);
     res.status(200).json({
       success: true,
       schedule: [...scheduleLesson, ...scheduleInterview],

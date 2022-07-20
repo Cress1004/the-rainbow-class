@@ -3,7 +3,6 @@ const { ClassName } = require("../models/ClassName");
 const { findAll } = require("../services");
 const { storeAddress, updateAddress } = require("./commonRepository");
 const { getLessonsByCLass } = require("./lessonRepository");
-const { createNewNoti } = require("./notificationRepository");
 const { getPairTeachingByClass } = require("./pairTeachingRepository");
 const { getStudentByClass } = require("./studentRepository");
 const {
@@ -138,7 +137,7 @@ const setMonitor = async (classId, monitorId, subMonitorId) => {
   try {
     const currentClass = await ClassName.findOne({ _id: classId });
     await downgradeMonitor(currentClass);
-    await upgradeMonitor(monitorId, subMonitorId);
+    await upgradeMonitor(currentClass, monitorId, subMonitorId);
     currentClass.classMonitor = monitorId;
     currentClass.subClassMonitor = subMonitorId;
     return currentClass.save();

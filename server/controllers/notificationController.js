@@ -7,7 +7,7 @@ const getNotification = async (req, res) => {
   try {
     const params = req.query;
     const noti = await getNotificationByUser(req.user, params);
-    res.status(200).json({ success: true, notifications: noti });
+    res.status(200).json({ success: true, notifications: noti.documents, count: noti.count });
   } catch (error) {
     res.status(400).send(error);
   }

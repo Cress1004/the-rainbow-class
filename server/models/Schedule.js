@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+var mongoose_delete = require('mongoose-delete');
 
 const scheduleSchema = mongoose.Schema({
   scheduleType: {
@@ -15,7 +16,7 @@ const scheduleSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Address",
   },
-  paticipants: [
+  participants: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -30,6 +31,7 @@ const scheduleSchema = mongoose.Schema({
   },
 });
 
+scheduleSchema.plugin(mongoose_delete, { deletedAt : true });
 const Schedule = mongoose.model("Schedule", scheduleSchema);
 
 module.exports = { Schedule };

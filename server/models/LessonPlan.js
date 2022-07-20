@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+var mongoose_delete = require('mongoose-delete');
 
 const LessonPlanSchema = mongoose.Schema({
     content: {
@@ -17,6 +18,7 @@ const LessonPlanSchema = mongoose.Schema({
     reference: String
 });
 
+LessonPlanSchema.plugin(mongoose_delete, { deletedAt : true });
 const LessonPlan = mongoose.model('LessonPlan', LessonPlanSchema);
 
 module.exports = { LessonPlan };

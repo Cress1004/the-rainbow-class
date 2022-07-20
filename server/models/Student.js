@@ -33,7 +33,6 @@ const studentSchema = mongoose.Schema(
     timestamps: {
       createdAt: "created_at",
       updatedAt: "updated_at",
-      deleteAt: "delete_at",
     },
   }
 );

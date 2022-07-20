@@ -7,9 +7,9 @@ const { getPairById } = require("./pairTeachingRepository");
 const storeInterviewSchedule = async (data) => {
   try {
     const newSchedule = new Schedule(data);
-    // for (let index = 0; index < data.paticipants?.length; index++) {
+    // for (let index = 0; index < data.participants?.length; index++) {
     //   await createNewNoti({
-    //     userId: data.paticipants[index],
+    //     userId: data.participants[index],
     //     type: data.scheduleType === 0 ? 1 : 2, //1: lessson, 2: interview
     //   });
     // }
@@ -20,11 +20,12 @@ const storeInterviewSchedule = async (data) => {
   }
 };
 
-const updateInterviewSchedule = async (cv, interviewTime, participants) => {
+const updateInterviewSchedule = async (cv, interviewTime, participants, linkOnline) => {
   try {
     const schedule = await Schedule.findOne({ _id: cv.schedule });
     schedule.time = interviewTime;
-    schedule.paticipants = participants;
+    schedule.participants = participants;
+    schedule.linkOnline = linkOnline;
     schedule.save();
   } catch (error) {}
 };
@@ -36,7 +37,7 @@ const storeNewSchedule = async (data, pairId) => {
     const newSchedule = await new Schedule(data);
     if (pairId) {
       newSchedule.personInCharge = pairTeaching.volunteer.user._id;
-      newSchedule.paticipants = [pairTeaching.volunteer.user._id];
+      newSchedule.participants = [pairTeaching.volunteer.user._id];
     }
     newSchedule.address = address._id;
     newSchedule.save();
@@ -77,40 +78,35 @@ const updateSchedule = async (data) => {
   }
 };
 
-const addPaticipant = async (scheduleId, userId) => {
+const addParticipant = async (scheduleId, userId) => {
   try {
     const schedule = await Schedule.findOne({ _id: scheduleId });
-    schedule.paticipants.push(userId);
-    await createNewNoti({
-      userId: userId,
-      type: schedule.scheduleType === 0 ? 1 : 2, //1: lessson, 2: interview
-      schedule: schedule._id,
-    });
-    schedule.save();
+    schedule.participants.push(userId);
+    await schedule.save();
   } catch (error) {
     console.log(error);
   }
 };
 
-const removePaticipant = async (scheduleId, currentUserId) => {
+const removeParticipant = async (scheduleId, currentUserId) => {
   try {
     const schedule = await Schedule.findOne({ _id: scheduleId });
     Promise.all(
-      schedule.paticipants.filter(
+      schedule.participants.filter(
         (userId) => !compareObjectId(userId, currentUserId)
       )
     ).then((result) => {
-      schedule.paticipants = result;
+      schedule.participants = result;
       schedule.save();
     });
   } catch (error) {
-    console.log("fail to remove paticipant");
+    console.log("fail to remove participant");
   }
 };
 
 const getAllSchedulesByVolunteer = async (data) => {
   try {
-    return await Schedule.find({ paticipants: data });
+    return await Schedule.find({ participants: data });
   } catch (error) {
     console.log("fail to get user schedule");
   }
@@ -120,14 +116,9 @@ const updatePersonInCharge = async (scheduleId, personInChargeId) => {
   try {
     const schedule = await Schedule.findOne({ _id: scheduleId });
     schedule.personInCharge = personInChargeId;
-    await createNewNoti({
-      userId: personInChargeId,
-      type: schedule.scheduleType === 0 ? 1 : 2, //1: lessson, 2: interview
-      schedule: schedule._id,
-    });
     return schedule.save();
   } catch (error) {
-    console.log("fail to update person incharge");
+    console.log(error);
     return null;
   }
 };
@@ -136,8 +127,8 @@ module.exports = {
   storeNewSchedule,
   deleteSchedule,
   updateSchedule,
-  addPaticipant,
-  removePaticipant,
+  addParticipant,
+  removeParticipant,
   getAllSchedulesByVolunteer,
   updatePersonInCharge,
   storeInterviewSchedule,

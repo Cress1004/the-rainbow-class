@@ -2,16 +2,24 @@ const { Volunteer } = require("../models/Volunteer");
 const { User } = require("../models/User");
 const {
   VOLUNTEER_ROLE,
-  SUPER_ADMIN,
   STUDENT_ROLE,
   CLASS_MONITOR,
   SUB_CLASS_MONITOR,
 } = require("../defaultValues/constant");
 const { compareObjectId } = require("../function/commonFunction");
-const { storeUser, updateUserData, deleteUser } = require("./userRepository");
+const {
+  storeUser,
+  updateUserData,
+  deleteUser,
+  getUserByVolunteer,
+} = require("./userRepository");
 const {
   findAllWithUserPopulatedFields,
 } = require("../services/queryByParamsServices");
+const {
+  createNotiUpgradeMonitorRole,
+  createNotiDownMonitorRole,
+} = require("./notificationRepository");
 
 const storeVolunteer = async (data) => {
   try {
@@ -34,16 +42,20 @@ const storeVolunteer = async (data) => {
 
 const getVolunteerById = async (id) => {
   try {
-    return await Volunteer.findOne({ _id: id }).populate({
-      path: "user",
-      select: "name email phoneNumber gender image address class linkFacebook",
-      populate: [
-        { path: "address", select: "address description" },
-        { path: "class" },
-      ],
-    });
+    return await Volunteer.findOne({ _id: id })
+      .populate({
+        path: "user",
+        select:
+          "name email phoneNumber gender image address class linkFacebook",
+        populate: [
+          { path: "address", select: "address description" },
+          { path: "class" },
+          { path: "updatedBy", select: "name" },
+        ],
+      })
+      .populate({ path: "updatedBy", select: "name" });
   } catch (error) {
-    console.log("fail to get volunteer data by ID");
+    console.log(error);
   }
 };
 
@@ -58,7 +70,8 @@ const getVolunteerByIdAndClassId = async (volunteerData, classId) => {
           { path: "address", select: "address description" },
           { path: "class", select: "name" },
         ],
-      });
+      })
+      .populate({ path: "updatedBy", select: "name" });
   } catch (error) {
     console.log("fail to get volunteer data by ID and class ID");
     return null;
@@ -223,15 +236,19 @@ const downgradeMonitor = async (currentClass) => {
       const monitor = await Volunteer.findOne({
         _id: currentClass.classMonitor,
       });
+      const userMonitor = await getUserByVolunteer(monitor);
       monitor.role = 1;
-      monitor.save();
+      await monitor.save();
+      await createNotiDownMonitorRole(userMonitor._id, currentClass);
     }
     if (currentClass.subClassMonitor) {
       const subMonitor = await Volunteer.findOne({
         _id: currentClass.subClassMonitor,
       });
+      const userSubMonitor = await getUserByVolunteer(subMonitor);
       subMonitor.role = 1;
-      subMonitor.save();
+      await subMonitor.save();
+      await createNotiDownMonitorRole(userSubMonitor._id, currentClass);
     }
   } catch (error) {
     console.log("fail to downgrade monitor");
@@ -239,17 +256,21 @@ const downgradeMonitor = async (currentClass) => {
   }
 };
 
-const upgradeMonitor = async (monitorId, subMonitorId) => {
+const upgradeMonitor = async (currentClass, monitorId, subMonitorId) => {
   try {
-    if (monitorId) {
+    if (monitorId && currentClass.monitorId !== monitorId) {
       const monitor = await Volunteer.findOne({ _id: monitorId });
+      const userMonitor = await getUserByVolunteer(monitor);
       monitor.role = 2;
-      monitor.save();
+      await monitor.save();
+      await createNotiUpgradeMonitorRole(userMonitor._id, currentClass, 2);
     }
-    if (subMonitorId) {
+    if (subMonitorId && currentClass.subClassMonitor !== subMonitorId) {
       const subMonitor = await Volunteer.findOne({ _id: subMonitorId });
+      const userSubMonitor = await getUserByVolunteer(subMonitor);
       subMonitor.role = 3;
-      subMonitor.save();
+      await subMonitor.save();
+      await createNotiUpgradeMonitorRole(userSubMonitor._id, currentClass, 3);
     }
   } catch (error) {
     console.log("fail to upgrade monitor");
@@ -323,11 +344,25 @@ const getAdminList = async (params) => {
 
 const getAllVolunteers = async () => {
   try {
-    const volunteers = await Volunteer.find({});
+    const volunteers = await Volunteer.find({ deleted: false }).populate(
+      "user"
+    );
     return volunteers;
   } catch (error) {
     console.log(error);
     return { message: error };
+  }
+};
+
+const updateVolunteerStatus = async (currentUser, updateData) => {
+  try {
+    const volunteer = await Volunteer.findOne({ _id: updateData.volunteerId });
+    volunteer.retirementDate = updateData.retirementDate;
+    volunteer.updatedBy = currentUser._id;
+    return volunteer.save();
+  } catch (error) {
+    console.log(error);
+    return null;
   }
 };
 
@@ -347,5 +382,6 @@ module.exports = {
   getAllAdmin,
   getAllVolunteers,
   getAdminList,
-  getVolunteerByClassId
+  getVolunteerByClassId,
+  updateVolunteerStatus,
 };

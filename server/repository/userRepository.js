@@ -1,4 +1,5 @@
 require("dotenv").config();
+const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { DEFAULT_AVATAR_PATH } = require("../defaultValues/constant");
@@ -169,6 +170,17 @@ const getUserByVolunteer = async (volunteer) => {
   }
 };
 
+const generateTokenToResetPassword = async (email) => {
+  try {
+    var user = await getUserDataByEmail(email);
+    var token = crypto.randomBytes(64).toString("hex");
+    user.token = token;
+    return user.save();
+  } catch (error) {
+    return error;
+  }
+};
+
 module.exports = {
   storeUser,
   updateUserData,
@@ -182,5 +194,6 @@ module.exports = {
   checkDuplicateMail,
   findUserByToken,
   comparePassword,
-  getUserByVolunteer
+  getUserByVolunteer,
+  generateTokenToResetPassword
 };

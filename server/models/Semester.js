@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+var mongoose_delete = require('mongoose-delete');
 
 const semesterSchema = mongoose.Schema({
   title: String,
@@ -6,6 +7,7 @@ const semesterSchema = mongoose.Schema({
   endDate: String,
 });
 
+semesterSchema.plugin(mongoose_delete, { deletedAt : true });
 const Semester = mongoose.model("Semester", semesterSchema, "semesters");
 
 module.exports = { Semester };

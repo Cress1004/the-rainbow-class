@@ -14,8 +14,8 @@ const {
   getReportByStudent,
 } = require("../repository/reportRepository");
 const {
-  removePaticipant,
-  addPaticipant,
+  removeParticipant,
+  addParticipant,
 } = require("../repository/scheduleRepository");
 const { getStudentByClassId } = require("../repository/studentRepository");
 const { getUserDataById } = require("../repository/userRepository");
@@ -87,7 +87,7 @@ const editLessonData = async (req, res) => {
 
 const assignLesson = async (req, res) => {
   try {
-    await addPaticipant(req.body.scheduleId, req.user._id);
+    await addParticipant(req.body.scheduleId, req.user._id);
     res.status(200).json({ success: true });
   } catch (error) {
     res.status(400).send(error);
@@ -96,7 +96,7 @@ const assignLesson = async (req, res) => {
 
 const unassignLesson = async (req, res) => {
   try {
-    await removePaticipant(req.body.scheduleId, req.user._id);
+    await removeParticipant(req.body.scheduleId, req.user._id);
     res.status(200).json({ success: true });
   } catch (error) {
     res.status(400).send(error);

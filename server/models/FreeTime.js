@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+var mongoose_delete = require('mongoose-delete');
 
 const FreeTimeSchema = mongoose.Schema(
   {
@@ -18,6 +19,7 @@ const FreeTimeSchema = mongoose.Schema(
   }
 );
 
+FreeTimeSchema.plugin(mongoose_delete, { deletedAt : true });
 const FreeTime = mongoose.model("FreeTime", FreeTimeSchema);
 
 module.exports = { FreeTime };

@@ -4,6 +4,7 @@ const { Location } = require("../models/Location");
 const { Semester } = require("../models/Semester");
 const { StudentType } = require("../models/StudentType");
 const { Subject } = require("../models/Subject");
+const { findAll } = require("../services");
 
 const findAllLocation = () => {
   return Location.find({});
@@ -11,13 +12,13 @@ const findAllLocation = () => {
 
 const getDistrictsByProvinceId = async (provinceId) => {
   const province = await Location.findOne({ id: provinceId });
-  return province.districts;
+  return province?.districts;
 };
 
 const getWardsByDistrictId = async (provinceId, districtId) => {
   const province = await Location.findOne({ id: provinceId });
-  const district = province.districts.find((item) => item.id === districtId);
-  return district.wards;
+  const district = province?.districts.find((item) => item.id === districtId);
+  return district?.wards;
 };
 
 const storeAddress = (data) => {
@@ -46,7 +47,22 @@ const deleteAddress = async (id) => {
 };
 
 const findAllStudentTypes = () => {
-  return StudentType.find({});
+  return StudentType.find({ deleted: false });
+};
+
+const findStudentTypeWithParams = async (params) => {
+  try {
+    return await findAll(StudentType, ["title"], {
+      limit: parseInt(params.limit),
+      offset: (params.offset - 1) * 10,
+      search: params.search,
+      query: { deleted: false },
+      sort: ["created_at_dsc"],
+    });
+  } catch (error) {
+    console.log(error);
+    return { message: error };
+  }
 };
 
 const getStudentTypeById = (id) => {
@@ -58,20 +74,58 @@ const storeStudentType = (data) => {
   return studentType.save();
 };
 
+const updateStudentType = async (data) => {
+  try {
+    return await StudentType.findOneAndUpdate(
+      { _id: data.id },
+      { title: data.title },
+      {
+        new: true,
+        upsert: true,
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    return { message: error };
+  }
+};
+
 const removeStudentType = async (id) => {
   try {
-    return StudentType.findByIdAndDelete({ _id: id });
+    return await StudentType.findOneAndUpdate(
+      { _id: data.id },
+      { deleted: true },
+      {
+        new: true,
+        upsert: true,
+      }
+    );
   } catch (error) {
-    console.log("delete student type fail");
+    console.log(error);
   }
 };
 
 const findAllSubjects = () => {
   try {
-    return Subject.find({});
+    return Subject.find({ deleted: false });
   } catch (error) {
     console.log(error);
     return null;
+  }
+};
+
+const findSubjectWithParams = async (params) => {
+  try {
+    return await findAll(Subject, ["title"], {
+      limit: parseInt(params.limit),
+      offset: (params.offset - 1) * 10,
+      search: params.search,
+      query: { deleted: false },
+      sort: ["created_at_dsc"],
+    });
+  } catch (error) {
+    console.log(error);
+    return { message: error };
   }
 };
 
@@ -94,9 +148,32 @@ const storeSubject = (data) => {
   }
 };
 
+const updateSubject = async (data) => {
+  try {
+    return await Subject.findOneAndUpdate(
+      { _id: data.id },
+      { title: data.title },
+      {
+        new: true,
+        upsert: true,
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    return { message: error };
+  }
+};
+
 const removeSubject = async (id) => {
   try {
-    return Subject.findByIdAndDelete({ _id: id });
+    return await Subject.findOneAndUpdate(
+      { _id: id },
+      { deleted: true },
+      {
+        new: true,
+        upsert: true,
+      }
+    );
   } catch (error) {
     console.log(error);
     return null;
@@ -105,7 +182,7 @@ const removeSubject = async (id) => {
 
 const findGrades = () => {
   try {
-    return Grade.find({});
+    return Grade.find({ deleted: false });
   } catch (error) {
     console.log(error);
     return null;
@@ -124,8 +201,14 @@ const storeGrade = (data) => {
 
 const removeGrade = async (id) => {
   try {
-    return Grade.findByIdAndDelete({ _id: id });
-  } catch (error) {
+    return await Grade.findOneAndUpdate(
+      { _id: id },
+      { deleted: true },
+      {
+        new: true,
+        upsert: true,
+      }
+    );  } catch (error) {
     console.log(error);
     return null;
   }
@@ -133,7 +216,7 @@ const removeGrade = async (id) => {
 
 const findSemesters = () => {
   try {
-    return Semester.find({});
+    return Semester.find({ deleted: false });
   } catch (error) {
     console.log(error);
     return null;
@@ -142,8 +225,8 @@ const findSemesters = () => {
 
 const storeSemester = (data) => {
   try {
-    const grade = new Semester(data);
-    return grade.save();
+    const semester = new Semester(data);
+    return semester.save();
   } catch (error) {
     console.log(error);
     return null;
@@ -152,10 +235,79 @@ const storeSemester = (data) => {
 
 const removeSemester = async (id) => {
   try {
-    return Semester.findByIdAndDelete({ _id: id });
+    return await Semester.findOneAndUpdate(
+      { _id: id },
+      { deleted: true },
+      {
+        new: true,
+        upsert: true,
+      }
+    );
   } catch (error) {
     console.log(error);
     return null;
+  }
+};
+
+const findGragesWithParams = async (params) => {
+  try {
+    return await findAll(Grade, ["title"], {
+      limit: parseInt(params.limit),
+      offset: (params.offset - 1) * 10,
+      search: params.search,
+      query: { deleted: false },
+      sort: ["created_at_dsc"],
+    });
+  } catch (error) {
+    console.log(error);
+    return { message: error };
+  }
+};
+
+const updateGrade = async (data) => {
+  try {
+    return await Grade.findOneAndUpdate(
+      { _id: data.id },
+      { title: data.title },
+      {
+        new: true,
+        upsert: true,
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    return { message: error };
+  }
+};
+
+const findSemestersWithParams = async (params) => {
+  try {
+    return await findAll(Semester, ["title", "startDate", "endDate"], {
+      limit: parseInt(params.limit),
+      offset: (params.offset - 1) * 10,
+      search: params.search,
+      query: { deleted: false },
+      sort: ["created_at_dsc"],
+    });
+  } catch (error) {
+    console.log(error);
+    return { message: error };
+  }
+};
+
+const updateSemester = async (data) => {
+  try {
+    return await Semester.findOneAndUpdate(
+      { _id: data.id },
+      { title: data.title, startDate: data.startDate, endDate: data.endDate },
+      {
+        new: true,
+        upsert: true,
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    return { message: error };
   }
 };
 
@@ -164,6 +316,7 @@ module.exports = {
   findAllStudentTypes,
   getStudentTypeById,
   storeStudentType,
+  updateStudentType,
   storeAddress,
   updateAddress,
   removeStudentType,
@@ -180,4 +333,11 @@ module.exports = {
   findSemesters,
   storeSemester,
   removeSemester,
+  findStudentTypeWithParams,
+  findSubjectWithParams,
+  updateSubject,
+  findGragesWithParams,
+  updateGrade,
+  findSemestersWithParams,
+  updateSemester,
 };

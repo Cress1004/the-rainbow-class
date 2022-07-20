@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+var mongoose_delete = require('mongoose-delete');
 
 const reportSchema = mongoose.Schema(
   {
@@ -29,6 +30,7 @@ const reportSchema = mongoose.Schema(
   }
 );
 
+reportSchema.plugin(mongoose_delete, { deletedAt : true });
 const Report = mongoose.model("Report", reportSchema);
 
 module.exports = { Report };

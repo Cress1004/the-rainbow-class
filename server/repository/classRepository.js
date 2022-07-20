@@ -2,7 +2,9 @@ const { VOLUNTEER_ROLE } = require("../defaultValues/constant");
 const { ClassName } = require("../models/ClassName");
 const { findAll } = require("../services");
 const { storeAddress, updateAddress } = require("./commonRepository");
-const { getLessonsByCLass } = require("./lessonRepository");
+const {
+  getLessonsByCLass,
+} = require("./lessonRepository");
 const { getPairTeachingByClass } = require("./pairTeachingRepository");
 const { getStudentByClass } = require("./studentRepository");
 const {
@@ -24,14 +26,17 @@ const findAllClasses = (user) => {
 
 const getAllClassesData = async (params) => {
   try {
-    const classResult = await findAll(ClassName, ['name'], {
+    const classResult = await findAll(ClassName, ["name"], {
       limit: parseInt(params.limit),
-      offset: (params.offset-1)*10,
+      offset: (params.offset - 1) * 10,
       search: params.search,
       query: params.query ? JSON.parse(params.query) : null,
-      sort: ['created_at_dsc']
+      sort: ["created_at_dsc"],
     });
-    return {classResult: classResult.documents, allResults: classResult.count};
+    return {
+      classResult: classResult.documents,
+      allResults: classResult.count,
+    };
   } catch (error) {
     console.log(error);
     return { message: error };
@@ -133,6 +138,20 @@ const getClassByUser = async (user) => {
   }
 };
 
+const getClassNameByUser = async (user) => {
+  try {
+    if (user.class) {
+      return ClassName.findOne({ _id: user.class }).select("name");
+    } else {
+      console.log("no class");
+      return null;
+    }
+  } catch (error) {
+    console.log("cant get class By User");
+    return null;
+  }
+};
+
 const setMonitor = async (classId, monitorId, subMonitorId) => {
   try {
     const currentClass = await ClassName.findOne({ _id: classId });
@@ -156,16 +175,23 @@ const listClassWithName = async () => {
   }
 };
 
-
 const getNumberOfClassesData = async () => {
   try {
-    return await ClassName.find({})
+    return await ClassName.find({});
   } catch (error) {
     console.log("cant get all classes data");
     return null;
   }
 };
 
+const findClassWithName = (id) => {
+  try {
+    if (id == 0) return null;
+    return ClassName.findOne({ _id: id }).select("name");
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 module.exports = {
   findAllClasses,
@@ -179,5 +205,7 @@ module.exports = {
   getAllClassesData,
   setMonitor,
   listClassWithName,
-  getNumberOfClassesData
+  getNumberOfClassesData,
+  findClassWithName,
+  getClassNameByUser
 };

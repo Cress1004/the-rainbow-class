@@ -1,16 +1,11 @@
 const { compareObjectId } = require("../function/commonFunction");
 const { Lesson } = require("../models/Lesson");
 const { deleteAddress } = require("./commonRepository");
-const { createNewNoti } = require("./notificationRepository");
 const {
   storeNewSchedule,
   deleteSchedule,
   updateSchedule,
 } = require("./scheduleRepository");
-const {
-  getVolunteerByClass,
-  getVolunteerByClassId,
-} = require("./volunteerRepository");
 
 const storeNewLesson = async (data) => {
   try {
@@ -172,9 +167,18 @@ const getReportByLesson = async (reports, lesson) => {
 
 const getLessonByClassAndMonth = async (classId, month) => {
   try {
-    const lessons = await Lesson.find({ class: classId })
-      .populate("schedule")
-      .sort({ createdAt: -1 });
+    let lessons;
+    if (classId == 0) {
+      lessons = await getAllLessonsByClass();
+    } else {
+      lessons = await Lesson.find({ class: classId })
+        .populate({
+          path: "schedule",
+          populate: { path: "personInCharge", select: "name" },
+        })
+        .populate("class")
+        .sort({ created_at: -1 });
+    }
     const result = lessons.filter((lesson) => {
       const monthTime = lesson.schedule.time.date.slice(0, 7);
       return monthTime == month;

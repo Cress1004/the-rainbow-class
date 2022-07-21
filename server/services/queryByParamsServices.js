@@ -118,7 +118,8 @@ async function findAllWithUserPopulatedFields(
   model,
   searchFields,
   classId,
-  { search, query, offset, limit, fields, sort }
+  { search, query, offset, limit, fields, sort },
+  studentIds
 ) {
   const s = searchFields
     .filter(
@@ -157,6 +158,15 @@ async function findAllWithUserPopulatedFields(
     query["user.isActive"] = query.isActive === "false" ? false : true;
     delete query.isActive;
   }
+
+  if (studentIds?.length) {
+    const ids = studentIds?.map((id) =>
+      mongoose.Types.ObjectId(id)
+    );
+    query["_id"] = { $in: ids };
+  }
+
+  console.log(query)
 
   if (query.studentTypes) {
     if (query.studentTypes.length) {
@@ -212,6 +222,7 @@ async function findAllWithUserPopulatedFields(
     },
     {
       $project: {
+        "_id": 1,
         "user.name": 1,
         "user.email": 1,
         "user.phoneNumber": 1,

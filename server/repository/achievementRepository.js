@@ -51,8 +51,74 @@ const updateAchievement = async (data) => {
   }
 };
 
+const getAchievementByAllStudentsAndMonth = async (
+  month,
+  currentPoint,
+  compareType
+) => {
+  const currentMonth = (new Date(month).getMonth() % 12) + 1;
+  const aggOptions = [
+    {
+      $lookup: {
+        from: "lessons",
+        localField: "lesson",
+        foreignField: "_id",
+        as: "lesson",
+      },
+    },
+    {
+      $unwind: {
+        path: "$lesson",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: "schedules",
+        localField: "lesson.schedule",
+        foreignField: "_id",
+        as: "schedule",
+      },
+    },
+    {
+      $unwind: {
+        path: "$schedule",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $project: {
+        student: 1,
+        month: {
+          $month: { $dateFromString: { dateString: "$schedule.time.date" } },
+        },
+        point: 1,
+      },
+    },
+    {
+      $match: {
+        month: { $eq: currentMonth },
+      },
+    },
+    {
+      $group: {
+        _id: "$student",
+        averagePoint: { $avg: "$point" },
+      },
+    },
+    {
+      $match: {
+        averagePoint: { $gte: currentPoint },
+      },
+    },
+  ];
+  const documents = await Achievement.aggregate(aggOptions);
+  return documents.map(item => item._id);
+};
+
 module.exports = {
   getAchievementByStudentId,
   updateAchievement,
   storeNewAchievement,
+  getAchievementByAllStudentsAndMonth,
 };

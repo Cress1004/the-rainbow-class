@@ -1,5 +1,8 @@
 const { checkRetirement } = require("../function/commonFunction");
 const {
+  getAchievementByAllStudentsAndMonth,
+} = require("../repository/achievementRepository");
+const {
   storeStudent,
   getStudentById,
   updateStudent,
@@ -32,14 +35,30 @@ const getStudents = async (req, res) => {
   try {
     const user = req.user;
     const params = req.query;
-    const students = await getListStudentsWithParams(user, params);
-    res
-      .status(200)
-      .json({
-        success: true,
-        students: students.documents,
-        numberOfStudent: students.count,
-      });
+    const query = params.query ? JSON.parse(params.query) : {};
+    const studentIds = await getAchievementByAllStudentsAndMonth(
+      query.month,
+      query.point,
+      query.compareType
+    );
+    // if (
+    //   query.achievementType === 0 &&
+    //   query.compareType &&
+    //   query.month &&
+    //   query.point
+    // ) {
+    //   await getAchievementByAllStudentsAndMonth(
+    //     query.month,
+    //     query.point,
+    //     query.compareType
+    //   );
+    // }
+    const students = await getListStudentsWithParams(user, params, studentIds);
+    res.status(200).json({
+      success: true,
+      students: students.documents,
+      numberOfStudent: students.count,
+    });
   } catch (error) {
     res.status(400).send(error);
   }

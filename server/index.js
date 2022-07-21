@@ -33,6 +33,7 @@ if (process.env.NODE_ENV === "production") {
     origin: [
       `https://the-rainbow-class-manage.azurewebsites.net`,
       `https://the-rainbow-class-guess.azurewebsites.net`,
+      `https://the-rainbow-class-guest.azurewebsites.net`,
     ],
     credentials: true,
     optionSuccessStatus: 200,

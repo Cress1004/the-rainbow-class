@@ -9,6 +9,7 @@ sockets.init = (server) => {
       origin: [
         `https://the-rainbow-class-manage.azurewebsites.net`,
         `https://the-rainbow-class-guess.azurewebsites.net`,
+        `https://the-rainbow-class-guest.azurewebsites.net`,
       ],
       methods: ["GET", "POST", "FETCH"],
     },

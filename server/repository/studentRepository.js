@@ -97,7 +97,7 @@ const getStudentAchievementByMonth = async (studentId, month) => {
   }
 };
 
-const getListStudentsWithParams = async (user, params) => {
+const getListStudentsWithParams = async (user, params, studentIds) => {
   try {
     const query = params.query ? JSON.parse(params.query) : {};
     if (user.role === STUDENT_ROLE) {
@@ -127,7 +127,8 @@ const getListStudentsWithParams = async (user, params) => {
             query: query,
             search: params.search,
             sort: ["created_at_asc"],
-          }
+          },
+          studentIds
         );
       else {
         return await findAllWithUserPopulatedFields(

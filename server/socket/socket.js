@@ -4,15 +4,21 @@ const sockets = {};
 
 sockets.init = (server) => {
   // socket.io setup
+
   const io = require("socket.io")(server, {
-    cors: {
-      origin: [
-        `https://the-rainbow-class-manage.azurewebsites.net`,
-        `https://the-rainbow-class-guess.azurewebsites.net`,
-        `https://the-rainbow-class-guest.azurewebsites.net`,
-      ],
-      methods: ["GET", "POST", "FETCH"],
-    },
+    cors:
+      process.env.NODE_ENV === "production"
+        ? {
+            origin: [
+              process.env.AZURE_CLIENT_MANAGE_PAGE,
+              process.env.AZURE_CLIENT_GUEST_PAGE,
+            ],
+            methods: ["GET", "POST", "FETCH"],
+          }
+        : {
+            origin: [`http://localhost:3000`, `http://localhost:3001`],
+            methods: ["GET", "POST", "FETCH"],
+          },
   });
 
   console.log("Socket io init setup done");

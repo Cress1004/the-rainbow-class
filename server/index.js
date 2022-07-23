@@ -26,11 +26,26 @@ const connect = mongoose
   .then(() => console.log("MongoDB Connected..."))
   .catch((err) => console.log(err));
 
-const corsOptions = {
-  origin: [`http://localhost:3000`, `http://localhost:3001`],
-  credentials: true,
-  optionSuccessStatus: 200,
-};
+let corsOptionsCheck;
+
+if (process.env.NODE_ENV === "production") {
+  corsOptionsCheck = {
+    origin: [
+      process.env.AZURE_CLIENT_MANAGE_PAGE,
+      process.env.AZURE_CLIENT_GUEST_PAGE,
+    ],
+    credentials: true,
+    optionSuccessStatus: 200,
+  };
+} else {
+  corsOptionsCheck = {
+    origin: [`http://localhost:3000`, `http://localhost:3001`],
+    credentials: true,
+    optionSuccessStatus: 200,
+  };
+}
+
+const corsOptions = corsOptionsCheck;
 
 app.use(cors(corsOptions));
 //to not get any deprecation warning or error

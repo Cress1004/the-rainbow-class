@@ -31,9 +31,8 @@ let corsOptionsCheck;
 if (process.env.NODE_ENV === "production") {
   corsOptionsCheck = {
     origin: [
-      `https://the-rainbow-class-manage.azurewebsites.net`,
-      `https://the-rainbow-class-guess.azurewebsites.net`,
-      `https://the-rainbow-class-guest.azurewebsites.net`,
+      process.env.AZURE_CLIENT_MANAGE_PAGE,
+      process.env.AZURE_CLIENT_GUEST_PAGE,
     ],
     credentials: true,
     optionSuccessStatus: 200,

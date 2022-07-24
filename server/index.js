@@ -28,6 +28,8 @@ const connect = mongoose
 
 let corsOptionsCheck;
 
+console.log(process.env.NODE_ENV)
+
 if (process.env.NODE_ENV === "production") {
   corsOptionsCheck = {
     origin: [
